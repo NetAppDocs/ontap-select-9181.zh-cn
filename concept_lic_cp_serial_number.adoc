@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: concept_lic_cp_serial_number.html 
+keywords: license, licensing, Capacity Pools, node serial numbers 
+summary: 对于 Capacity Tiers 许可模型，九位数节点序列号与分配给该节点的许可证序列号相同。但是，使用 Capacity Pools 许可模型分配给节点的序列号具有不同的格式。 
+---
+= ONTAP Select Capacity Pools 许可模型的节点序列号
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+对于 Capacity Tiers 许可模型，九位数节点序列号与分配给该节点的许可证序列号相同。但是，使用 Capacity Pools 许可模型分配给节点的序列号具有不同的格式。
+
+使用 Capacity Pools 许可的节点序列号具有以下格式：
+
+`999 ppppppppp nnnnnnnn`
+
+
+NOTE: 为清楚起见，添加了空格，但不是实际序列号的一部分。
+
+下表从左到右描述了节点序列号的每个部分。
+
+[cols="15,85"]
+|===
+| 板块 | 问题描述 
+
+
+| '999' | 由 NetApp 保留的常量三位数值。 
+
+
+| ppppppppp | 由 NetApp 分配给容量池的可变九位许可证序列号 
+
+
+| nnnnnnnn | License Manager 使用 Capacity Pool 为每个节点生成的可变八位数值 
+|===
+
+CAUTION: 打开涉及使用容量池许可证的节点的 NetApp 支持案例时，必须提供九位数容量池许可证序列号。您无法提供完整的二十位节点序列号。您可以通过跳过节点序列号的前三位（'999'）并提取后九位（ppppppppp），从节点序列号中获取许可证序列号。

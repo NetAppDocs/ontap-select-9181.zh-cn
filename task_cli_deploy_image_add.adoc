@@ -1,0 +1,108 @@
+---
+sidebar: sidebar 
+permalink: task_cli_deploy_image_add.html 
+keywords: administer, administering, cli, deploy, ontap select image, add 
+summary: 将 ONTAP Select 映像添加到 Deploy 管理实用程序的实例中。安装后，您可以在部署 ONTAP Select 集群时使用它。 
+---
+= 将 ONTAP Select 映像添加到 Deploy
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+将 ONTAP Select 映像添加到 Deploy 管理实用程序的实例中。安装映像后，您可以在部署 ONTAP Select 群集时使用它。
+
+.开始之前
+在将任何新的 ONTAP Select 映像添加到 Deploy 之前，应首先删除所有不需要的映像。
+
+
+NOTE: 您只能添加版本早于 Deploy 实用程序实例中包含的原始版本的 ONTAP Select 映像。不支持从 NetApp 添加较新版本的 ONTAP Select。
+
+
+
+== 步骤 1：下载安装映像
+
+要开始向 Deploy 实用程序的实例添加 ONTAP Select 映像的过程，必须从 NetApp 支持站点下载安装映像。ONTAP Select 安装映像被格式化为单个压缩文件。
+
+.步骤
+. 访问 link:https://mysupport.netapp.com/site/downloads/["NetApp 支持站点下载"^] 页面。
+. 向下滚动并选择 *ONTAP Select Image*。
+. 选择所需的安装映像版本。
+. 查看最终用户许可协议 (EULA) 并选择 *Accept & Continue*。
+. 选择并下载相应的 *ONTAP Select Image Install* 软件包。根据需要回复所有提示。
+
+
+
+
+== 步骤 2：将安装映像上传到 Deploy
+
+获取 ONTAP Select 安装映像后，必须将该文件上传到 Deploy 虚拟机。
+
+.开始之前
+确认您的本地工作站上有可用的安装映像文件。您还必须有 Deploy 管理员用户帐户的密码。
+
+.关于此任务
+此任务介绍将文件上载到 Deploy 虚拟机的一种方法。可能还有其他更适合您环境的选项。
+
+.步骤
+. 在本地工作站上的命令 shell 中，将映像文件上传到 Deploy 虚拟机，如以下示例中所示：
++
+....
+scp image_v_93_install_esx.tgz admin@10.234.81.101:/home/admin (provide password when prompted)
+....
++
+....
+sftp admin@10.234.81.101 (provide password when prompted)
+put image_v_93_install_esx.tgz
+exit
+....
+
+
+.结果
+节点安装文件存储在 admin 用户的主目录中。
+
+
+
+== 步骤 3：添加安装映像
+
+将 ONTAP Select 安装映像添加到 Deploy images 目录，以便在部署新集群时可用。
+
+.开始之前
+您必须知道安装映像文件已放置在 Deploy 实用工具虚拟机的哪个目录中。假定该文件位于管理员的主目录中。
+
+.步骤
+. 使用管理员 (admin) 帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 启动 Bash shell：
++
+[source, cli]
+----
+shell bash
+----
+. 将安装映像文件放入 images 目录，如以下示例中所示：
++
+`tar -xf image_v_93_install_esx.tgz -C /opt/netapp/images/`
+
+
+
+
+
+== 步骤 4：显示可用的安装映像
+
+显示部署新集群时可用的 ONTAP Select 图像。
+
+.步骤
+. 访问 Deploy 实用程序虚拟机上的在线文档网页，并使用管理员（admin）帐户 Sign in：
++
+`\http://<FQDN|IP_ADDRESS>/api/ui`
+
++
+使用 Deploy 虚拟机的域名或 IP 地址。
+
+. 导航到页面底部并选择 *Deploy*，然后选择 *GET /images*。
+. 选择 *Try it out!* 以显示可用的 ONTAP Select 图像。
+. 确认所需映像可用。
+

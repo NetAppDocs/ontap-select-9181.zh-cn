@@ -1,0 +1,119 @@
+---
+sidebar: sidebar 
+permalink: task_cli_migrate_deploy.html 
+keywords: administer, administering, cli, deploy, deploy instance, migrate 
+summary: 您可以使用命令行界面将 Deploy 管理实用程序的现有实例迁移到新虚拟机。 
+---
+= 将 ONTAP Select Deploy 实例迁移到新虚拟机
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以使用命令行界面将 Deploy 管理实用程序的现有实例迁移到新虚拟机。
+
+此过程基于创建使用原始虚拟机配置数据的新虚拟机。新虚拟机和原始虚拟机必须运行相同版本和发行版的 Deploy 实用程序。无法迁移到 Deploy 实用程序的其他版本和发行版。
+
+
+
+== 步骤 1：备份 Deploy 配置数据
+
+作为迁移虚拟机的一部分，您必须创建 Deploy 配置数据的备份。您还应该在部署 ONTAP Select 集群后创建备份。数据将保存到单个加密文件中，您可以将该文件下载到本地工作站。
+
+.开始之前
+* 确保 Deploy 在备份操作期间未执行任何其他任务。
+* 保存原始 Deploy 虚拟机映像。
++
+
+CAUTION: 在此过程的后续步骤中，当您将 Deploy 配置数据从原始虚拟机还原到新虚拟机时，需要使用原始 Deploy 虚拟机映像。
+
+
+
+.关于此任务
+您创建的备份文件从虚拟机捕获所有配置数据。此数据描述了部署环境的各个方面，包括 ONTAP Select 群集。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 创建 Deploy 配置数据的备份，该数据存储在 Deploy 服务器的内部目录中：
++
+[source, cli]
+----
+deploy backup create
+----
+. 出现提示时，请提供备份密码。
++
+备份文件基于密码进行加密。
+
+. 显示系统中的可用备份：
++
+[source, cli]
+----
+deploy backup show -detailed
+----
+. 根据 *已创建* 字段中的日期选择您的备份文件，并记录 *下载 URL* 值。
++
+您可以通过 URL 访问备份文件。
+
+. 使用 Web 浏览器或 Curl 等实用程序，使用 URL 将备份文件下载到本地工作站。
+
+
+
+
+== 步骤 2：安装 Deploy 虚拟机的新实例
+
+您必须创建 Deploy 虚拟机的新实例，您可以使用原始虚拟机的配置数据对其进行更新。
+
+.开始之前
+您必须熟悉用于在 VMware 环境中下载和部署 ONTAP Select Deploy 虚拟机的过程。
+
+.关于此任务
+此任务在高层次上进行了描述。
+
+.步骤
+. 创建 Deploy 虚拟机的新实例：
++
+.. 下载虚拟机映像。
+.. 部署虚拟机并配置网络接口。
+.. 使用 SSH 访问 Deploy 实用程序。
+
+
+
+
+.相关信息
+link:task_install_deploy.html["安装 ONTAP Select Deploy"]
+
+
+
+== 步骤 3：将 Deploy 配置数据还原到新虚拟机
+
+必须将配置数据从原始 Deploy 实用程序虚拟机还原到新虚拟机。数据位于您必须从本地工作站上传的单个文件中。
+
+.开始之前
+您必须具有以前备份的配置数据。数据包含在单个文件中，并且必须在本地工作站上可用。
+
+.步骤
+. 在本地工作站上的命令 shell 中，使用 sftp 实用程序将备份文件上传到 Deploy 虚拟机，如下例所示：
++
+....
+sftp admin@10.234.81.101 (provide password when prompted)
+put deploy_backup_20190601162151.tar.gz
+exit
+....
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 还原配置数据：
++
+[source, cli]
+----
+deploy backup restore -path <path_name> -filename <file_name>
+----
++
+示例命令：
+
++
+`deploy backup restore -path /home/admin -filename deploy_backup_20180601162151.tar.gz`
+
+

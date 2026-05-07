@@ -1,0 +1,72 @@
+---
+sidebar: sidebar 
+permalink: concept_api_async_proc.html 
+keywords: rest api, deploy rest api, rest, asynchronous processing, job object 
+summary: 某些 Deploy API 调用（尤其是创建或修改资源的调用）可能需要比其他调用更长的时间才能完成。ONTAP Select Deploy 异步处理这些长时间运行的请求。 
+---
+= 使用 Job 对象对 ONTAP Select 进行异步处理
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+某些 Deploy API 调用（尤其是创建或修改资源的调用）可能需要比其他调用更长的时间才能完成。ONTAP Select Deploy 异步处理这些长时间运行的请求。
+
+
+
+== 使用 Job 对象描述的异步请求
+
+在进行异步运行的 API 调用后，HTTP 响应代码 202 表示请求已成功验证和接受，但尚未完成。此请求作为后台任务处理，此后台任务在对客户端的初始 HTTP 响应后继续运行。响应包括锚定请求的 Job 对象，包括其唯一标识符。
+
+
+NOTE: 您应参阅 ONTAP Select Deploy 在线文档页面，以确定哪些 API 调用异步运行。
+
+
+
+== 查询与 API 请求关联的作业对象
+
+HTTP 响应中返回的 Job 对象包含多个属性。您可以查询 state 属性以确定请求是否成功完成。Job 对象可以处于以下状态之一：
+
+* 已排队
+* 正在运行
+* 成功
+* 失败
+
+
+在轮询 Job 对象以检测任务的终端状态时，您可以使用两种技术，无论是成功还是失败：
+
+* 标准轮询请求 立即返回当前作业状态
+* 仅当出现以下情况之一时，才会返回长轮询请求作业状态：
++
+** 状态的更改时间比轮询请求中提供的日期时间值更近
+** 超时值已过期（1 到 120 秒）
+
+
+
+
+标准轮询和长轮询使用相同的 API 调用来查询作业对象。但是，长轮询请求包含两个查询参数： `poll_timeout` 和 `last_modified`。
+
+
+TIP: 应始终使用长轮询来减少 Deploy 虚拟机上的工作负载。
+
+
+
+== 发出异步请求的一般过程
+
+您可以使用以下高级过程完成异步 API 调用：
+
+. 发出异步 API 调用。
+. 接收 HTTP 响应 202，指示成功接受请求。
+. 从响应正文中提取 Job 对象的标识符。
+. 在循环中，在每个周期中执行以下操作：
++
+.. 使用长轮询请求获取 Job 的当前状态
+.. 如果作业处于非终端状态（已排队、正在运行），请再次执行循环。
+
+
+. 当作业达到终止状态（成功、失败）时停止。
+

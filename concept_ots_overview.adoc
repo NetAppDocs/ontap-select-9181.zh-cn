@@ -1,0 +1,154 @@
+---
+sidebar: sidebar 
+permalink: concept_ots_overview.html 
+keywords: overview, software defined storage, sds, typical deployment, ontap 9 
+summary: ONTAP Select 是 ONTAP 的纯软件版本，可作为虚拟机在虚拟机监控程序主机上进行部署。它补充了主流的 FAS 和 AFF ONTAP 产品套件以及其他纯软件选项，如 Cloud Volumes ONTAP。 
+---
+= 了解 ONTAP Select
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 是 ONTAP 的纯软件版本，可以将其部署为虚拟机监控程序主机上的虚拟机。它补充了主流的 FAS、AFF 和 ASA ONTAP 产品套件以及其他纯软件选项，如 Cloud Volumes ONTAP。
+
+ONTAP Select 将内部磁盘驱动器、NVMe、SSD 或 HDD 以及外部阵列存储转换为灵活的存储系统，具有专用 ONTAP 存储系统提供的许多相同优势。您还可以在新服务器或现有服务器基础设施上部署 ONTAP Select。ONTAP Select 易于管理，并利用与基于 ONTAP 的解决方案相同的管理软件，这意味着减少了运营开销和培训要求。
+
+ONTAP Select 通过两种互补的许可模式适应您的容量消耗需求——容量层级和完全灵活的容量池。两种许可模式都允许您以低至 1TB 的增量增加容量。例如，您可以从几个 TB 开始，并随着项目的增长动态添加容量。如果使用容量池，则可以在项目完成时根据需要重新分配容量。
+
+ONTAP Select 已集成到 VMware vSphere 和基于内核的虚拟机 (KVM) 等云管理框架中。这有助于加快新项目的部署，例如文件服务、主目录、软件开发环境和应用程序测试。
+
+SnapMirror 软件可让您在混合云的 ONTAP 存储之间移动数据，以便您可以轻松访问所需的数据。例如，您可以快速创建一个环境来证明一个想法。稍后，您可以将项目移动到专用存储平台以进行生产部署，或者将其作为开发工作流的一部分在云中更易于访问。
+
+
+
+== 软件定义存储
+
+通过软件实现和交付 IT 服务，使管理员能够以以前无法实现的速度和敏捷性快速调配资源。随着现代数据中心迁移到软件定义基础设施 (SDI) 架构，您可以将最有价值的 IT 资产与底层物理基础设施分开，从而提供灵活性、可扩展性和可编程性。
+
+在数据分散于直接连接存储（DAS）孤岛的商品世界中，数据移动和管理已成为更复杂的问题。软件定义存储（SDS）已成为 SDI 领域解决这些和其他问题的重要组成部分。
+
+ONTAP Select 是 NetApp 针对 SDS 市场的解决方案。ONTAP Select 为软件定义的数据中心带来了企业级存储管理功能，并将 NetApp Data Fabric 架构扩展到极端边缘用例，包括物联网 (IoT) 和战术服务器。
+
+
+
+== 两个软件组件
+
+ONTAP Select 由两个主要软件组件组成：
+
+
+
+=== ONTAP Select 节点
+
+ONTAP Select 集群由一个、两个、四个、六个、八个、十个或十二个节点组成。每个集群节点都部署为单独的虚拟机，并运行专门设计的 ONTAP 9 软件版本。
+
+
+
+=== ONTAP Select Deploy 管理实用程序
+
+部署管理实用程序作为单独的 Linux 虚拟机打包和安装。您必须使用此实用程序在生产环境中部署 ONTAP Select 群集。当前版本的 ONTAP Select 节点映像与 Deploy 实用程序捆绑在一起。
+
+
+NOTE: Deploy 管理实用程序未分配单独的版本号。Deploy 与关联的 ONTAP Select 版本具有相同的版本号。但是，特定 ONTAP Select 版本中 Deploy 实用程序的每个更新都有唯一的内部版本号。
+
+
+
+== 典型部署的示意图
+
+下图说明了用于部署和支持四节点 ONTAP Select 集群的 NetApp ONTAP Select Deploy 管理实用程序。Deploy 实用程序和 ONTAP Select 节点在专用虚拟机监控程序主机上作为单独的虚拟机运行。
+
+image:ots_architecture.png["演示使用 Deploy 管理实用程序创建的 ONTAP Select 四节点集群。"]
+
+
+
+== 使用 ONTAP Select 的 FlexCache 回写
+
+ONTAP Select 支持具有回写功能的 FlexCache 缓存卷。ONTAP Select 实例的整体性能与入门级 ONTAP 系统相当。
+
+具有回写功能的 FlexCache 缓存卷对 ONTAP Select 有以下要求：
+
+* 在中型（8 核）或大型（16 核）实例上使用 ONTAP Select。
+* 使用 NVMe 支持的固态硬盘。与 ONTAP Select 的 NVMe 支持存储相比，SAS 支持的存储性能较低。
+* 在开始部署之前测试 ONTAP Select 的 FlexCache 回写功能。FlexCache 回写不建议用于大量小文件。
+
+
+ONTAP Select 不支持在小型实例（4 核）上回写的 FlexCache 缓存卷。此外，ONTAP Select 不支持在小型、中型或大型实例上回写的 FlexCache 原始卷。
+
+link:https://docs.netapp.com/us-en/ontap/flexcache-writeback/flexcache-write-back-guidelines.html["了解 ONTAP FlexCache 回写"^]
+
+
+
+== 比较 ONTAP Select 和 ONTAP 9
+
+基于硬件的 ONTAP 和 ONTAP Select 提供企业级存储解决方案。但是，由于它们的设计和实现方式不同，因此每个都可以满足不同的业务需求和使用场景。在规划 ONTAP Select 部署之前，您应该熟悉平台之间的主要差异。
+
+
+
+=== 不同的 HA 架构
+
+根据您在群集中定义的节点数量，ONTAP Select 提供 HA 功能。例如，一个四节点群集由两个 HA 对组成。与 ONTAP Select 一起使用的 HA 架构基于非共享存储模型。也就是说，HA 对中的一个节点不能直接访问另一个节点拥有的存储。此设计可能会影响某些 ONTAP Select 操作特性。
+
+
+
+=== 容量许可
+
+ONTAP Select 引入了基于消费的许可模式。在生产环境中部署 ONTAP Select 集群时，必须为每个节点或共享容量池购买具有存储容量的许可证。使用 Deploy 实用程序，必须应用建立集群节点存储容量的许可证文件。
+
+
+
+=== ONTAP 功能许可
+
+ONTAP Select 集群中的每个节点都会自动获得使用多个 ONTAP 功能的许可。无需手动安装或应用这些功能许可证。
+
+
+
+=== ONTAP Select 中不支持的 ONTAP 功能
+
+ONTAP Select 不支持几个 ONTAP 功能。在大多数情况下，这些功能需要在虚拟化 ONTAP Select 环境中不可用的特殊硬件。
+
+* 自主勒索软件防护 (ARP) 的自动更新
++
+
+NOTE: 从 ONTAP Select 9.16.1 开始，支持 ARP 的手动更新，ARP 功能许可证包含在 NetApp 许可证文件 (NLF) 中。
+
+* 集群 IPspace
++
+不支持对群集 IPspace 进行任何修改，包括添加或删除端口、虚拟 LAN (VLAN) 或链路聚合组。
+
+* 光纤通道
++
+不支持 Fibre Channel 和 Fibre Channel over Ethernet。
+
+* 运行状况监视器
++
+与基于硬件的 ONTAP 部署一起使用的传统健康监控特定于底层硬件组件。由于 ONTAP Select 使用的虚拟化环境，健康监视器未处于活动状态。
+
+* 接口组
++
+不支持接口组。
+
+* 多租户密钥管理器 (MTKM)
+* NIC 卸载支持
++
+由于 ONTAP Select 使用的虚拟化环境，不支持 NIC 卸载功能。
+
+* NetApp 存储加密驱动器
+* ONTAP 端口属性
++
+不支持修改 ONTAP 端口的属性，包括速度、双工和流量控制。
+
+* 服务处理器
+* SVM 迁移
+* SnapLock Compliance
+* SnapMirror 活动同步
+* VMware HCX
+
+
+.相关信息
+* link:reference_lic_ontap_features.html#enabled-ontap-features["了解默认情况下启用的 ONTAP 功能"]
+* link:concept_lic_evaluation.html["了解 ONTAP Select 许可证选项"]
+

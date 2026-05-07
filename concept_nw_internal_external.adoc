@@ -1,0 +1,110 @@
+---
+sidebar: sidebar 
+permalink: concept_nw_internal_external.html 
+keywords: ontap select, internal network, external network 
+summary: 内部和外部 ONTAP Select 网络的特征。 
+---
+= ONTAP Select 内部和外部网络
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 内部和外部网络的特征。
+
+
+
+== ONTAP Select 内部网络
+
+内部 ONTAP Select 网络仅存在于产品的多节点变体中，负责为 ONTAP Select 集群提供集群通信、HA 互连和同步复制服务。此网络包括以下端口和接口：
+
+* *e0c，e0d。*承载集群网络 LIF
+* *e0e.*承载 RSM LIF
+* *e0f.*承载 HA 互连 LIF
+
+
+该网络的吞吐量和延迟对于确定 ONTAP Select 集群的性能和弹性至关重要。集群安全需要网络隔离，并确保系统接口与其他网络流量保持独立。因此，此网络必须由 ONTAP Select 集群独家使用。
+
+
+NOTE: 不支持将 Select 内部网络用于 Select 集群流量以外的流量，例如应用程序或管理流量。ONTAP 内部 VLAN 上不能有其他虚拟机或主机。
+
+通过内部网络的网络数据包必须位于专用 VLAN 标记的第 2 层网络上。为此，可使用以下方法之一：
+
+* 将 VLAN 标记的端口组分配给内部虚拟 NIC（e0c 到 e0f）（VST 模式）
+* 使用上游交换机提供的本征 VLAN，其中本征 VLAN 不用于任何其他流量（分配一个没有 VLAN ID 的端口组，即 EST 模式）
+
+
+在所有情况下，内部网络流量的 VLAN 标记都是在 ONTAP Select VM 之外完成的。
+
+
+NOTE: 仅支持 ESXi 标准和分布式 vSwitches。不支持其他虚拟交换机或 ESXi 主机之间的直接连接。必须完全打开内部网络；不支持 NAT 或防火墙。
+
+在 ONTAP Select 集群中，使用称为端口组的虚拟二层网络对象将内部流量和外部流量分开。正确的 vSwitch 分配这些端口组非常重要，特别是对于负责提供集群、HA 互连和镜像复制服务的内部网络。这些网络端口的网络带宽不足会导致性能下降，甚至影响集群节点的稳定性。因此，四个、六个、八个、十个和十二个节点集群要求内部 ONTAP Select 网络使用 10Gb 连接；不支持 1Gb NIC。但是，可以对外部网络进行权衡，因为限制传入 ONTAP Select 集群的数据流量不会影响其可靠运行的能力。
+
+双节点集群可以使用四个 1Gb 端口进行内部流量，也可以使用一个 10Gb 端口，而不是四节点集群所需的两个 10Gb 端口。在条件阻止服务器配备四个 10Gb NIC 卡的环境中，两个 10Gb NIC 卡可用于内部网络，两个 1Gb NIC 可用于外部 ONTAP 网络。
+
+
+
+=== 内部网络验证和故障排除
+
+可以使用网络连接检查器功能验证多节点群集中的内部网络。可以从运行  `network connectivity-check start` 命令的 Deploy CLI 调用此函数。
+
+运行以下命令来查看测试的输出：
+
+[listing]
+----
+network connectivity-check show --run-id X (X is a number)
+----
+此工具仅适用于多节点 Select 集群中的内部网络故障排除。该工具不应用于对单节点集群（包括 vNAS 配置）、ONTAP Deploy 到 ONTAP Select 连接或客户端连接问题进行故障排除。
+
+集群创建向导（ONTAP Deploy UI 的一部分）包括内部网络检查器，作为创建多节点集群期间可用的可选步骤。鉴于内部网络在多节点集群中扮演的重要角色，使此步骤成为集群创建工作流的一部分可提高集群创建操作的成功率。
+
+从 ONTAP Deploy 2.10 开始，内部网络使用的 MTU 大小可以设置在 7,500 到 9,000 之间。网络连接检查器还可用于测试 7,500 至 9,000 之间的 MTU 大小。默认 MTU 值设置为虚拟网络交换机的值。如果环境中存在像 VXLAN 这样的网络覆盖，则必须用较小的值替换该默认值。
+
+
+
+== ONTAP Select 外部网络
+
+ONTAP Select 外部网络负责集群的所有出站通信，因此存在于单节点和多节点配置中。虽然此网络没有内部网络严格定义的吞吐量要求，但管理员应注意不要在客户端和 ONTAP VM 之间造成网络瓶颈，因为性能问题可能被误认为是 ONTAP Select 问题。
+
+
+NOTE: 与内部流量类似，外部流量可以在 vSwitch 层（VST）和外部交换层（EST）进行标记。此外，ONTAP Select VM 本身还可以在称为 VGT 的过程中对外部流量进行标记。有关更多详细信息，请参阅 link:concept_nw_data_mgmt_separation.html["数据和管理流量分离"] 部分。
+
+下表重点介绍了 ONTAP Select 内部和外部网络之间的主要区别。
+
+*内部与外部网络快速参考*
+
+[cols="3*"]
+|===
+| 问题描述 | 内部网络 | 外部网络 
+
+
+| 网络服务 | 集群 HA/IC RAID SyncMirror (RSM) | 数据管理集群间（SnapMirror 和 SnapVault） 
+
+
+| 网络隔离 | 必填项 | 可选 
+
+
+| 帧大小 (MTU) | 7,500 至 9,000 | 1,500（默认）9,000（支持） 
+
+
+| IP 地址分配 | 自动生成 | 用户定义 
+
+
+| DHCP 支持 | 否 | 否 
+|===
+
+
+=== NIC 组队
+
+为了确保内部和外部网络同时具有提供高性能和容错所需的必要带宽和弹性特性，建议使用物理网络适配器组合。支持具有单个 10Gb 链路的双节点集群配置。但是，NetApp 推荐的最佳做法是在 ONTAP Select 集群的内部和外部网络上使用 NIC 组合。
+
+
+
+=== MAC 地址生成
+
+分配给所有 ONTAP Select 网络端口的 MAC 地址由包含的部署实用程序自动生成。该实用程序使用特定于 NetApp 的平台特定组织唯一标识符 (OUI)，以确保与 FAS 系统没有冲突。然后将此地址的副本存储在 ONTAP Select 安装虚拟机 (ONTAP Deploy) 的内部数据库中，以防止在未来的节点部署过程中意外重新分配。在任何时候，管理员都不应修改网络端口的分配 MAC 地址。

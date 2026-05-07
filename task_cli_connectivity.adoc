@@ -1,0 +1,60 @@
+---
+sidebar: sidebar 
+permalink: task_cli_connectivity.html 
+keywords: administer, administering, cli, connectivity, network connectivity, network checker 
+summary: 您可以测试内部集群网络上两个或多个 ONTAP Select 节点之间的网络连接。通常在部署多节点集群之前运行此测试，以检测可能导致操作失败的问题。 
+---
+= 确认 ONTAP Select 节点之间的网络连接
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以测试内部集群网络上两个或多个 ONTAP Select 节点之间的网络连接。通常在部署多节点集群之前运行此测试，以检测可能导致操作失败的问题。
+
+.开始之前
+必须对测试中包含的所有 ONTAP Select 节点进行配置并打开电源。
+
+.关于此任务
+每次启动测试时，都会在后台创建一个新的进程运行，并分配一个唯一的运行标识符。一次只能激活一个运行。
+
+该测试有两种控制其操作的模式：
+
+* 快速 此模式执行基本无中断测试。执行 PING 测试，同时测试网络 MTU 大小和 vSwitch。
+* 扩展 此模式对所有冗余网络路径执行更全面的测试。如果在活动的 ONTAP Select 群集上运行此操作，则可能会影响群集的性能。
+
+
+
+NOTE: 建议在创建多节点群集之前始终执行快速测试。快速测试成功完成后，您可以根据生产要求选择执行扩展测试。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 CLI。
+. 显示网络连接检查器的当前运行，并验证没有运行处于活动状态：
++
+`network connectivity-check show`
+
+. 启动网络连接检查器，并在命令输出中记下运行标识符：
++
+`network connectivity-check start -host-names HOSTNAMES -vswitch-type VSWITCH_TYPE-mode MODE`
+
++
+示例
+
++
+[listing]
+----
+network connectivity-check start -host-names 10.234.81.14
+10.234.81.15 -vswitch-type StandardVSwitch -mode quick
+----
+. 根据运行标识符监控网络连接检查器的进度：
++
+`network connectivity-check show -run-id RUN_ID`
+
+
+
+.完成后
+网络连接检查器通常通过删除添加到 ONTAP-Internal 端口组的任何临时端口和 IP 地址来进行清理。但是，如果连接检查器无法删除临时端口，则必须通过使用选项 `-mode cleanup`重新运行 CLI 命令来执行手动清理操作。如果不从 ONTAP-Internal 端口组中删除临时端口，则可能无法成功创建 ONTAP Select 虚拟机。

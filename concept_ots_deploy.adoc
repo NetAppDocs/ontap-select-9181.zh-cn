@@ -1,0 +1,81 @@
+---
+sidebar: sidebar 
+permalink: concept_ots_deploy.html 
+keywords: ontap select deploy, deploy administration utility, deploy utility, functionality, accessing 
+summary: ONTAP Select Deploy 是用于部署和管理 ONTAP Select 集群的管理实用程序。 
+---
+= ONTAP Select Deploy
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select Deploy 是用于部署和管理 ONTAP Select 集群的管理实用程序。Deploy 打包为 Linux 虚拟机，必须在创建 ONTAP Select 集群之前安装该虚拟机。
+
+
+
+== 核心功能
+
+Deploy 管理实用程序执行以下核心功能：
+
+* 记录部署 ONTAP Select 的每个虚拟机监控程序主机的详细信息
+* 配置主机并安装所需的许可证
+* 部署和管理 ONTAP Select 集群
+* 维护 ONTAP Select 集群和主机的库存
+* 收集 AutoSupport 数据并将其发送至 NetApp
+* 维护一组内部的 ONTAP Select 节点映像
+* 支持虚拟机监控程序特定的命令格式和协议
+
+
+
+
+== 访问 Deploy 实用程序的方式
+
+访问 Deploy 管理实用程序时，有多个可用的选项。所有外部接口在功能上都是等效的。您应该选择最适合您的特定部署目标和要求的访问选项。在任何情况下，您都必须使用具有有效密码的管理员帐户登录。
+
+
+
+=== Web 图形用户界面
+
+您可以通过新式 Web 浏览器访问 Deploy 实用程序。Web UI 提供了一个直观且易于使用的界面，在大多数情况下，它将成为您使用该实用程序时的主要界面。
+
+
+
+=== 命令行界面
+
+可通过管理 shell 获得基于文本的命令行界面。可以通过以下方式访问 CLI 管理 shell：
+
+* 安全外壳 (SSH)
+* 虚拟机控制台
+
+
+通常在安装和初始配置过程中使用虚拟机控制台。但是，在大多数情况下，SSH 提供了更灵活、更方便的选择。
+
+
+
+=== REST Web 服务 API
+
+当连接到 Deploy 实用程序时，暴露给外部客户端的 REST Web 服务 API 提供了另一个选项。您可以使用任何支持 REST Web 服务的主流编程语言或工具访问 API。热门选择包括：
+
+* Python
+* Java
+* Curl
+
+
+使用编程或脚本语言提供了自动部署和管理 ONTAP Select 集群的机会。
+
+
+
+=== ONTAP Select 在线文档网页
+
+在 Deploy 实用程序中显示联机文档网页是访问 REST Web 服务 API 的替代方法。但是，您不使用编程语言，而是使用浏览器通过页面访问管理 API。提供以下功能：
+
+* REST Web 服务 API 中每个调用的详细说明
+* 能够手动发出任何 API 调用
+
+
+您可以使用 Deploy 虚拟机的 IP 或域名访问在线文档页面。要显示页面，请在浏览器中输入具有以下格式的 URL（替换 Deploy VM 实例的相应 IP 地址或域名）： `\http://<ip_address>/api/ui`

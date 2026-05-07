@@ -1,0 +1,38 @@
+---
+sidebar: sidebar 
+permalink: concept_lic_cp_restrictions.html 
+keywords: license, licensing, Capacity Pools, restrictions 
+summary: 下面介绍了使用容量池许可模式时适用的限制。 
+---
+= ONTAP Select Capacity Pools 许可的部署限制
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+下面介绍了使用容量池许可模式时适用的限制。
+
+.每个集群的一致许可模式
+单个 ONTAP Select 群集中的所有节点必须使用相同的许可模式，即容量层或容量池。不能在单个群集中混合节点的许可类型。
+
+.集群中的所有节点都使用相同的 License Manager 实例
+ONTAP Select 集群中具有 Capacity Pool 许可证的所有节点都必须使用相同的 License Manager 实例。由于每个 Deploy 实例中都有一个 License Manager 实例，因此该限制是对现有要求的重申，即同一个 Deploy 实例必须管理集群中的所有节点。
+
+.每个节点一个容量池
+每个节点只能从一个容量池租用存储。一个节点不能使用两个或多个池。
+
+.HA 对中节点的相同池
+单个 HA 对中的两个节点必须从同一容量池租用存储。但是，同一集群中的不同 HA 对可以从由同一 License Manager 管理的不同池租用存储。
+
+.存储许可证持续时间
+从 NetApp 获取存储许可证时，必须选择许可证期限。例如，许可证的有效期为一年。
+
+.数据聚合租用期限
+当 ONTAP Select 节点请求数据聚合的存储租约时，License Manager 会根据 Capacity Pool 的配置提供特定期限的租约。您可以为每个池配置一小时至七天的租约期限。默认租约期限为 24 小时。
+
+.分配给 Deploy 的静态 IP 地址
+使用 Capacity Pools 许可时，必须为 Deploy 管理实用程序分配静态 IP 地址。

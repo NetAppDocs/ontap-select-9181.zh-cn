@@ -1,0 +1,98 @@
+---
+sidebar: sidebar 
+permalink: access-evaluation-software.html 
+keywords: ontap select, evaluation, software, register, download, access 
+summary: 请求访问以下载 ONTAP Select 评估软件。 
+---
+= 访问 ONTAP Select 评估软件
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+如果您是 ONTAP Select 的当前客户并且您拥有有效的权利或 NetApp 合作伙伴并希望下载新的容量层评估许可证，则可以访问 link:https://mysupport.netapp.com/site/downloads/evaluation/ontap-select["ONTAP Select 评估软件"^]。
+
+如果您不是上述两者之一，并希望尝试 ONTAP Select 进行评估，您可以按照以下步骤请求访问以下载评估软件。
+
+.关于此任务
+* 本说明适用于参与 NetApp 的 NetApp 销售人员、合作伙伴和潜在客户。
+* ONTAP Select Capacity Tiers 评估许可证从安装之日起限制为 90 天。
++
+
+NOTE: 您不能扩展评估许可证。90 天后，许可证将不再有效，您将无法访问相关数据。
+
+* 评估软件包含下载 ONTAP Select Deploy 管理实用程序和部署群集所需的所有信息。
+
+
+
+
+== 步骤 1：注册一个帐户
+
+根据需要完成 NetApp 账号注册，然后申请潜在客户访问权限。
+
+.步骤
+. 创建新帐户或退出现有帐户。
++
+[role="tabbed-block"]
+====
+.创建新帐户
+--
+使用您的公司电子邮箱在 link:https://mysupport.netapp.com/site/user/registration["NetApp 支持站点"^] 上注册帐户。
+
+
+NOTE: Gmail 或 yahoo 等免费电子邮件帐户是不可接受的。
+
+请确保您没有使用新创建的帐户 Sign in。
+
+--
+.现有帐户
+--
+如果您已有帐户，请转到 link:https://mysupport.netapp.com/site/["NetApp 支持站点"^] 并确保您未登录。
+
+--
+====
+. 创建非技术支持案例，将访问级别提升至"prospect"。
++
+.. 选择 *CASES* 选项卡，然后选择 *Create non-technical cases*
+.. 选择 *User Registration Issue* 作为反馈类别。
+.. 选择 *Create case*。
++
+填写所有必填信息，并在备注部分写下："我的公司电子邮件地址是 <your-email-address>。我希望获得潜在客户下载 ONTAP Select 评估软件的访问权限。"
+
++
+包括您的 NetApp 联系人的姓名。
+
+.. 选择 *Submit*。
+
+
+
+
+
+
+== 步骤 2：下载 ONTAP Select 评估软件
+
+支持个案审核通过后，NetApp 支持团队将使用提供的电子邮件地址通知您。
+
+.步骤
+. https://mysupport.netapp.com/site/downloads/evaluation/ontap-select["下载 ONTAP Select 评估软件"^]。
++
+评估许可证文件位于 zip 文件中。
+
+. 要遵守法律要求，您需要在获得访问权限之前link:https://mysupport.netapp.com/site/help["创建支持案例"^]。这有助于 NetApp 维护正确的控制和文档，同时为您提供所需的生产就绪软件。
++
+
+NOTE: NetApp 提供 ONTAP Select 的"生产就绪"版本，该版本不是开源或替代版本。仅当您升级到生产许可证时，支持才可用。
+
+
+
+.下一步是什么？
+评估软件下载完成后，按照说明下载 ONTAP Select Deploy 管理实用程序并部署群集。
+
+.相关信息
+* link:concept_lic_evaluation.html["了解 ONTAP Select 部署的评估许可证"]
+* link:task_adm_licenses.html#convert-license["将评估许可证转换为生产许可证"]
+

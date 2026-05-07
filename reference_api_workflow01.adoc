@@ -1,0 +1,410 @@
+---
+sidebar: sidebar 
+permalink: reference_api_workflow01.html 
+keywords: rest api, deploy rest api, rest, workflow, create cluster, curl, json 
+summary: 您可以在由 vCenter 管理的 VMware ESXi 主机上部署单节点 ONTAP Select 集群。使用评估许可证创建集群。 
+---
+= 工作流程 1：在 ESXi 上创建 ONTAP Select 单节点评估集群
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以在由 vCenter 管理的 VMware ESXi 主机上部署单节点 ONTAP Select 集群。使用评估许可证创建集群。
+
+在以下情况下，集群创建工作流程不同：
+
+* ESXi 主机不由 vCenter 管理（独立主机）
+* 集群内使用多个节点或主机
+* 集群使用购买的许可证部署在生产环境中
+* 使用 KVM 虚拟机管理程序代替 VMware ESXi
+
+
+
+
+== 1.注册 vCenter 服务器凭据
+
+在部署到由 vCenter 服务器管理的 ESXi 主机时，您必须在注册主机之前添加凭据。然后，Deploy 管理实用程序可以使用凭据向 vCenter 进行身份验证。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 部署 | POST | /security/credentials 
+|===
+Curl::
+
+
+[source, curl]
+----
+curl -iX POST -H 'Content-Type: application/json' -u admin:<password> -k -d @step01 'https://10.21.191.150/api/security/credentials'
+----
+JSON 输入（步骤 01）::
+
+
+[source, json]
+----
+{
+  "hostname": "vcenter.company-demo.com",
+  "type": "vcenter",
+  "username": "misteradmin@vsphere.local",
+  "password": "mypassword"
+}
+----
+处理类型:: 异步
+输出::
++
+--
+* 位置响应标头中的凭据 ID
+* 作业对象
+
+
+--
+
+
+
+
+== 2.注册虚拟机管理程序主机
+
+您必须添加一个虚拟机监控程序主机，其中将运行包含 ONTAP Select 节点的虚拟机。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | POST | /hosts 
+|===
+Curl::
+
+
+[source, curl]
+----
+curl -iX POST -H 'Content-Type: application/json' -u admin:<password> -k -d @step02 'https://10.21.191.150/api/hosts'
+----
+JSON 输入（步骤 02）::
+
+
+[source, json]
+----
+{
+  "hosts": [
+    {
+      "hypervisor_type": "ESX",
+      "management_server": "vcenter.company-demo.com",
+      "name": "esx1.company-demo.com"
+    }
+  ]
+}
+----
+处理类型:: 异步
+输出::
++
+--
+* 位置响应标头中的主机 ID
+* 作业对象
+
+
+--
+
+
+
+
+== 3.创建集群
+
+在您创建 ONTAP Select 群集时，系统会注册基本群集配置，并由 Deploy 自动生成节点名称。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | POST | /clusters 
+|===
+Curl:: 对于单节点集群，查询参数 node_count 应设置为 1。
+
+
+[source, curl]
+----
+curl -iX POST -H 'Content-Type: application/json' -u admin:<password> -k -d @step03 'https://10.21.191.150/api/clusters? node_count=1'
+----
+JSON 输入（步骤 03）::
+
+
+[source, json]
+----
+{
+  "name": "my_cluster"
+}
+----
+处理类型:: 同步
+输出::
++
+--
+* 位置响应标头中的集群 ID
+
+
+--
+
+
+
+
+== 4.配置集群
+
+在配置集群时，必须提供几个属性。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | PATCH | /clusters/{cluster_id} 
+|===
+Curl:: 您必须提供集群 ID。
+
+
+[source, curl]
+----
+curl -iX PATCH -H 'Content-Type: application/json' -u admin:<password> -k -d @step04 'https://10.21.191.150/api/clusters/CLUSTERID'
+----
+JSON 输入（步骤 04）::
+
+
+[source, json]
+----
+{
+  "dns_info": {
+    "domains": ["lab1.company-demo.com"],
+    "dns_ips": ["10.206.80.135", "10.206.80.136"]
+    },
+    "ontap_image_version": "9.5",
+    "gateway": "10.206.80.1",
+    "ip": "10.206.80.115",
+    "netmask": "255.255.255.192",
+    "ntp_servers": {"10.206.80.183"}
+}
+----
+处理类型:: 同步
+输出:: 无
+
+
+
+
+== 5.检索节点名称
+
+Deploy 管理实用程序在创建群集时自动生成节点标识符和名称。在配置节点之前，必须检索分配的 ID。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | GET | /clusters/{cluster_id}/nodes 
+|===
+Curl:: 您必须提供集群 ID。
+
+
+[source, curl]
+----
+curl -iX GET -u admin:<password> -k 'https://10.21.191.150/api/clusters/CLUSTERID/nodes?fields=id,name'
+----
+处理类型:: 同步
+输出::
++
+--
+* 数组记录，每个记录描述一个具有唯一 ID 和名称的单个节点
+
+
+--
+
+
+
+
+== 6.配置节点
+
+必须提供节点的基本配置，这是用于配置节点的三个 API 调用中的第一个。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | 路径 | /clusters/{cluster_id}/nodes/{node_id} 
+|===
+Curl:: 必须提供集群 ID 和节点 ID。
+
+
+[source, curl]
+----
+curl -iX PATCH -H 'Content-Type: application/json' -u admin:<password> -k -d @step06 'https://10.21.191.150/api/clusters/CLUSTERID/nodes/NODEID'
+----
+JSON 输入（步骤 06）:: 您必须提供 ONTAP Select 节点将运行的主机 ID。
+
+
+[source, json]
+----
+{
+  "host": {
+    "id": "HOSTID"
+    },
+  "instance_type": "small",
+  "ip": "10.206.80.101",
+  "passthrough_disks": false
+}
+----
+处理类型:: 同步
+输出:: 无
+
+
+
+
+== 7.检索节点网络
+
+您必须标识单节点集群中节点使用的数据和管理网络。内部网络不与单节点集群一起使用。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | GET | /clusters/{cluster_id}/nodes/{node_id}/networks 
+|===
+Curl:: 必须提供集群 ID 和节点 ID。
+
+
+[source, curl]
+----
+curl -iX GET -u admin:<password> -k 'https://10.21.191.150/api/ clusters/CLUSTERID/nodes/NODEID/networks?fields=id,purpose'
+----
+处理类型:: 同步
+输出::
++
+--
+* 两个记录的数组，每个记录描述节点的单个网络，包括唯一 ID 和目的
+
+
+--
+
+
+
+
+== 8.配置节点网络
+
+您必须配置数据和管理网络。单节点集群不使用内部网络。
+
+
+NOTE: 发出以下 API 调用两次，每个网络一次。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | PATCH | /clusters/{cluster_id}/nodes/{node_id}/networks/{network_id} 
+|===
+Curl:: 您必须提供集群 ID、节点 ID 和网络 ID。
+
+
+[source, curl]
+----
+curl -iX PATCH -H 'Content-Type: application/json' -u admin:<password> -k -d @step08 'https://10.21.191.150/api/clusters/ CLUSTERID/nodes/NODEID/networks/NETWORKID'
+----
+JSON 输入（步骤 08）:: 您需要提供网络的名称。
+
+
+[source, json]
+----
+{
+  "name": "sDOT_Network"
+}
+----
+处理类型:: 同步
+输出:: 无
+
+
+
+
+== 9.配置节点存储池
+
+配置节点的最后一步是附加存储池。您可以通过 vSphere Web 客户端或可选地通过 Deploy REST API 来确定可用的存储池。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | PATCH | /clusters/{cluster_id}/nodes/{node_id}/networks/{network_id} 
+|===
+Curl:: 您必须提供集群 ID、节点 ID 和网络 ID。
+
+
+[source, curl]
+----
+curl -iX PATCH -H 'Content-Type: application/json' -u admin:<password> -k -d @step09 'https://10.21.191.150/api/clusters/ CLUSTERID/nodes/NODEID'
+----
+JSON 输入（步骤 09）:: 池容量为 2 TB。
+
+
+[source, json]
+----
+{
+  "pool_array": [
+    {
+      "name": "sDOT-01",
+      "capacity": 2147483648000
+    }
+  ]
+}
+----
+处理类型:: 同步
+输出:: 无
+
+
+
+
+== 10.部署集群
+
+配置集群和节点后，即可部署集群。
+
+[cols="15,15,70"]
+|===
+| 类别 | HTTP 谓词 | 路径 
+
+
+| 集群 | POST | /clusters/{cluster_id}/deploy 
+|===
+Curl:: 您必须提供集群 ID。
+
+
+[source, curl]
+----
+curl -iX POST -H 'Content-Type: application/json' -u admin:<password> -k -d @step10 'https://10.21.191.150/api/clusters/CLUSTERID/deploy'
+----
+JSON 输入（步骤 10）:: 您必须提供 ONTAP 管理员帐户的密码。
+
+
+[source, json]
+----
+{
+  "ontap_credentials": {
+    "password": "mypassword"
+  }
+}
+----
+处理类型:: 异步
+输出::
++
+--
+* 作业对象
+
+
+--
+
+
+.相关信息
+link:deploy-evaluation-ontap-select-ovf-template.html["部署 ONTAP Select 集群的 90 天评估实例"]

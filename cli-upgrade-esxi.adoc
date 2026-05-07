@@ -1,0 +1,238 @@
+---
+sidebar: sidebar 
+permalink: cli-upgrade-esxi.html 
+keywords: administer, administering, cli, esxi, upgrade, esxi 8.0 
+summary: 如果您在 VMware ESXi 上运行 ONTAP Select，您可以将 ESXi 软件从较早的受支持版本升级到 ESXi 8.0 或更高版本。在升级之前，您应该了解该过程并选择适当的升级过程。 
+---
+= 升级到 VMware ESXi 8.0 或更高版本以支持 ONTAP Select
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+如果您在 VMware ESXi 上运行 ONTAP Select，您可以将 ESXi 软件从较早的受支持版本升级到 ESXi 8.0 或更高版本。在升级之前，您应该了解该过程并选择适当的升级过程。
+
+
+
+== 准备升级 VMware ESXi
+
+在托管 ONTAP Select 集群的虚拟机管理程序上升级 ESXi 软件之前，请准备并选择适合您环境的升级过程。
+
+.步骤
+. *熟悉如何升级 VMware ESXi*
++
+升级 ESXi 软件是 VMware 描述和支持的过程。使用 ONTAP Select 时，虚拟机监控程序升级过程是较大升级过程的一部分。有关详细信息，请参见 VMware 文档。
+
+. *选择升级过程*
++
+有几种升级程序可用。您应该根据以下标准选择适用的程序：
+
++
+** ONTAP Select 集群大小
++
+支持单节点群集和多节点群集。
+
+** ONTAP Select Deploy 的使用
++
+无论是否使用 Deploy 实用程序，都可以升级。
+
++
+
+TIP: 您应该选择使用 Deploy 管理实用程序的升级过程。
+
++
+使用 Deploy 管理实用程序执行 ESXi 升级是更通用和更具弹性的选项。但是，在某些情况下，Deploy 不可用或无法使用。例如，早期版本的 ONTAP Select 和 Deploy 管理实用程序不支持升级到 ESXi 8.0。
+
+
+
+
+
+如果使用这些早期版本并尝试升级，则可以使 ONTAP Select 虚拟机处于无法引导的状态。在此情况下，必须选择不使用 Deploy 的升级过程。
+
+. *升级 Deploy 管理实用程序*
++
+在使用 Deploy 实用程序执行升级过程之前，可能需要升级 Deploy 实例。通常，应升级到最新版本的 Deploy。Deploy 实用程序必须支持您正在使用的 ONTAP Select 版本。请参见 link:reference_release_notes.html["ONTAP Select 发行说明"] 了解更多信息。
+
+. *更新过程完成后*
++
+如果选择使用 Deploy 实用程序的升级过程，则应在所有节点升级后使用 Deploy 执行群集刷新操作。有关详细信息，请参见刷新 Deploy 群集配置。
+
+
+
+
+
+== 使用 Deploy 升级单节点集群
+
+您可以使用 Deploy 管理实用程序作为过程的一部分来升级托管 ONTAP Select 单节点集群的 VMware ESXi 虚拟机监控程序。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 将节点移动到脱机状态：
++
+[source, cli]
+----
+node stop --cluster-name <cluster_name> --node-name <node_name>
+----
+. 使用 VMware 提供的过程将运行 ONTAP Select 的虚拟机监控程序主机升级到 ESXi 8.0 或更高版本。
+. 将节点移动到联机状态：
++
+[source, cli]
+----
+node start --cluster-name <cluster_name> --node-name <node_name>
+----
+. 节点启动后，验证集群是否正常。
++
+示例：
+
++
+....
+ESX-1N::> cluster show
+Node           Health  Eligibility
+-------------- ------- ------------
+sdot-d200-011d true    true
+....
+
+
+.完成后
+您应该使用 Deploy 管理实用程序执行集群刷新操作。
+
+
+
+== 使用 Deploy 升级多节点集群
+
+您可以使用 Deploy 管理实用程序作为过程的一部分来升级托管 ONTAP Select 多节点集群的 VMware ESXi 虚拟机监控程序。
+
+.关于此任务
+必须对集群中的每个节点执行此升级过程，一次一个节点。如果集群包含四个或更多节点，则应先按顺序升级每个 HA 对中的节点，然后再继续进行下一个 HA 对。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 将节点移动到脱机状态：
++
+[source, cli]
+----
+node stop --cluster-name <cluster_name> --node-name <node_name>
+----
+. 使用 VMware 提供的过程将运行 ONTAP Select 的虚拟机监控程序主机升级到 ESXi 8.0 或更高版本。
++
+有关详细信息，请参见准备升级 VMware ESXi。
+
+. 将节点移动到联机状态：
++
+[source, cli]
+----
+node start --cluster-name <cluster_name> --node-name <node_name>
+----
+. 节点启动后，请验证已启用存储故障转移且集群运行状况良好。
++
+.显示示例
+[%collapsible]
+====
+[listing]
+----
+ESX-2N_I2_N11N12::> storage failover show
+Takeover
+Node Partner Possible State Description
+-------------- -------------- -------- ---------------------------
+sdot-d200-011d sdot-d200-012d true Connected to sdot-d200-012d
+sdot-d200-012d sdot-d200-011d true Connected to sdot-d200-011d
+2 entries were displayed.
+ESX-2N_I2_N11N12::> cluster show
+Node Health Eligibility
+--------------------- ------- ------------
+sdot-d200-011d true true
+sdot-d200-012d true true
+2 entries were displayed.
+----
+====
+
+
+.完成后
+您必须对 ONTAP Select 集群中使用的每台主机执行升级过程。升级所有 ESXi 主机后，应使用 Deploy 管理实用程序执行集群刷新操作。
+
+
+
+== 在没有 Deploy 的情况下升级单节点集群
+
+您可以升级托管 ONTAP Select 单节点集群的 VMware ESXi 虚拟机监控程序，而无需使用 Deploy 管理实用程序。
+
+.步骤
+. Sign in 到 ONTAP 命令行界面并停止该节点。
+. 使用 VMware vSphere，确认 ONTAP Select 虚拟机已关闭。
+. 使用 VMware 提供的过程将运行 ONTAP Select 的虚拟机监控程序主机升级到 ESXi 8.0 或更高版本。
++
+有关详细信息，请参见准备升级 VMware ESXi。
+
+. 使用 VMware vSphere，访问 vCenter 并执行以下操作：
++
+.. 将软盘驱动器添加到 ONTAP Select 虚拟机。
+.. 打开 ONTAP Select 虚拟机的电源。
+.. 使用管理员帐户通过 SSH Sign in 到 ONTAP CLI。
+
+
+. 节点启动后，验证集群是否正常。
++
+示例：
+
++
+....
+ESX-1N::> cluster show
+Node           Health  Eligibility
+-------------- ------- ------------
+sdot-d200-011d true    true
+....
+
+
+.完成后
+您应该使用 Deploy 管理实用程序执行集群刷新操作。
+
+
+
+== 升级不使用 Deploy 的多节点集群
+
+您可以升级托管 ONTAP Select 多节点群集的 VMware ESXi 虚拟机管理程序，而无需使用 Deploy 管理实用程序。
+
+.关于此任务
+必须对集群中的每个节点执行此升级过程，一次一个节点。如果集群包含四个或更多节点，则应先按顺序升级每个 HA 对中的节点，然后再继续进行下一个 HA 对。
+
+.步骤
+. Sign in 到 ONTAP 命令行界面并停止该节点。
+. 使用 VMware vSphere，确认 ONTAP Select 虚拟机已关闭。
+. 使用 VMware 提供的过程将运行 ONTAP Select 的虚拟机监控程序主机升级到 ESXi 8.0 或更高版本。
+. 使用 VMware vSphere，访问 vCenter 并执行以下操作：
++
+.. 将软盘驱动器添加到 ONTAP Select 虚拟机。
+.. 打开 ONTAP Select 虚拟机的电源。
+.. 使用管理员帐户通过 SSH Sign in 到 ONTAP CLI。
+
+
+. 节点启动后，请验证已启用存储故障转移且集群运行状况良好。
++
+.显示示例
+[%collapsible]
+====
+[listing]
+----
+ESX-2N_I2_N11N12::> storage failover show
+Takeover
+Node Partner Possible State Description
+-------------- -------------- -------- ---------------------------
+sdot-d200-011d sdot-d200-012d true Connected to sdot-d200-012d
+sdot-d200-012d sdot-d200-011d true Connected to sdot-d200-011d
+2 entries were displayed.
+ESX-2N_I2_N11N12::> cluster show
+Node Health Eligibility
+--------------------- ------- ------------
+sdot-d200-011d true true
+sdot-d200-012d true true
+2 entries were displayed.
+----
+====
+
+
+.完成后
+您必须对 ONTAP Select 集群中使用的每台主机执行升级过程。

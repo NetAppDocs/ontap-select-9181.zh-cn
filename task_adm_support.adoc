@@ -1,0 +1,108 @@
+---
+sidebar: sidebar 
+permalink: task_adm_support.html 
+keywords: administer, administering, web, diagnostics, support 
+summary: 在管理 ONTAP Select 过程中，您可以执行几个相关的诊断和支持任务。 
+---
+= ONTAP Select 诊断和支持
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+在管理 ONTAP Select 过程中，您可以执行几个相关的诊断和支持任务。
+
+
+
+== 配置 Deploy 系统
+
+您应该设置影响 Deploy 实用程序运行方式的基本系统配置参数。
+
+.关于此任务
+部署配置数据由 AutoSupport 使用。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡。
+. 单击 *Settings & AutoSupport*，然后单击 image:icon_pencil.gif["编辑"]。
+. 提供适合您环境的配置数据，然后单击 *修改*。
++
+如果使用代理服务器，则可以按以下方式配置代理 URL：
+`\http://USERNAME:PASSWORD@<FQDN|IP>:PORT`
+
++
+示例
+`\http://user1:mypassword@proxy.company-demo.com:80`
+
+
+
+
+
+== 显示 ONTAP Select Deploy 事件消息
+
+ONTAP Select Deploy 实用程序包括一个事件日志记录工具，该工具提供有关系统活动的信息。您应该查看事件日志的内容，以调试任何问题或在支持人员指示时进行调试。
+
+.关于此任务
+您可以根据以下几个特征筛选事件消息列表：
+
+* 状态
+* 类型
+* 类别
+* 实例
+* 时间
+* 问题描述
+
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡。
+. 单击 *Events & Jobs*，然后单击 *Events*。
+. （可选）单击 *Filter* 并创建过滤器以限制显示的事件消息。
+
+
+
+
+== 启用 AutoSupport
+
+您可以根据需要启用和禁用 AutoSupport 功能。
+
+.关于此任务
+AutoSupport 是 NetApp 在支持 ONTAP Select 时使用的主要故障排除工具。因此，除非绝对必要，否则不应禁用 AutoSupport。如果禁用 AutoSupport，数据仍会被收集，但不会传输到 NetApp。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡。
+. 单击 *Settings & AutoSupport* ，然后单击 image:icon_kebab.gif["选项"]。
+. 根据需要启用或禁用 AutoSupport 功能。
+
+
+
+
+== 生成并下载 AutoSupport 包
+
+ONTAP Select 包括生成 AutoSupport 包的功能。您应该生成一个包来调试任何问题，或者在支持人员指示时进行调试。
+
+.关于此任务
+您可以在 NetApp 支持的指导下生成以下 AutoSupport 包：
+
+* 部署日志 由 ONTAP Select Deploy 实用程序创建的日志文件
+* 故障排除 有关虚拟机管理程序主机和 ONTAP Select 节点的故障排除和调试信息
+* 有关虚拟机监控程序主机和 ONTAP Select 节点的性能信息
+
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡。
+. 单击 *Settings & AutoSupport* ，然后单击 image:icon_kebab.gif["选项"]。
+. 单击 *Generate*。
+. 选择类型并提供软件包的描述；您可以选择提供案例编号。
+. 单击 *Generate*。
++
+每个 AutoSupport 包都分配有唯一的序列标识号。
+
+. （可选）在 *AutoSupport History* 下，选择正确的包，然后单击下载图标，将 AutoSupport 文件保存到本地工作站。
+

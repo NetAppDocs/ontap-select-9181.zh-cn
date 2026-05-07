@@ -1,0 +1,55 @@
+---
+sidebar: sidebar 
+permalink: reference_plan_ots_mcc_sds.html 
+keywords: plan, planning, metrocluster, metrocluster sds 
+summary: 在规划 ONTAP Select 部署时，您应该考虑 MetroCluster SDS 的几个要求。 
+---
+= 准备 ONTAP Select MetroCluster SDS 部署
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+MetroCluster SDS 是创建双节点 ONTAP Select 集群时的配置选项。它类似于远程办公室/分支机构 (ROBO) 部署。这种增强的双节点部署提供了其他用例场景。在准备部署 MetroCluster SDS 时，您应该了解这些要求和限制。
+
+部署 MetroCluster SDS 之前，请确认满足以下要求。
+
+.许可
+每个节点必须具有高级或更高的 ONTAP Select 许可证。
+
+.虚拟机监控程序平台
+MetroCluster SDS 可以部署在相同的 VMware ESXi 和 KVM 虚拟机监控程序上，以支持 ROBO 环境中的双节点群集。
+
+[NOTE]
+====
+从 ONTAP Select 9.14.1 开始，已恢复对 KVM 虚拟机管理程序的支持。以前，在 ONTAP Select 9.10.1 中删除了对在 KVM 虚拟机管理程序上部署新集群的支持，并且在 ONTAP Select 9.11.1 中删除了对管理现有 KVM 集群和主机的支持，但脱机或删除除外。
+
+====
+.网络配置
+参与站点之间需要第 2 层连接。支持 10GbE 和 1GbE，包括以下配置：
+
+* 1 x 10GbE
+* 4 x 1GbE
+
+
+
+NOTE: 数据服务端口和互连端口必须连接到相同的第一台交换机。
+
+.节点之间的延迟
+两个节点之间的网络必须支持 5 ms 的平均延迟，并具有额外的 5 ms 周期性抖动。在部署集群之前，必须使用 link:concept_nw_concepts_chars.html["深入了解网络"] 节中所述的过程测试网络。
+
+.Mediator 服务
+与所有双节点 ONTAP Select 群集一样，Deploy 虚拟机中包含一个单独的中介服务，用于监控节点并协助管理故障。随着 MetroCluster SDS 可用的增强距离，这在网络拓扑中创建了三个不同的站点。中介和节点之间的链路延迟应为 125 毫秒往返或更短。
+
+.存储
+使用 HDD 和 SSD 磁盘支持直接连接存储 (DAS)。还支持 vNAS，包括 VMware 环境中的外部存储阵列和 vSAN。
+
+
+NOTE: 部署 MetroCluster SDS 时，您不能在分布式或"拉伸"拓扑中使用 vSAN。
+
+.分配给 Deploy 的静态 IP 地址
+您必须为 Deploy 管理实用程序分配一个静态 IP 地址。此要求适用于管理一个或多个 ONTAP Select 双节点集群的所有 Deploy 实例。

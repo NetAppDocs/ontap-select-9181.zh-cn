@@ -1,0 +1,54 @@
+---
+sidebar: sidebar 
+permalink: reference_initial_state.html 
+keywords: install, installing, initial state, cluster initial state 
+summary: 部署集群后，应了解集群的初始状态，并根据环境需要配置集群。 
+---
+= 部署后 ONTAP Select 集群的初始状态
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+部署集群后，应了解集群的初始状态，并根据环境需要配置集群。
+
+ONTAP Select 集群在创建后具有多个特征。
+
+
+NOTE: 限制 ONTAP 管理员帐户的角色和权限可能会限制 ONTAP Select Deploy 管理群集的能力。有关详细信息，请参阅知识库文章 link:https://kb.netapp.com/onprem/ontap/ONTAP_Select/OTS_Deploy_cluster_refresh_fails_with_error%3A_ONTAPSelectSysCLIVersionFailed_zapi_returned_bad_status_0%3A_None["OTS Deploy 集群刷新失败并显示错误"^]。
+
+.LIF
+分配了两种类型的客户指定 LIF：
+
+* 集群管理（每个集群一个）
+* 节点管理（每个节点一个）
+
+
+
+NOTE: 多节点集群具有带自动生成 LIF 的内部网络。
+
+.SVM
+三个 SVM 处于活动状态：
+
+* 管理 SVM
+* 节点 SVM
+* 系统（集群）SVM
+
+
+
+NOTE: 数据 SVM 不是作为 ONTAP Select 集群部署的一部分创建的。它们必须在部署后由集群管理员创建。有关详细信息，请参见 https://docs.netapp.com/us-en/ontap/nfs-config/create-svms-data-access-task.html["创建 SVM"^]。
+
+.聚合
+根聚合已创建。
+
+.功能
+所有功能均已获得许可并可用。SnapLock 和 FabricPool 都需要单独的许可证。
+
+.相关信息
+* link:https://docs.netapp.com/us-en/ontap/system-admin/types-svms-concept.html["集群中包含的 SVM 类型"^]
+* link:reference_lic_ontap_features.html["默认情况下启用的 ONTAP 功能"]
+

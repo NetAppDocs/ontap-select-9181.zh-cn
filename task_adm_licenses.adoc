@@ -1,0 +1,189 @@
+---
+sidebar: sidebar 
+permalink: task_adm_licenses.html 
+keywords: administer, administering, web, licenses 
+summary: 在管理 ONTAP Select 许可证时，可以执行几个相关任务。 
+---
+= 管理 ONTAP Select 许可证
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+在管理 ONTAP Select 许可证时，可以执行几个相关任务。
+
+
+
+== 管理容量层许可证
+
+您可以根据需要添加、编辑和删除 ONTAP Select Capacity Tier 许可证。
+
+.步骤
+. 使用管理员帐户通过 Web 界面 Sign in 到 Deploy 实用程序。
+. 选择页面顶部的 *Administration* 选项卡。
+. 选择 *Licenses* 并选择 *Capacity Tier*。
+. （可选）选择 *Filter* 并限制显示的许可证。
+. 要替换现有许可证；选择一个许可证，选择 image:icon_kebab.gif["选项"]，然后选择 *Update*。
+. 要添加新许可证，请选择页面顶部的 *Add*，然后选择 *Upload License(s)* 并从本地工作站中选择许可证文件。
+
+
+
+
+== 管理容量池许可证
+
+您可以根据需要添加、编辑和删除 ONTAP Select Capacity Pool 许可证。
+
+.步骤
+. 使用管理员帐户通过 Web 界面 Sign in 到 Deploy 实用程序。
+. 选择页面顶部的 *Administration* 选项卡。
+. 选择 *Licenses* 并选择 *Capacity Pools*。
+. （可选）选择 *Filter* 并限制显示的许可证。
+. （可选）选择一个许可证并选择 image:icon_kebab.gif["选项"] 以管理现有许可证。
+. 添加新许可证或续订现有许可证：
++
+[role="tabbed-block"]
+====
+.添加新许可证
+--
+要添加新许可证，请选择页面顶部的 *Add*。
+
+--
+.续订现有许可证
+--
+要续订现有许可证：
+
+.. 在现有许可证上选择 image:icon_kebab.gif["选项"]。
+.. 选择 *Upload License(s)*。
+.. 从本地工作站选择许可证文件。
+
+
+--
+====
+. 要查看容量池列表：
++
+.. 选择 *Summary*。
+.. 选择并展开一个池以查看从池租用存储的集群和节点。
+.. 在 *License Information* 下查看许可证的当前状态。
+.. 您可以在租约到期下更改为池签发的租约持续时间。
+
+
+. 要查看集群列表：
++
+.. 选择 *Details*。
+.. 选择并展开集群以查看存储利用率。
+
+
+
+
+
+
+== 重新安装容量池许可证
+
+每个活动的 Capacity Pool 许可证都被锁定到特定的 License Manager 实例，该实例包含在 Deploy 管理实用程序的实例中。如果使用的是 Capacity Pool 许可证，然后还原或恢复 Deploy 实例，则原始许可证不再有效。您必须生成新的容量许可证文件，然后将许可证安装到新的 Deploy 实例。
+
+.开始之前
+* 确定原始 Deploy 实例使用的所有 Capacity Pool 许可证。
+* 如果在创建新 Deploy 实例时还原备份，请确定备份是否是最新的。
+* 找到最近由原始 Deploy 实例创建的 ONTAP Select 节点（仅当未将原始 Deploy 实例的最新备份还原到新 Deploy 实例时）。
+* 还原或重新创建 Deploy 实例
+
+
+.关于此任务
+在高层次上，这项任务由三个部分组成。您必须重新生成并安装 Deploy 实例使用的所有 Capacity Pool 许可证。在所有许可证重新安装到新 Deploy 实例后，如果需要，您可以重置序列号。最后，如果 Deploy IP 地址已更改，则必须更新使用 Capacity Pools 许可证的每个 ONTAP Select 节点。
+
+.步骤
+. 请与 NetApp 支持人员联系，并取消绑定和注册原始 Deploy 实例的所有 Capacity Pool 许可证。
+. 获取并下载每个 Capacity Pool 许可证的新许可证文件。
++
+有关更多信息，请参阅 link:task_lic_acquire_cp.html["获取容量池许可证"]。
+
+. 在新的 Deploy 实例中安装 Capacity Pool 许可证：
++
+.. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+.. 选择页面顶部的 *Administration* 选项卡。
+.. 选择 *Licenses*，然后选择 *Capacity Pool*。
+.. 选择 *Add* ，然后选择 *Upload License(s)* 以选择并上传许可证。
+
+
+. 如果在不还原备份的情况下创建了新 Deploy 实例，或者使用的备份不是最新的，则必须更新序列号：
++
+.. 使用管理员帐户 Sign in 到 Deploy 实用程序命令行界面。
+.. 显示原始 Deploy 实例最近创建的节点的序列号：
++
+`node show -cluster-name CLUSTER_NAME -name NODE_NAME -detailed`
+
+.. 从二十位节点序列号中提取最后八位数字，以获取原始 Deploy 实例使用的最后一个序列号。
+.. 在序列号中添加 20 以创建新的序列号。
+.. 为新的 Deploy 实例设置序列号：
++
+`license-manager modify -serial-sequence SEQ_NUMBER`
+
+
+
+. 如果分配给新 Deploy 实例的 IP 地址与原始 Deploy 实例的 IP 地址不同，则必须在使用 Capacity Pools 许可证的每个 ONTAP Select 节点上更新 IP 地址：
++
+.. Sign in 到 ONTAP Select 节点的 ONTAP 命令行界面。
+.. 进入高级权限模式：
++
+`set adv`
+
+.. 显示当前配置：
++
+`system license license-manager show`
+
+.. 设置节点使用的许可证管理器（Deploy）IP 地址：
++
+`system license license-manager modify -host NEW_IP_ADDRESS`
+
+
+
+
+
+
+
+== 将评估许可证转换为生产许可证
+
+您可以使用 Deploy 管理实用程序升级 ONTAP Select 评估群集以使用生产容量层许可证。
+
+.开始之前
+* 每个节点必须分配足够的存储空间，以支持生产许可证所需的最低要求。
+* 您必须为评估集群中的每个节点配备 Capacity Tier 许可证。
+
+
+.关于此任务
+对单节点集群执行集群许可证修改会造成中断。但是，多节点集群的情况并非如此，因为转换过程会一次一个地重新启动每个节点来应用许可证。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 选择页面顶部的 *Clusters* 选项卡，然后选择所需的集群。
+. 在集群详情页面的顶端，选择 *Click here* 修改集群许可证。
++
+您还可以在 *Cluster Details* 部分中选择评估许可证旁边的 *Modify*。
+
+. 为每个节点选择一个可用的生产许可证，或根据需要上传更多许可证。
+. 提供 ONTAP 凭据并选择 *修改*。
++
+集群的许可证升级可能需要几分钟的时间。在离开页面或进行任何其他更改之前，请允许流程完成。
+
+
+
+.完成后
+最初分配给评估部署的每个节点的二十位节点序列号被用于升级的生产许可证中的九位序列号所取代。
+
+
+
+== 管理过期的容量池许可证
+
+一般来说，当许可证过期时，什么也不会发生。但是，您无法安装其他许可证，因为节点与过期的许可证相关联。在续订许可证之前，您应该_不要_执行任何会使聚合脱机的操作，例如重新启动或故障转移操作。建议采取的措施是加快许可证续订。
+
+有关 ONTAP Select 和许可证续订的详细信息，请参见 link:reference_faq.html#licenses-installation-upgrades-and-reverts["常见问题解答"] 中的许可证、安装、升级和还原部分。
+
+
+
+== 管理附加许可证
+
+对于 ONTAP Select 产品，附加许可证直接在 ONTAP 中应用，而不是通过 ONTAP Select Deploy 进行管理。有关详细信息，请参见 link:https://docs.netapp.com/us-en/ontap/system-admin/manage-licenses-concept.html["管理许可证概述（仅限集群管理员）"^] 和 link:https://docs.netapp.com/us-en/ontap/task_admin_enable_new_features.html["通过添加许可证密钥启用新功能"^]。

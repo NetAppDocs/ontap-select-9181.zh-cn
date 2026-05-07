@@ -1,0 +1,51 @@
+---
+sidebar: sidebar 
+permalink: concept-data-protection-and-efficiency.html 
+keywords: ontap select, metrocluster software defined storage, mc sds storage 
+summary: ONTAP Select MetroCluster SDS 提供增强的保护和具有成本效益的实施。 
+---
+= 了解 ONTAP Select 数据保护和效率
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 基于 ONTAP 存储软件构建，通过高可用、无共享的横向扩展架构高效地提供企业存储服务。您可以部署具有一个、两个、四个、六个、八个、十个或十二个节点的解决方案，每个节点的 NFS、SMB/CIFS 和 iSCSI 连接存储的原始容量高达 400TB。您可以利用本机重复数据删除和压缩，通过增加有效容量来降低存储成本。横向扩展架构可实现高可用性和无中断数据移动，用于负载平衡或服务硬件。
+
+
+
+== Snapshot 数据保护
+
+ONTAP Select 包括数据保护功能，包括快照和 SnapMirror 软件。您可以快速将数据复制到其他 ONTAP 存储，无论是在内部、远程站点还是在云中。如果您必须快速恢复数据，SnapRestore 软件可以使用本地快照在几秒钟内恢复整个文件系统或数据卷，而不管文件的容量或数量如何。
+
+
+
+== MetroCluster 软件定义存储
+
+ONTAP Select MetroCluster 软件定义存储 (SDS) 提供增强的保护和经济高效的实施。
+
+如果满足某些最低要求，则可以在两个位置之间扩展双节点群集。此架构完全适合基于硬件的 MetroCluster 和单个数据中心集群（硬件定义或软件定义）之间。ONTAP Select MetroCluster SDS 的要求突出了软件定义存储解决方案的一般灵活性，以及它与基于硬件的 MetroCluster SDS 之间的差异。无需专有硬件。
+
+与 MetroCluster 不同，ONTAP Select 使用现有的网络基础设施，支持高达 5 毫秒 RTT 的网络延迟，最大抖动高达 5 毫秒，总计 10 毫秒最大延迟。市场空间中的分离要求更多地与物理分离有关，而不是实际距离。在某些情况下，这可能意味着不同的建筑物。在其他情况下，这可能意味着同一栋楼内的不同房间。无论实际的物理位置如何，将双节点集群定义为 MetroCluster SDS 的是每个节点使用单独的上行链路交换机。
+
+作为双节点 HA 配置的一部分，需要调解器在故障转移期间正确识别活动节点，并避免在网络分区期间两个节点都保持独立活动的任何脑裂情况。此操作与之前可用的常规双节点 HA 配置相同。为了在站点故障期间提供适当的保护和故障转移，调解器应位于与两个 HA 节点不同的站点。调解器和每个 ONTAP Select 节点之间的最大延迟不能超过 125ms。
+
+ONTAP Select MetroCluster SDS 具有以下优点：
+
+* MetroCluster SDS 为 ONTAP Select 提供了另一个维度（数据中心到数据中心）的保护。您现在可以利用这一额外的保护级别，同时充分利用软件定义存储和 ONTAP 的所有优势。
+* MetroCluster SDS 通过 0 RPO 和自动故障转移提供业务关键型数据保护。数据存储和应用接入点都自动切换到幸存的数据中心或节点，无需 IT 干预。
+* MetroCluster SDS 具有成本效益。它利用现有的网络基础设施来实现 HA 对之间的扩展弹性，无需额外的硬件。它还在同一集群中提供活动/活动数据访问和数据中心冗余。
+
+
+*MetroCluster SDS*
+
+image:MCSDS_01.jpg["基于 DAS 构建的私有云"]
+
+有关更多最佳做法和其他要求，请参见 link:concept_ha_config.html#two-node-ha-versus-multi-node-ha["双节点 HA 与多节点 HA"] 和 link:reference_plan_best_practices.html#two-node-stretched-ha-metrocluster-sds-best-practices["双节点拉伸 HA（MetroCluster SDS）最佳实践"] 部分。
+
+.相关信息
+link:reference_lic_ontap_features.html["ONTAP Select 支持 ONTAP 功能"]

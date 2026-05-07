@@ -1,0 +1,317 @@
+---
+settings:
+  name: ONTAP Select
+  harmony_integration: maestro
+  downlevel: true
+  internal:
+    pdf_enabled: true
+    lipi_enabled: true
+  prod:
+    pdf_enabled: true
+    harmony_enabled: false
+  versions:
+  - version-number: 9.18.1
+    url: "/ontap-select-9181"
+  - version-number: 9.19.1
+    url: "/ontap-select"
+  - version-number: 9.17.1
+    url: "/ontap-select-9171"
+  - version-number: 9.16.1
+    url: "/ontap-select-9161"
+  - version-number: 9.15.1
+    url: "/ontap-select-9151"
+  langs: zh-cn,us-en,de-de,es-es,fr-fr,it-it,pt-br,ja-jp,ko-kr,zh-tw
+sidebar:
+  entries:
+  - title: ONTAP Select 9.18.1 文档
+    url: "/index.html"
+  - title: 发行说明
+    entries:
+    - title: ONTAP Select 发行说明
+      url: "/reference_release_notes.html"
+    - title: 新增功能
+      url: "/reference_new_ots.html"
+  - title: 概念
+    entries:
+    - title: 了解 ONTAP Select
+      url: "/concept_ots_overview.html"
+    - title: ONTAP Select Deploy
+      url: "/concept_ots_deploy.html"
+    - title: 业务用例
+      entries:
+      - title: 业务需求和使用场景
+        url: "/concept_usecase_overview.html"
+      - title: 远程和分支机构
+        url: "/concept_usecase_robo.html"
+      - title: 私有云和数据中心
+        url: "/concept_usecase_private_cloud.html"
+      - title: 数据保护和效率
+        url: "/concept-data-protection-and-efficiency.html"
+    - title: Terminology
+      url: "/concept_terminology.html"
+  - title: 计划
+    entries:
+    - title: 部署工作流
+      url: "/concept_workflow_deploy.html"
+    - title: ONTAP Select
+      entries:
+      - title: 一般要求
+        url: "/reference_plan_ots_general.html"
+      - title: 虚拟机监控程序和硬件
+        url: "/reference_plan_ots_hardware.html"
+      - title: 存储和 RAID
+        url: "/reference_plan_ots_storage.html"
+      - title: 外部存储要求
+        entries:
+        - title: VMware ESXi
+          url: "/reference_plan_ots_vnas.html"
+        - title: KVM
+          url: "/reference_plan_ots_kvm.html"
+      - title: 网络连接
+        url: "/reference_plan_ots_networking.html"
+      - title: 双节点集群
+        url: "/reference_plan_ots_two_node.html"
+      - title: 远程办公室和分支机构
+        url: "/reference_plan_ots_robo.html"
+      - title: MetroCluster SDS
+        url: "/reference_plan_ots_mcc_sds.html"
+      - title: ESXi 上的 VMware vCenter
+        url: "/reference_plan_ots_vcenter.html"
+    - title: ONTAP Select Deploy
+      entries:
+      - title: 一般要求
+        url: "/reference_plan_dep_general.html"
+      - title: VMware 环境
+        url: "/reference_plan_dep_vmware.html"
+    - title: 最佳实践
+      url: "/reference_plan_best_practices.html"
+  - title: 许可证
+    entries:
+    - title: 选项
+      entries:
+      - title: 了解评估许可证
+        url: "/concept_lic_evaluation.html"
+      - title: 生产许可证
+        entries:
+        - title: 了解生产许可证
+          url: "/concept_lic_production.html"
+        - title: 平台许可证产品
+          url: "/concept_lic_platforms.html"
+        - title: 容量池许可模式
+          entries:
+          - title: 操作详细信息
+            url: "/concept_lic_cp_operation.html"
+          - title: 节点序列号
+            url: "/concept_lic_cp_serial_number.html"
+          - title: 限制
+            url: "/concept_lic_cp_restrictions.html"
+          - title: 好处总结
+            url: "/concept_lic_cp_benefits.html"
+        - title: 容量层与容量池
+          url: "/concept_lic_cp_compare_ct.html"
+    - title: 购买许可证
+      entries:
+      - title: 许可工作流
+        url: "/concept_lic_workflow.html"
+      - title: 容量层
+        entries:
+        - title: 调整许可证大小的注意事项
+          url: "/sizing-capacity-tier-license.html"
+        - title: 获取许可证
+          url: "/task_lic_acquire_ct.html"
+      - title: 容量池
+        entries:
+        - title: 调整许可证大小的注意事项
+          url: "/sizing-capacity-pool-license.html"
+        - title: 获取许可证
+          url: "/task_lic_acquire_cp.html"
+    - title: ONTAP 功能
+      url: "/reference_lic_ontap_features.html"
+  - title: 安装
+    entries:
+    - title: 安装前检查清单
+      entries:
+      - title: 主机准备检查清单
+        entries:
+        - title: KVM 主机清单
+          url: "/kvm-host-configuration-and-preparation-checklist.html"
+        - title: ESXi 主机清单
+          url: "/esxi-host-configuration-and-preparation-checklist.html"
+      - title: 部署实用程序所需信息
+        url: "/reference_chk_deploy_req_info.html"
+      - title: ONTAP Select 必填信息
+        url: "/reference_chk_select_req_info.html"
+      - title: NVMe 主机配置
+        url: "/task_chk_nvme_configure.html"
+    - title: 安装 ONTAP Select Deploy
+      url: "/task_install_deploy.html"
+    - title: 部署集群
+      url: "/task_deploy_cluster.html"
+    - title: 初始集群状态
+      url: "/reference_initial_state.html"
+  - title: 管理
+    entries:
+    - title: 开始之前
+      url: "/concept_adm_before.html"
+    - title: 升级节点
+      url: "/concept_adm_upgrading_nodes.html"
+    - title: 诊断和支持
+      url: "/task_adm_support.html"
+    - title: 保护 ONTAP Select
+      url: "/task_adm_security.html"
+    - title: 确认网络连接
+      url: "/task_adm_connectivity.html"
+    - title: 管理调解器服务
+      url: "/task_adm_mediators.html"
+    - title: 集群
+      entries:
+      - title: ONTAP Select 集群
+        url: "/task_adm_clusters.html"
+      - title: 扩展或收缩集群
+        url: "/task_cluster_expansion_contraction.html"
+    - title: 节点和主机
+      entries:
+      - title: 访问 VM 视频控制台
+        url: "/task_adm_video_console.html"
+      - title: 调整集群节点的大小
+        url: "/task_adm_resize.html"
+      - title: 替换发生故障的软件 RAID 驱动器
+        url: "/task_adm_replace_drives_swraid.html"
+      - title: 升级到 VMFS6
+        url: "/task_adm_upgrade_vmfs6.html"
+    - title: 许可证
+      url: "/task_adm_licenses.html"
+  - title: 深入了解
+    entries:
+    - title: 存储
+      entries:
+      - title: 一般概念和特征
+        url: "/concept_stor_concepts_chars.html"
+      - title: 用于本地连接存储的硬件 RAID 服务
+        url: "/concept_stor_hwraid_local.html"
+      - title: 用于本地连接存储的软件 RAID 服务
+        url: "/concept_stor_swraid_local.html"
+      - title: VSAN 和外部阵列配置
+        url: "/concept_stor_vsan_external.html"
+      - title: 增加存储容量
+        url: "/concept_stor_capacity_inc.html"
+      - title: 存储效率支持
+        url: "/concept_stor_eff_support.html"
+    - title: 网络连接
+      entries:
+      - title: 一般概念和特征
+        url: "/concept_nw_concepts_chars.html"
+      - title: 单节点和多节点配置
+        url: "/concept_nw_single_multi_node.html"
+      - title: 内部和外部网络
+        url: "/concept_nw_internal_external.html"
+      - title: 支持的配置
+        url: "/concept_nw_supported_configs.html"
+      - title: VMware vSphere VSwitch 配置
+        url: "/concept_nw_vsphere_vswitch_config.html"
+      - title: 物理交换机配置
+        url: "/concept_nw_physical_switch_config.html"
+      - title: 数据和管理分离
+        url: "/concept_nw_data_mgmt_separation.html"
+    - title: 高可用性架构
+      entries:
+      - title: HA 配置
+        url: "/concept_ha_config.html"
+      - title: 同步复制和镜像聚合
+        url: "/concept_ha_mirroring.html"
+      - title: 其他高可用性功能
+        url: "/concept_ha_other.html"
+    - title: 性能
+      entries:
+      - title: 性能概述
+        url: "/concept_perf_general.html"
+      - title: ONTAP Select 9.6 性能
+        url: "/concept_perf_premium_ha_direct_ssd_96.html"
+  - title: 通过 REST 实现自动化
+    entries:
+    - title: 概念
+      entries:
+      - title: REST Web 服务
+        url: "/concept_api_rest.html"
+      - title: 访问 Deploy API
+        url: "/concept_api_how_access.html"
+      - title: 基本操作
+        url: "/concept_api_operation.html"
+      - title: 请求和响应事务
+        url: "/concept_api_transaction.html"
+      - title: 异步处理
+        url: "/concept_api_async_proc.html"
+    - title: 使用浏览器访问
+      entries:
+      - title: 开始之前
+        url: "/concept_api_before_browser.html"
+      - title: 访问文档页面
+        url: "/task_api_access_doc_page.html"
+      - title: 了解 API 调用
+        url: "/task_api_understanding_call.html"
+    - title: 工作流程
+      entries:
+      - title: 开始之前
+        url: "/concept_api_before_workflows.html"
+      - title: 工作流 1 创建集群
+        url: "/reference_api_workflow01.html"
+    - title: 使用 Python 访问
+      entries:
+      - title: 开始之前
+        url: "/concept_api_before_python.html"
+      - title: 了解脚本
+        url: "/concept_api_understanding_scripts.html"
+    - title: Python 代码示例
+      entries:
+      - title: 创建集群
+        url: "/reference_api_script_cc.html"
+      - title: 用于创建集群的 JSON
+        url: "/reference_api_json_cc.html"
+      - title: 添加节点许可证
+        url: "/reference_api_script_anl.html"
+      - title: 删除集群
+        url: "/reference_api_script_dc.html"
+      - title: 通用支持模块
+        url: "/reference_api_script_common.html"
+      - title: 调整集群节点大小
+        url: "/reference_api_script_resize.html"
+  - title: 使用 CLI
+    entries:
+    - title: 使用 SSH Sign in
+      url: "/task_cli_signing_in.html"
+    - title: 部署集群
+      url: "/task_cli_deploy_cluster.html"
+    - title: 安全性
+      url: "/task_cli_security.html"
+    - title: 网络连接
+      url: "/task_cli_connectivity.html"
+    - title: 集群
+      url: "/task_cli_clusters.html"
+    - title: 节点和主机
+      entries:
+      - title: 升级 ESXi
+        url: "/cli-upgrade-esxi.html"
+      - title: 修改主机管理服务器
+        url: "/reference_host_modify_command.html"
+    - title: 部署实用程序
+      entries:
+      - title: 升级 Deploy 实例
+        url: "/task_cli_upgrade_deploy.html"
+      - title: 迁移 Deploy 实例
+        url: "/task_cli_migrate_deploy.html"
+      - title: 添加 ONTAP Select 图像
+        url: "/task_cli_deploy_image_add.html"
+      - title: 移除 ONTAP Select 图像
+        url: "/task_cli_deploy_image_remove.html"
+      - title: 恢复双节点集群的 Deploy
+        url: "/task_cli_deploy_recover_two_node.html"
+  - title: 试用 ONTAP Select
+    entries:
+    - title: 访问评估软件
+      url: "/access-evaluation-software.html"
+    - title: 部署集群的 90 天评估实例
+      url: "/deploy-evaluation-ontap-select-ovf-template.html"
+  - title: 常见问题解答
+    url: "/reference_faq.html"
+  - title: 法律声明
+    url: "/legal-notices.html"

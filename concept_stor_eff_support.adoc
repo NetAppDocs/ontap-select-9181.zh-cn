@@ -1,0 +1,125 @@
+---
+sidebar: sidebar 
+permalink: concept_stor_eff_support.html 
+keywords: ontap select, storage efficiency support 
+summary: ONTAP Select 提供的存储效率选项与 FAS 和 AFF 阵列上存在的存储效率选项类似。 
+---
+= ONTAP Select 存储效率支持
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 提供的存储效率选项与 FAS 和 AFF 阵列上存在的存储效率选项类似。
+
+使用全闪存 VSAN 或通用闪存阵列的 ONTAP Select 虚拟 NAS (vNAS) 部署应遵循使用非 SSD 直接连接存储 (DAS) 的 ONTAP Select 最佳实践。
+
+只要您具有带有 SSD 驱动器和高级许可证的 DAS 存储，就会在新安装上自动启用类似 AFF 的个性。
+
+具有类似 AFF 的个性，在安装过程中会自动启用以下内联 SE 功能：
+
+* 内联零模式检测
+* 卷内联重复数据删除
+* 卷后台重复数据删除
+* 自适应内联压缩
+* 内联数据压缩
+* 聚合内联重复数据删除
+* 聚合后台重复数据删除
+
+
+要验证 ONTAP Select 是否已启用所有默认存储效率策略，请在新创建的卷上运行以下命令：
+
+[listing]
+----
+<system name>::> set diag
+Warning: These diagnostic commands are for use by NetApp personnel only.
+Do you want to continue? {y|n}: y
+twonode95IP15::*> sis config
+Vserver:                                SVM1
+Volume:                                 _export1_NFS_volume
+Schedule                                -
+Policy:                                 auto
+Compression:                            true
+Inline Compression:                     true
+Compression Type:                       adaptive
+Application IO Si                       8K
+Compression Algorithm:                  lzopro
+Inline Dedupe:                          true
+Data Compaction:                        true
+Cross Volume Inline Deduplication:      true
+Cross Volume Background Deduplication:  true
+----
+
+NOTE: 对于从 9.6 及更高版本升级的 ONTAP Select，您必须使用高级许可证在 DAS SSD 存储上安装 ONTAP Select。此外，在使用 ONTAP Deploy 进行初始集群安装期间，必须选中*启用存储效率*复选框。当未满足先前条件时，在 ONTAP 升级后启用类似 AFF 的个性需要手动创建引导参数并重新启动节点。请联系技术支持以获得更多详细信息。
+
+.ONTAP Select 存储效率配置
+下表总结了可用的各种存储效率选项，默认情况下启用，或默认情况下不启用，但建议使用，具体视媒体类型和软件许可证而定。
+
+[cols="4"]
+|===
+| ONTAP Select 功能 | DAS SSD（premium 或 premium XL^1^） | DAS HDD（所有许可证） | vNAS（所有许可证） 
+
+
+| 内联零检测 | 是（默认） | 是 由用户按卷启用 | 是 由用户按卷启用 
+
+
+| 卷内联重复数据删除 | 是（默认） | 不可用 | 不支持 
+
+
+| 32K 内联压缩（二次压缩） | 是，由用户按卷启用。 | 是 由用户按卷启用 | 不支持 
+
+
+| 8K 内联压缩（自适应压缩） | 是（默认） | 是 用户按卷启用 | 不支持 
+
+
+| 后台压缩 | 不支持 | 是 用户按卷启用 | 是 由用户按卷启用 
+
+
+| 压缩扫描程序 | 是 | 是 | 是 由用户按卷启用 
+
+
+| 内联数据压缩 | 是（默认） | 是 用户按卷启用 | 不支持 
+
+
+| 压缩扫描程序 | 是 | 是 | 不支持 
+
+
+| 聚合内联重复数据删除 | 是（默认） | 不适用 | 不支持 
+
+
+| 卷后台重复数据删除 | 是（默认） | 是 用户按卷启用 | 是 由用户按卷启用 
+
+
+| 聚合后台重复数据删除 | 是（默认） | 不适用 | 不支持 
+|===
+[small]#^1^ONTAP Select 9.6 支持新的许可证（premium XL）和新的虚拟机大小（large）。但是，large 虚拟机仅支持使用软件 RAID 的 DAS 配置。硬件 RAID 和 vNAS 配置不支持 9.6 版本中的 large ONTAP Select VM。#
+
+.关于 DAS SSD 配置升级行为的说明
+升级到 ONTAP Select 9.6 或更高版本后，等待  `system node upgrade-revert show` 命令指示升级已完成，然后验证现有卷的存储效率值。
+
+在升级到 ONTAP Select 9.6 或更高版本的系统上，在现有聚合或新创建的聚合上创建的新卷具有与在全新部署上创建的卷相同的行为。进行 ONTAP Select 代码升级的现有卷具有与新创建的卷相同的大部分存储效率策略，但有一些变化：
+
+场景 1:: 如果在升级之前未在卷上启用存储效率策略，则：
++
+--
+* 具有 `space guarantee = volume`的卷未启用内联数据压缩、聚合内联重复数据删除和聚合后台重复数据删除。这些选项可在升级后启用。
+* 具有 `space guarantee = none`的卷未启用后台压缩。此选项可在升级后启用。
+* 升级后，现有卷上的存储效率策略设置为自动。
+
+
+--
+场景 2:: 如果在升级之前已在卷上启用了一些存储效率，则：
++
+--
+* 具有 `space guarantee = volume`的卷在升级后看不到任何差异。
+* 具有 `space guarantee = none`的卷已打开聚合后台重复数据删除。
+* 具有 `storage policy inline-only`的卷的策略设置为 auto。
+* 具有用户定义的存储效率策略的卷不会更改策略，但具有 `space guarantee = none`的卷除外。这些卷已启用聚合后台重复数据删除。
+
+
+--
+

@@ -1,0 +1,187 @@
+---
+sidebar: sidebar 
+permalink: concept_stor_hwraid_local.html 
+keywords: ontap select, hardware raid, performance boost, protection 
+summary: 当硬件 RAID 控制器可用时，ONTAP Select 可以将 RAID 服务移动到硬件控制器，以提高写入性能并防止物理驱动器故障。因此，ONTAP Select 群集中所有节点的 RAID 保护由本地连接的 RAID 控制器提供，而不是通过 ONTAP 软件 RAID 提供。 
+---
+= 适用于 ONTAP Select 本地连接存储的硬件 RAID 服务
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+当硬件 RAID 控制器可用时，ONTAP Select 可以将 RAID 服务移动到硬件控制器，以提高写入性能并防止物理驱动器故障。因此，ONTAP Select 群集中所有节点的 RAID 保护由本地连接的 RAID 控制器提供，而不是通过 ONTAP 软件 RAID 提供。
+
+
+NOTE: ONTAP Select 数据聚合配置为使用 RAID 0，因为物理 RAID 控制器正在向底层驱动器提供 RAID 条带化。不支持其他 RAID 级别。
+
+
+
+== 用于本地连接存储的 RAID 控制器配置
+
+所有为 ONTAP Select 提供后备存储的本地连接磁盘都必须位于 RAID 控制器后面。大多数商品服务器都配有多个不同价位的 RAID 控制器选项，每个选项都有不同的功能级别。目的是支持尽可能多的这些选项，前提是它们满足对控制器的某些最低要求。
+
+
+NOTE: 您无法从使用硬件 RAID 配置的 ONTAP Select VM 中分离虚拟磁盘。分离磁盘仅支持使用软件 RAID 配置的 ONTAP Select VM。有关详细信息，请参见 link:task_adm_replace_drives_swraid.html["更换 ONTAP Select 软件 RAID 配置中的故障驱动器"]。
+
+管理 ONTAP Select 磁盘的 RAID 控制器必须满足以下要求：
+
+* 硬件 RAID 控制器必须具有电池备份单元 (BBU) 或闪存后备写入缓存 (FBWC)，并支持 12Gbps 的吞吐量。
+* RAID 控制器必须支持能够承受至少一个或两个磁盘故障的模式（RAID 5 和 RAID 6）。
+* 必须将驱动器缓存设置为已禁用。
+* 必须将写入策略配置为回写模式，并在 BBU 或闪存故障时回退到直写模式。
+* 必须将 I/O 读取策略设置为已缓存。
+
+
+所有为 ONTAP Select 提供后备存储的本地连接磁盘必须放置在运行 RAID 5 或 RAID 6 的 RAID 组中。对于 SAS 驱动器和 SSD，使用多达 24 个驱动器的 RAID 组可使 ONTAP 从将传入读取请求分散到更多磁盘中获益。这样做可以显著提高性能。对于 SAS/SSD 配置，针对单 LUN 配置与多 LUN 配置进行了性能测试。没有发现明显的差异，因此，为了简单起见，NetApp 建议创建支持您的配置需求所需的最少数量的 LUN。
+
+NL-SAS 和 SATA 驱动器需要一套不同的最佳实践。出于性能原因，磁盘的最小数量仍为 8 个，但 RAID 组大小不应大于 12 个驱动器。NetApp 还建议每个 RAID 组使用一个备用磁盘；但是，可以对所有 RAID 组使用全局备用磁盘。例如，您可以为每三个 RAID 组使用两个备件，每个 RAID 组由 8 到 12 个驱动器组成。
+
+
+NOTE: 较旧 ESXi 版本的最大范围和数据存储区大小为 64TB，这可能会影响支持这些大容量驱动器提供的总原始容量所需的 LUN 数量。
+
+
+
+== RAID 模式
+
+许多 RAID 控制器最多支持三种操作模式，每种模式都代表了写入请求所采用的数据路径的显著差异。这三种模式如下：
+
+* 直写。所有传入的 I/O 请求都被写入 RAID 控制器缓存，然后在确认请求返回到主机之前立即刷新到磁盘。
+* 写入绕过。所有传入的 I/O 请求都直接写入磁盘，绕过 RAID 控制器缓存。
+* 写回。所有传入的 I/O 请求都直接写入控制器缓存并立即确认回主机。使用控制器将数据块异步刷新到磁盘。
+
+
+写回模式提供最短的数据路径，I/O 确认在块进入缓存后立即发生。此模式为混合读/写工作负载提供最低延迟和最高吞吐量。但是，如果没有 BBU 或非易失性闪存技术，如果系统在此模式下运行时发生电源故障，用户将面临丢失数据的风险。
+
+ONTAP Select 需要电池备份或闪存单元；因此，我们可以确信，在发生此类故障时，缓存的块会刷新到磁盘。为此，需要将 RAID 控制器配置为写回模式。
+
+
+
+== ONTAP Select 和 OS 之间共享的本地磁盘
+
+最常见的服务器配置是所有本地连接的磁盘轴位于单个 RAID 控制器后面。应至少配置两个 LUN：一个用于虚拟机管理程序，一个用于 ONTAP Select VM。
+
+例如，假设 HP DL380 g8 具有六个内部驱动器和一个 Smart Array P420i RAID 控制器。所有内部驱动器均由此 RAID 控制器管理，系统上不存在其他存储。
+
+下图显示了此配置样式。在此示例中，系统上不存在其他存储；因此，系统管理程序必须与 ONTAP Select 节点共享存储。
+
+*仅使用 RAID 管理的磁盘轴的服务器 LUN 配置*
+
+image:ST_08.jpg["仅使用 RAID 管理的磁盘轴的服务器 LUN 配置"]
+
+从与 ONTAP Select 相同的 RAID 组配置 OS LUN 允许虚拟机监控程序操作系统（以及从该存储中配置的任何客户端 VM）受益于 RAID 保护。此配置可防止单驱动器故障导致整个系统停机。
+
+
+
+== 本地磁盘在 ONTAP Select 和 OS 之间拆分
+
+服务器供应商提供的其他可能配置包括使用多个 RAID 或磁盘控制器配置系统。在此配置中，一组磁盘由一个磁盘控制器管理，该控制器可能提供也可能不提供 RAID 服务。第二组磁盘由能够提供 RAID 5/6 服务的硬件 RAID 控制器管理。
+
+通过这种配置风格，可以提供 RAID 5/6 服务的 RAID 控制器后面的主轴集应由 ONTAP Select VM 独家使用。根据管理的总存储容量，应将磁盘主轴配置为一个或多个 RAID 组和一个或多个 LUN。然后，这些 LUN 将用于创建一个或多个数据存储，所有数据存储都受到 RAID 控制器的保护。
+
+第一组磁盘是为虚拟机监控程序操作系统和不使用 ONTAP 存储的任何客户端虚拟机保留的，如下图所示。
+
+*混合 RAID/非 RAID 系统上的服务器 LUN 配置*
+
+image:ST_09.jpg["混合 RAID/非 RAID 系统上的服务器 LUN 配置"]
+
+
+
+== 多个 LUN
+
+在两种情况下，必须更改单 RAID 组/单 LUN 配置。使用 NL-SAS 或 SATA 驱动器时，RAID 组大小不得超过 12 个驱动器。此外，单个 LUN 可以大于底层虚拟机管理程序存储限制，无论是单个文件系统范围最大大小还是总存储池最大大小。然后，必须将底层物理存储拆分为多个 LUN，才能成功创建文件系统。
+
+
+
+== VMware vSphere 虚拟机文件系统限制
+
+某些版本的 ESXi 上数据存储库的最大大小为 64TB。
+
+如果服务器连接的存储容量超过 64TB，则可能需要调配多个 LUN，每个 LUN 小于 64TB。创建多个 RAID 组以缩短 SATA/NL-SAS 驱动器的 RAID 重建时间也会导致调配多个 LUN。
+
+当需要多个 LUN 时，一个主要考虑点是确保这些 LUN 具有相似且一致的性能。如果要在单个 ONTAP 聚合中使用所有 LUN，则这一点尤其重要。或者，如果一个或多个 LUN 的子集具有明显不同的性能配置文件，则强烈建议将这些 LUN 隔离在单独的 ONTAP 聚合中。
+
+可以使用多个文件系统范围来创建单个数据存储区，最多可达数据存储区的最大大小。要限制需要 ONTAP Select 许可证的容量，请确保在群集安装期间指定容量上限。此功能允许 ONTAP Select 仅使用（因此仅需要许可证）数据存储区中的一部分空间。
+
+或者，可以从在单个 LUN 上创建单个数据存储区开始。当需要更大的 ONTAP Select 容量许可证的额外空间时，可以将该空间作为扩展区添加到同一个数据存储区，直到数据存储区的最大大小。达到最大大小后，可以创建新数据存储区并将其添加到 ONTAP Select。支持这两种类型的容量扩展操作，可以通过使用 ONTAP Deploy storage-add 功能来实现。每个 ONTAP Select 节点可配置为支持高达 400TB 的存储。从多个数据存储区调配容量需要两个步骤的过程。
+
+初始集群创建可用于创建占用初始数据存储中部分或全部空间的 ONTAP Select 集群。第二步是使用其他数据存储执行一个或多个容量添加操作，直到达到所需的总容量。此功能详见章节 link:concept_stor_capacity_inc.html["增加存储容量"]。
+
+
+NOTE: VMFS 开销为非零（请参阅 VMware KB 1001618），并且尝试使用数据存储区报告为可用的整个空间导致在群集创建操作期间出现虚假错误。
+
+每个数据存储区中有 2% 的缓冲区未使用。此空间不需要容量许可证，因为它未被 ONTAP Select 使用。ONTAP Deploy 自动计算缓冲区的确切千兆字节数，只要未指定容量上限即可。如果指定了容量上限，则首先强制执行该大小。如果容量上限大小在缓冲区大小范围内，则集群创建失败，并显示一条错误消息，指定可用作容量上限的正确最大大小参数：
+
+[listing]
+----
+“InvalidPoolCapacitySize: Invalid capacity specified for storage pool “ontap-select-storage-pool”, Specified value: 34334204 GB. Available (after leaving 2% overhead space): 30948”
+----
+VMFS 6 既支持新安装，也支持作为现有 ONTAP Deploy 或 ONTAP Select VM 的存储 vMotion 操作的目标。
+
+VMware 不支持从 VMFS 5 到 VMFS 6 的现场升级。因此，存储 vMotion 是允许任何虚拟机从 VMFS 5 数据存储区过渡到 VMFS 6 数据存储区的唯一机制。但是，对 ONTAP Select 和 ONTAP Deploy 的存储 vMotion 支持已扩展，以涵盖除了从 VMFS 5 过渡到 VMFS 6 的特定目的之外的其他场景。
+
+
+
+== ONTAP Select 虚拟磁盘
+
+在其核心，ONTAP Select 向 ONTAP 提供一组从一个或多个存储池配置的虚拟磁盘。ONTAP 具有一组虚拟磁盘，它将其视为物理磁盘，并且存储堆栈的剩余部分由虚拟机管理程序抽象化。下图更详细地显示了这种关系，突出显示了物理 RAID 控制器、虚拟机监控程序和 ONTAP Select VM 之间的关系。
+
+* RAID 组和 LUN 配置从服务器的 RAID 控制器软件中进行。使用 VSAN 或外部阵列时，不需要此配置。
+* 存储池配置从虚拟机监控程序内部进行。
+* 虚拟磁盘由单个虚拟机创建和拥有；在本示例中，由 ONTAP Select 创建和拥有。
+
+
+*虚拟磁盘到物理磁盘映射*
+
+image:ST_12.jpg["虚拟磁盘到物理磁盘的映射"]
+
+
+
+== 虚拟磁盘配置
+
+为了提供更流畅的用户体验，ONTAP Select 管理工具 ONTAP Deploy 会自动从关联的存储池配置虚拟磁盘，并将它们连接到 ONTAP Select VM。在初始设置期间以及执行存储添加操作期间会自动执行此操作。如果 ONTAP Select 节点是 HA 对的一部分，则会自动将虚拟磁盘分配给本地和镜像存储池。
+
+ONTAP Select 会将底层连接的存储拆分为大小相等的虚拟磁盘，且每个虚拟磁盘不超过 16 TB。如果 ONTAP Select 节点是 HA 对的一部分，则会在每个集群节点上至少创建两个虚拟磁盘，并将其分配给本地和镜像丛，以便在镜像聚合中使用。
+
+例如，ONTAP Select 可以分配一个 31TB 的数据存储区或 LUN（部署虚拟机并配置系统和根磁盘后剩余的空间）。然后创建四个约 7.75TB 的虚拟磁盘，并将其分配给相应的 ONTAP 本地和镜像丛。
+
+
+NOTE: 向 ONTAP Select VM 添加容量可能会导致不同大小的 VMDK。有关详细信息，请参阅部分 link:concept_stor_capacity_inc.html["增加存储容量"]。与 FAS 系统不同，不同大小的 VMDK 可以存在于同一个聚合中。ONTAP Select 在这些 VMDK 上使用 RAID 0 条带，从而能够充分利用每个 VMDK 中的所有空间，无论其大小如何。
+
+
+
+== 虚拟化 NVRAM
+
+NetApp FAS 系统通常配备物理 NVRAM PCI 卡，这是一种包含非易失性闪存的高性能卡。此卡通过授予 ONTAP 立即向客户端确认传入写入的能力，大大提高了写入性能。它还可以在称为转储的过程中安排将修改的数据块移动回较慢的存储介质。
+
+商品系统通常不配备此类设备。因此，此 NVRAM 卡的功能已虚拟化，并放置在 ONTAP Select 系统引导磁盘上的分区中。正是出于这个原因，实例的系统虚拟磁盘的放置非常重要。这也是为什么该产品需要具有用于本地连接存储配置的弹性缓存的物理 RAID 控制器。
+
+NVRAM 放置在自己的 VMDK 上。在自己的 VMDK 中拆分 NVRAM 允许 ONTAP Select VM 使用 vNVMe 驱动程序与其 NVRAM VMDK 进行通信。它还要求 ONTAP Select VM 使用与 ESXi 8.0 及更高版本兼容的硬件版本 13。
+
+
+
+== 数据路径说明：NVRAM 和 RAID 控制器
+
+虚拟化 NVRAM 系统分区和 RAID 控制器之间的交互可以通过遍历写入请求进入系统时所采用的数据路径来最好地突出显示。
+
+对 ONTAP Select VM 的传入写入请求以 VM 的 NVRAM 分区为目标。在虚拟化层，此分区存在于 ONTAP Select 系统磁盘中，该磁盘是连接到 ONTAP Select VM 的 VMDK。在物理层，这些请求会缓存在本地 RAID 控制器中，就像所有针对底层主轴的块更改一样。从这里，写入会被确认回主机。
+
+此时，物理上，块驻留在 RAID 控制器缓存中，等待刷新到磁盘。逻辑上，块驻留在 NVRAM 中，等待转储到相应的用户数据磁盘。
+
+由于更改的块会自动存储在 RAID 控制器的本地缓存中，因此对 NVRAM 分区的传入写入会自动缓存并定期刷新到物理存储介质。这不应与将 NVRAM 内容定期刷新回 ONTAP 数据磁盘混淆。这两个事件无关，发生在不同的时间和频率。
+
+下图显示了传入写入所采取的 I/O 路径。它突出了物理层（由 RAID 控制器缓存和磁盘表示）和虚拟层（由虚拟机的 NVRAM 和数据虚拟磁盘表示）之间的区别。
+
+
+NOTE: 尽管在 NVRAM VMDK 上更改的块被缓存在本地 RAID 控制器缓存中，但缓存无法识别 VM 构造或其虚拟磁盘。它存储系统上的所有更改块，NVRAM 只是其中的一部分。这包括绑定到 hypervisor 的写入请求，如果它是从相同的支持主轴配置的。
+
+*对 ONTAP Select VM 的传入写入*
+
+image:ST_13.jpg["到 ONTAP Select VM 的传入写入"]
+
+
+NOTE: NVRAM 分区在其自己的 VMDK 上分离。该 VMDK 使用 ESXi 8.0 或更高版本中提供的 vNVME 驱动程序连接。此更改对于具有软件 RAID 的 ONTAP Select 安装最为重要，因为它们无法从 RAID 控制器缓存中受益。

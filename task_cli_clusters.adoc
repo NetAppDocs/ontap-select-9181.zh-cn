@@ -1,0 +1,84 @@
+---
+sidebar: sidebar 
+permalink: task_cli_clusters.html 
+keywords: administer, administering, cli, clusters 
+summary: 可以执行多个相关任务来管理 ONTAP Select 集群。 
+---
+= 使用 CLI 管理 ONTAP Select 集群
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以使用 CLI 执行几项相关任务来管理 ONTAP Select 集群。
+
+
+
+== 备份 ONTAP Select Deploy 配置数据
+
+备份 ONTAP Select Deploy 配置数据，例如，在部署集群后。数据将保存到单个加密文件中，您可以将其下载到本地工作站。
+
+您创建的备份文件捕获所有配置数据。此数据描述了部署环境的各个方面，包括 ONTAP Select 群集。
+
+.开始之前
+确保 Deploy 在备份操作期间未执行任何其他任务。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 ONTAP Select Deploy 实用程序 CLI。
+. 创建 ONTAP Select Deploy 配置数据的备份，该数据存储在 ONTAP Select Deploy 服务器的内部目录中：
++
+[source, cli]
+----
+deploy backup create
+----
+. 出现提示时，请提供备份密码。
++
+备份文件基于密码进行加密。
+
+. 显示系统中的可用备份：
++
+[source, cli]
+----
+deploy backup show -detailed
+----
+. 根据 *已创建* 字段中的日期选择您的备份文件，并记录 *下载 URL* 值。
++
+您可以通过 URL 访问备份文件。
+
+. 使用 Web 浏览器或 Curl 等实用程序，使用 URL 将备份文件下载到本地工作站。
+
+
+
+
+== 删除 ONTAP Select 集群
+
+您可以在不再需要 ONTAP Select 集群时将其删除。
+
+.开始之前
+集群必须处于脱机状态。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 虚拟机 CLI。
+. 显示集群状态：
++
+[source, cli]
+----
+cluster show -name <cluster_name>
+----
+. 如果集群未脱机，请将其移至脱机状态：
++
+[source, cli]
+----
+cluster offline -name <cluster_name>
+----
+. 确认集群处于离线状态后，删除集群：
++
+[source, cli]
+----
+cluster delete -name <cluster_name>
+----
+

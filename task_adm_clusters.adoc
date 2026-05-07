@@ -1,0 +1,119 @@
+---
+sidebar: sidebar 
+permalink: task_adm_clusters.html 
+keywords: administer, administering, web, clusters 
+summary: 可以执行多个相关任务来管理 ONTAP Select 集群。 
+---
+= 管理 ONTAP Select 集群
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+可以执行多个相关任务来管理 ONTAP Select 集群。
+
+
+
+== 使 ONTAP Select 集群脱机和联机
+
+创建集群后，您可以根据需要将其脱机和联机。
+
+.开始之前
+创建集群后，它最初处于在线状态。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Clusters* 选项卡，然后从列表中选择所需的集群。
+. 单击集群右侧的 image:icon_kebab.gif["选项"] 并选择 *Take Offline*。
++
+如果脱机选项不可用，则表示集群已处于脱机状态。
+
+. 在弹出窗口中单击 *是* 确认请求。
+. 偶尔单击 *Refresh* 以确认集群处于脱机状态。
+. 要使集群恢复联机，请点击 image:icon_kebab.gif["选项"] 并选择 *Bring Online*。
+. 偶尔单击 *Refresh* 以确认集群处于联机状态。
+
+
+
+
+== 删除 ONTAP Select 集群
+
+您可以在不再需要 ONTAP Select 集群时将其删除。
+
+.开始之前
+集群必须处于脱机状态。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Clusters* 选项卡，然后从列表中选择所需的集群。
+. 单击集群右侧的 image:icon_kebab.gif["选项"] 并选择 *删除*。
++
+如果删除选项不可用，则此集群未处于脱机状态。
+
+. 偶尔单击 *Refresh* 以确认集群已从列表中删除。
+
+
+
+
+== 刷新 Deploy 集群配置
+
+创建 ONTAP Select 集群后，您可以使用 ONTAP 或虚拟机管理程序管理工具在 Deploy 实用程序之外对集群或虚拟机配置进行更改。虚拟机的配置也可以在迁移后更改。
+
+当对集群或虚拟机进行这些更改时，Deploy 实用工具配置数据库不会自动更新，并且可能会与集群的状态不同步。您应在这些和其他情况下执行集群刷新，以根据集群的当前状态更新 Deploy 数据库。
+
+.开始之前
+必填信息:: 您必须具有集群的当前配置信息，包括：
++
+--
+* ONTAP 管理员凭据
+* 集群管理 IP 地址
+* 集群中节点的名称
+
+
+--
+稳定的集群状态:: 集群必须处于稳定状态。当正在创建或删除集群时，或者当集群处于 _create_failed_ 或 _delete_failed_ 状态时，您无法刷新集群。
+虚拟机迁移后:: 在迁移运行 ONTAP Select 的虚拟机后，您必须使用 Deploy 实用程序创建新主机，然后才能执行集群刷新。
+
+
+.关于此任务
+您可以使用 Web 用户界面执行集群刷新以更新 Deploy 配置数据库。
+
+
+NOTE: 您可以使用 Deploy CLI shell 中的 cluster refresh 命令来刷新群集，而不是使用 Deploy UI。
+
+集群和虚拟机配置:: 可以更改并导致 Deploy 数据库不同步的一些配置值包括：
++
+--
+* 集群和节点名称
+* ONTAP 网络配置
+* ONTAP 版本（升级后）
+* 虚拟机名称
+* 主机网络名称
+* 存储池名称
+
+
+--
+集群和节点状态:: ONTAP Select 群集或节点可能处于阻止其正常运行的状态。您应执行群集刷新操作以更正以下情况：
++
+--
+* 节点处于 _unknown_ 状态 ONTAP Select 节点可能处于 _unknown state_ ，原因有几个，包括未找到该节点。
+* 集群处于 _degraded_ 状态如果某个节点已关闭电源，则该节点可能仍然在 Deploy 实用程序中处于联机状态。在这种情况下，集群处于 _degraded_ 状态。
+
+
+--
+
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面左上角的 *Clusters* 选项卡，然后从列表中选择所需的集群。
+. 点击页面右侧的 image:icon_kebab.gif["选项"]，然后选择 *Cluster Refresh*。
+. 在 *Cluster Credentials* 下，提供集群的 ONTAP 管理员密码。
+. 单击 *Refresh*。
+
+
+.完成后
+如果操作成功，则更新字段 _Last Refresh_。集群刷新操作完成后，应备份 Deploy 配置数据。

@@ -1,0 +1,32 @@
+---
+sidebar: sidebar 
+permalink: task_adm_mediators.html 
+keywords: administer, administering, web, mediators 
+summary: 每个 ONTAP Select 双节点集群由中介服务监控，该服务协助管理节点共享的 HA 功能。 
+---
+= 管理 ONTAP Select Deploy 调解员服务
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+每个 ONTAP Select 双节点集群由中介服务监控，该服务协助管理节点共享的 HA 功能。
+
+
+
+== 查看调解人服务的状态
+
+您可以查看针对定义到 ONTAP Select Deploy 实用程序的每个双节点群集的 mediator 服务的状态。
+
+.关于此任务
+您可以查看每个介体的配置，包括当前状态、两个 ONTAP Select 节点以及存储 HA 控制信息的 iSCSI 目标。将鼠标悬停在页面上的对象上以显示详细信息。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡，然后单击 *Mediators*。
+. （可选）单击 *Filter* 以自定义 mediator 服务监控的双节点集群的视图。
+

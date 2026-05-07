@@ -1,0 +1,43 @@
+---
+sidebar: sidebar 
+permalink: reference_plan_ots_kvm.html 
+keywords: plan, planning, vnas, kvm 
+summary: 您应该考虑与使用 KVM 虚拟机管理程序相关的几个规划问题。 
+---
+= ONTAP Select 的 KVM 外部存储要求
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以在 KVM 虚拟机监控程序上使用外部存储阵列配置 ONTAP Select。
+
+
+
+== 基本要求和限制
+
+如果对 ONTAP Select 存储池使用外部阵列，则适用以下配置限制：
+
+* 必须使用 CLVM 将其定义为逻辑池类型。
+* 您必须提供存储容量限制。
+* 该配置仅支持 FC、以太网光纤通道 (FCoE) 和 iSCSI 协议。
+* 此配置无法识别精简配置的存储。
+
+
+
+CAUTION: 指定的存储容量必须在外部存储的允许存储限制范围内。如果未提供容量限制，或者在磁盘创建操作期间外部存储空间用尽，则会发生错误。
+
+
+
+== 最佳实践
+
+您应遵循以下最佳实践：
+
+* 为 ONTAP Select 网络和外部存储定义专用网络端口、带宽和 vSwitch 配置
+* 配置容量选项以限制存储利用率（ONTAP Select 不能消耗外部存储池的整个容量）
+* 验证所有外部存储阵列是否都尽可能使用可用的冗余和高可用性 (HA) 功能
+

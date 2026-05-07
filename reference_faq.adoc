@@ -1,0 +1,323 @@
+---
+sidebar: sidebar 
+permalink: reference_faq.html 
+keywords: faq, frequently asked questions 
+summary: 查找 ONTAP Select 常见问题的答案。 
+---
+= ONTAP Select 常见问题解答
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以找到有关 ONTAP Select 常见问题的答案。
+
+[NOTE]
+====
+从 ONTAP Select 9.14.1 开始，已恢复对 KVM 虚拟机管理程序的支持。以前，在 ONTAP Select 9.10.1 中删除了对在 KVM 虚拟机管理程序上部署新集群的支持，并且在 ONTAP Select 9.11.1 中删除了对管理现有 KVM 集群和主机的支持，但脱机或删除除外。
+
+====
+
+
+== 常规
+
+有几个一般性问题和答案。
+
+.ONTAP Select Deploy 和 ONTAP Select 之间有什么区别？
+ONTAP Select Deploy 是用于创建 ONTAP Select 集群的实用程序。目前，ONTAP Select Deploy 是唯一可用于创建生产集群的方法。ONTAP Select Deploy 还可用于创建评估 Select 集群，允许客户端测试和记录生产部署的实际步骤。ONTAP Select Deploy 还可以使用适当的容量层许可证将评估集群转换为生产集群，该许可证具有足够的容量来覆盖评估期间消耗的空间。
+
+ONTAP Select Deploy 是包含 ONTAP Select 映像的虚拟机。在集群安装期间，ONTAP Select Deploy 会强制执行几项检查，以帮助确保满足 ONTAP Select 最低要求。ONTAP Select Deploy VM 和 Select 集群可以单独升级。
+
+.如何解决 ONTAP Select 的性能问题？
+与 FAS 上的 ONTAP 一样，应使用 perfstat 实用程序收集性能数据。以下是一个示例命令：
+
+[listing]
+----
+perfstat8 –i N,m -t <sample time in minutes> --verbose --nodes=<filer IP> --diag-passwd=abcxyz --mode="cluster-mode" > <name of output file>
+----
+.如何访问 ONTAP Select Deploy 的 Swagger API 页面？
+[listing]
+----
+http://<Deploy-IP-Address/api/ui
+----
+
+NOTE: API v3 版本与先前版本的 API 不向后兼容。新的 API 过程可在 https://library.netapp.com/ecm/ecm_download_file/ECMLP2845694["Field Portal"^]上获得。
+
+.ONTAP Select VM 是否可以使用 VMware 或其他第三方快照进行备份？
+不可以。ONTAP Select VM 使用独立的永久性驱动器，这些驱动器不包含在基于 VMware 的快照中。备份 ONTAP Select 的唯一受支持方法是 SnapMirror 或 SnapVault。
+
+.对于本常见问题解答未涉及的问题，我可以从何处获得澄清？
+请联系 link:mailto:ng-ses-ontap-select@netapp.com["ng-ses-ontap-select@netapp.com"]。
+
+
+
+== 许可证、安装、升级和还原
+
+有几个问题和答案涉及许可证、安装、升级和还原。
+
+.ONTAP Select 和 ONTAP Select Deploy 是否可以单独升级？
+可以。ONTAP Select Deploy 实用程序可以与 ONTAP Select 集群分开升级。同样，Select 集群可以与 ONTAP Select Deploy 实用程序分开升级。
+
+.ONTAP Select 是否可以使用与 FAS 集群相同的程序进行升级？
+是的，Select 集群的升级过程与 FAS 集群的升级相同，不过 ONTAP Select 升级二进制文件是从 ONTAP on FAS 升级二进制文件单独下载的。
+
+.ONTAP Select 是否可以使用与 FAS 集群相同的程序进行还原？
+是的，ONTAP Select 集群的还原过程与 FAS 集群的还原过程几乎相同。但是，有一些不同之处：
+
+* 只能还原 ONTAP Select 升级实例，并且只能还原到原始安装版本。新安装无法还原为较旧的代码版本，即使 ONTAP Select 通常支持该较旧版本。
+* 对于使用软件 RAID 的 ONTAP Select (KVM) 和 ONTAP Select (ESXi)，无法恢复到不支持软件 RAID 的先前版本。此外，在 ESXi 上新安装的 ONTAP Select 9.5 或更高版本使用 VMXNET3 网络驱动程序，并在可能的情况下使用 vNVMe 驱动程序。这些新安装无法还原到早期版本的 ONTAP Select。
+* 如果 ONTAP Select VM 也升级到大型实例（使用 Premium XL 许可证），则不支持恢复到 9.6 之前的版本，因为大型实例功能在早期版本中不可用。
+
+
+.ONTAP MetroCluster SDS 是否至少需要高级许可证？
+是
+
+.安装后是否可以更改 ONTAP Select 集群网络配置？
+ONTAP Select Deploy 使用通过 UI、CLI 或 REST API 提供的集群刷新操作来识别对以下 ONTAP Select 集群属性的更改：
+
+* 网络配置（IP 地址、DNS、NTP、网络掩码和网关）
+* ONTAP Select 集群、节点名称和版本
+
+
+还可以识别以下 ONTAP Select VM 更改：
+
+* ONTAP Select 虚拟机名称和状态更改（例如，在线或离线）
+* 主机网络名称和存储池名称更改
+
+
+升级到 ONTAP Select Deploy 2.6 可为已部署但未从其原始配置更改的任何 ONTAP Select 集群提供对这些更改的支持。换句话说，如果使用 System Manager 或 vCenter 更改了上述 ONTAP Select 集群属性，则升级到 ONTAP Select Deploy 2.6 不会修复这些不一致性。必须首先回滚 ONTAP Select 属性更改，ONTAP Select Deploy 才能将其唯一元数据添加到每个 ONTAP Select VM。
+
+.安装后是否可以更改 ONTAP Select Deploy 网络配置？
+不支持在环境中运行 Deploy 实例后修改其网络详细信息。有关详细信息，请参阅知识库文章 link:https://kb.netapp.com/onprem/ontap/ONTAP_Select/Modifying_DNS_configuration_of_ONTAP_Deploy_instance["修改 ONTAP Deploy 实例的 DNS 配置"^]。
+
+.Deploy 如何检测 ONTAP Select 许可证是否续订？
+此方法对所有许可证都是相同的，但具体取决于它是 Capacity Tier 还是 Capacity Pool 许可证。
+
+* ONTAP Select Deploy 检测许可证和支持合同是否通过从 NetApp 购买更新的许可证文件而续订。许可证文件 (.NLF) 包括容量、开始和结束日期；在 link:https://mysupport.netapp.com/site/["NetApp 支持站点"^] 上生成，然后在 Deploy 服务器上更新。
++
+
+NOTE: 您可以使用 *Add* 和 *Update* 功能将 NLF 加载到 Deploy 服务器中。*Add* 将新许可证添加到服务器，*Update* 使用容量、节点许可证（standard、premium、premium XL）、支持开始和结束日期（Capacity Tier 许可证）或订阅开始和结束日期（Capacity Pool 许可证）等信息更新现有文件。
+
++
+
+CAUTION: 不要尝试修改许可证文件。这样做会使安全密钥无效并使许可证无效。
+
+* *容量层许可证*是与 ONTAP Select 节点序列号绑定的按节点永久许可证。它与单独的支持合同一起出售。虽然许可证是永久性的，但必须续订支持合同才能访问 ONTAP Select 升级并获得 NetApp 技术支持的帮助。还需要当前支持合同才能更改许可证参数，例如容量或节点大小。
++
+购买 Capacity Tier 许可证更新、参数更改或支持合同续订需要节点序列号作为订单的一部分。Capacity Tier 节点序列号为九位数，以数字"32"开头。
+
++
+购买完成并生成许可证文件后，使用 *Update* 功能将其上传到 Deploy 服务器。
+
+* *容量池许可证*是使用特定容量和节点大小池（标准、高级、高级 XL）部署一个或多个集群的权利的订阅。订阅包括在指定期限内使用许可证和支持的权利。使用许可证和支持合同的权利具有指定的开始和结束日期。
+
+
+.Deploy 如何检测节点是否已续订许可证或支持合同？
+购买、生成和上传更新的许可证文件是 Deploy 检测更新的许可证和支持合同的方式。
+
+如果超过了 Capacity Tier 支持合同的结束日期，节点可以继续运行，但您将无法下载和安装 ONTAP 更新，或者在未首先使支持合同最新的情况下致电 NetApp 技术支持以获得帮助。
+
+如果 Capacity Pool 订阅失效，系统会首先警告您，但在 30 天后，如果系统关闭，它将不会重新启动，直到在 Deploy 服务器上安装更新的订阅。
+
+
+
+== 存储
+
+有几个关于存储的问题和答案。
+
+.单个 ONTAP Select Deploy 实例可以在 ESXi 和 KVM 上创建群集吗？
+是ONTAP Select Deploy 可以安装在 KVM 或 ESXi 上，并且两种安装都可以在任一虚拟机监控程序上创建 ONTAP Select 集群。
+
+.在 ESXi 上运行 ONTAP Select 是否需要 vCenter？
+如果 ESXi 主机已获得适当的许可，则无需由 vCenter Server 管理 ESXi 主机。但是，如果主机由 vCenter server 管理，则必须将 ONTAP Select Deploy 配置为使用该 vCenter Server。换句话说，如果 ESXi 主机正由 vCenter Server 主动管理，则无法在 ONTAP Select Deploy 中将其配置为独立主机。请注意，ONTAP Select Deploy VM 依赖 vCenter 来跟踪由于 vMotion 或 VMware HA 事件导致的所有 ONTAP Select VM 在 ESXi 主机之间的迁移。
+
+.什么是软件 RAID？
+ONTAP Select 可以使用没有硬件 RAID 控制器的服务器。在这种情况下，RAID 功能在软件中实现。使用软件 RAID 时，同时支持 SSD 和 NVMe 驱动器。ONTAP Select 启动磁盘和核心磁盘仍必须驻留在虚拟化分区（存储池或数据存储）内。ONTAP Select 使用 RD2（根数据数据分区）对 SSD 进行分区。因此，ONTAP Select 根分区驻留在用于数据聚合的相同物理主轴上。但是，根聚合以及启动和核心虚拟化磁盘不计入容量许可证。
+
+AFF/FAS 上可用的所有 RAID 方法也可用于 ONTAP Select。这包括 RAID 4、RAID DP 和 RAID-TEC。SSD 的最小数量因所选 RAID 配置类型而异。最佳实践要求至少有一个备件。备用磁盘和奇偶校验磁盘不计入容量许可证。
+
+.软件 RAID 与硬件 RAID 配置有何不同？
+软件 RAID 是 ONTAP 软件堆栈中的一个层。软件 RAID 提供了更多的管理控制，因为物理驱动器是分区的，并且可以作为 ONTAP Select VM 中的原始磁盘使用。而对于硬件 RAID，通常可以使用单个大型 LUN，然后可以将其划分出来，以创建在 ONTAP Select 中看到的 VMDISK。软件 RAID 是可选的，可以代替硬件 RAID 使用。
+
+软件 RAID 的一些要求如下：
+
+* 支持 ESXi 和 KVM
++
+** 从 ONTAP Select 9.14.1 开始，已恢复对 KVM 虚拟机管理程序的支持。此前，ONTAP Select 9.10.1 中已删除对 KVM 虚拟机管理程序的支持。
+
+
+* 支持的物理磁盘大小：200GB – 32TB
+* 仅支持 DAS 配置
+* 支持 SSD 或 NVMe
+* 需要 Premium 或 Premium XL ONTAP Select 许可证
+* 硬件 RAID 控制器应不存在或禁用，或者应以 SAS HBA 模式运行
+* 必须将基于专用 LUN 的 LVM 存储池或数据存储用于系统磁盘：核心转储、引导/NVRAM 和调解器。
+
+
+.ONTAP Select for KVM 是否支持多个 NIC 绑定？
+在 KVM 上安装时，必须使用单个绑定和单个网桥。具有两个或四个物理端口的主机应将所有端口放在同一个绑定中。
+
+.ONTAP Select 如何报告或警告虚拟机监控程序主机中出现故障的物理磁盘或 NIC？ONTAP Select 是从虚拟机监控程序检索此信息，还是应该在虚拟机监控程序级别设置监控？
+使用硬件 RAID 控制器时，ONTAP Select 基本上不会察觉到底层服务器问题。如果服务器根据我们的最佳实践进行配置，则应存在一定程度的冗余。我们建议使用 RAID 5/6 来避免驱动器故障。对于软件 RAID 配置，ONTAP 负责发出有关磁盘故障的警报，如果有备用驱动器，则启动驱动器重建。
+
+应至少使用两个物理 NIC，以避免网络层出现单点故障。NetApp 建议 Data、Mgmt 和 Internal 端口组将 NIC 分组和绑定配置为在团队或绑定中配置两个或多个上行链路。这种配置确保，如果有任何上行链路故障，虚拟交换机将流量从故障的上行链路移动到 NIC 团队中的健康上行链路。有关建议的网络配置的详细信息，请参阅 link:reference_plan_best_practices.html#networking["最佳实践摘要：网络"]。
+
+对于双节点或四节点集群，所有其他错误均由 ONTAP HA 处理。如果需要更换虚拟机监控程序服务器，并且需要使用新服务器重新构建 ONTAP Select 集群，请参阅 _Can I recover an ONTAP Select node?_。
+
+.是否可以恢复 ONTAP Select 节点？
+如果需要恢复 ONTAP Select 节点，例如，ONTAP Select 虚拟机或主机完全丢失或意外删除单节点群集，请联系 NetApp 技术支持。有关详细信息，请参阅知识库文章 link:https://kb.netapp.com/on-prem/ontap/ontap-select/Select-KBs/ONTAP_Select_node_VM_recovery_in_case_of_disaster["发生灾难时的 ONTAP Select 节点 VM 恢复"^]。
+
+.ONTAP Select 支持的最大数据存储区大小是多少？
+包括 vSAN 在内的所有配置都支持每个 ONTAP Select 节点 400TB 的存储。
+
+在超过支持的最大大小的数据存储上安装时，您必须在产品设置期间使用 Capacity Cap。
+
+.如何增加 ONTAP Select 节点的容量？
+ONTAP Select Deploy 包含支持 ONTAP Select 节点上的容量扩展操作的存储添加工作流。您可以通过使用来自同一数据存储的空间（如果仍有可用空间）或从单独的数据存储添加空间来扩展受管存储。不支持在同一聚合中混合本地数据存储和远程数据存储。
+
+Storage add 还支持软件 RAID。但是，在软件 RAID 的情况下，必须向 ONTAP Select VM 添加其他物理驱动器。在这种情况下，storage add 类似于管理 FAS 或 AFF 阵列。使用软件 RAID 向 ONTAP Select 节点添加存储时，必须考虑 RAID 组大小和驱动器大小。
+
+.ONTAP Select 支持 vSAN 或外部阵列类型数据存储吗？
+ONTAP Select Deploy 和 ONTAP Select for ESXi 支持使用 vSAN 或外部阵列类型的数据存储区为其存储池配置 ONTAP Select 单节点集群。
+
+ONTAP Select Deploy 和 ONTAP Select for KVM 支持使用外部阵列上的共享逻辑存储池类型配置 ONTAP Select 单节点集群。存储池可以基于 iSCSI 或 FC/FCoE。不支持其他类型的存储池。
+
+支持共享存储上的多节点 HA 群集。
+
+.ONTAP Select 是否支持 vSAN 或其他共享外部存储（包括一些 HCI 堆栈）上的多节点集群？
+ESXi 和 KVM 均支持使用外部存储的多节点集群（多节点 vNAS）。不支持在同一集群中混合使用虚拟机监控程序。共享存储上的 HA 架构仍然意味着 HA 对中的每个节点都有其合作伙伴数据的镜像副本。但是，与依赖 VMware HA 或 KVM Live Motion 的单节点集群相比，多节点集群带来了 ONTAP 无中断操作的优势。
+
+虽然 ONTAP Select Deploy 增加了对同一主机上多个 ONTAP Select VM 的支持，但它不允许这些实例在集群创建期间成为同一 ONTAP Select 集群的一部分。对于 ESXi 环境，NetApp 建议创建 VM 反关联规则，以便 VMware HA 不会尝试将多个 ONTAP Select VM 从同一个 ONTAP Select 集群迁移到单个 ESXi 主机。此外，如果 ONTAP Select Deploy 检测到 ONTAP Select VM 的管理（用户启动）vMotion 或实时迁移导致违反了我们的最佳实践，例如两个 ONTAP Select 节点最终在同一物理主机上，则 ONTAP Select Deploy 会在 Deploy UI 和日志中发布警报。ONTAP Select Deploy 意识到 ONTAP Select VM 位置的唯一方法是集群刷新操作的结果，这是 ONTAP Select Deploy 管理员必须启动的手动操作。ONTAP Select Deploy 中没有启用主动监控的功能，并且警报仅通过 Deploy UI 或日志可见。换言之，此警报无法转发到集中式监控基础设施。
+
+.ONTAP Select 支持 VMware 的 NSX VXLAN 吗？
+支持 NSX-V VXLAN 端口组。对于多节点 HA，包括 ONTAP MetroCluster SDS，请确保将内部网络 MTU 配置为 7500 到 8900 之间（而不是 9000），以适应 VXLAN 开销。可以在集群部署期间使用 ONTAP Select Deploy 配置内部网络 MTU。
+
+.ONTAP Select 支持 KVM 实时迁移吗？
+在外部阵列存储池上运行的 ONTAP Select VM 支持 virsh 实时迁移。
+
+.我是否需要 ONTAP Select Premium for vSAN AF？
+否，无论外部阵列或 vSAN 配置是否为全闪存，都支持所有版本。
+
+.支持哪些 vSAN FTT/FTM 设置？
+Select VM 继承 vSAN 数据存储存储策略，对 FTT/FTM 设置没有限制。但是，请注意，根据 FTT/FTM 设置，ONTAP Select VM 大小可能远大于其设置期间配置的容量。ONTAP Select 使用在设置期间创建的厚置备延迟置零 VMDK。为了避免影响使用相同共享数据存储的其他 VM，请务必在数据存储中提供足够的可用容量，以适应从 Select 容量和 FTT/FTM 设置派生的真实 Select VM 大小。
+
+.如果多个 ONTAP Select 节点属于不同的 Select 集群，它们是否可以在同一台主机上运行？
+可以仅针对 vNAS 配置在同一主机上配置多个 ONTAP Select 节点，只要这些节点不属于同一 ONTAP Select 集群。DAS 配置不支持此操作，因为同一物理主机上的多个 ONTAP Select 节点将争夺对 RAID 控制器的访问权限。
+
+.您可以让具有单个 10GE 端口的主机运行 ONTAP Select 吗？它是否同时可用于 ESXi 和 KVM？
+您可以使用单个 10GE 端口连接到外部网络。但是，NetApp 建议您仅在受限的小型环境中使用此功能。ESXi 和 KVM 都支持此功能。
+
+.要在 KVM 上执行实时迁移，还需要运行哪些其他过程？
+您必须在参与实时迁移的每个主机上安装和运行开源 CLVM 和 pacemaker (pcs) 组件。这是访问每个主机上相同的卷组所必需的。
+
+
+
+== vCenter
+
+有几个关于 VMware vCenter 的问题和答案。
+
+.ONTAP Select Deploy 如何与 vCenter 通信，应该打开哪些防火墙端口？
+ONTAP Select Deploy 使用 VMware VIX API 与 vCenter、ESXi 主机或两者进行通信。VMware 文档指出，与 vCenter 服务器或 ESXi 主机的初始连接是在 TCP 端口 443 上使用 HTTPS/SOAP 完成的。这是通过 TLS/SSL 进行安全 HTTP 的端口。其次，在 TCP 端口 902 上的套接字上打开与 ESXi 主机的连接。通过此连接的数据使用 SSL 加密。此外，ONTAP Select Deploy 发出一个  `PING` 命令，以验证是否有 ESXi 主机在您指定的 IP 地址处响应。
+
+ONTAP Select Deploy 还必须能够与 ONTAP Select 节点和集群管理 IP 地址进行通信，如下所示：
+
+* Ping
+* SSH（端口 22）
+* SSL (端口 443)
+
+
+对于双节点集群，ONTAP Select Deploy 托管集群邮箱。每个 ONTAP Select 节点必须能够通过 iSCSI（端口 3260）到达 ONTAP Select Deploy。
+
+对于多节点集群，内部网络必须完全打开（没有 NAT 或防火墙）。
+
+.ONTAP Select Deploy 需要哪些 vCenter 权限来创建 ONTAP Select 群集？
+此处提供了所需 vCenter 权限的列表：link:reference_plan_ots_vcenter.html["VMware vCenter 服务器"]。
+
+
+
+== HA 和集群
+
+有几个关于 HA 对和集群的问题和答案。
+
+.四节点、六节点或八节点集群与双节点 ONTAP Select 集群有什么区别？
+与 ONTAP Select Deploy VM 主要用于创建集群的四节点、六节点和八节点集群不同，双节点集群持续依赖 ONTAP Select Deploy VM 进行 HA 仲裁。如果 ONTAP Select Deploy VM 不可用，则会禁用故障转移服务。
+
+.什么是 MetroCluster SDS？
+MetroCluster SDS 是一种成本较低的同步复制选项，属于 NetApp 的 MetroCluster 业务连续性解决方案类别。它仅适用于 ONTAP Select，不同于可在 FAS Hybrid Flash、AFF 和 适用于云的 NetApp 私有存储 上使用的 NetApp MetroCluster。
+
+.MetroCluster SDS 与 NetApp MetroCluster 有何不同？
+MetroCluster SDS 提供同步复制解决方案，属于 NetApp MetroCluster 解决方案范畴。但是，关键的区别在于连接类型（仅支持 IP 网络，而不支持 FC 和 IP）。
+
+.双节点 ONTAP Select 集群和双节点 ONTAP MetroCluster SDS 有什么区别？
+双节点集群定义为两个节点位于彼此相距 300m 以内的同一个数据中心的集群。一般来说，两个节点都具有通过 Inter-Switch Link 连接到同一网络交换机或一组网络交换机的上行链路。
+
+双节点 MetroCluster SDS 被定义为具有物理上分离的节点（不同的房间、不同的建筑物或不同的数据中心）的群集，并且每个节点的上行链路连接连接到单独的网络交换机。虽然 MetroCluster SDS 不需要专用硬件，但环境应支持最低延迟要求（5ms RTT 和 5ms 抖动，最大总计 10ms）。
+
+MetroCluster SDS 是一项高级功能，需要 Premium 或 Premium XL 许可证。Premium 许可证支持创建小型和中型 VM 以及 HDD 和 SSD 介质。支持所有这些配置。
+
+.ONTAP MetroCluster SDS 是否需要本地存储 (DAS)？
+ONTAP MetroCluster SDS 支持所有类型的存储配置（DAS 和 vNAS）。
+
+.ONTAP MetroCluster SDS 是否支持软件 RAID？
+是，KVM 和 ESXi 上的 SSD 介质均支持软件 RAID。
+
+.ONTAP MetroCluster SDS 是否同时支持 SSD 和旋转介质？
+是的，虽然需要 Premium 许可证，但此许可证支持小型和中型 VM 以及 SSD 和旋转介质。
+
+.ONTAP MetroCluster SDS 是否支持四节点和更大集群大小？
+不可以，只有带有 Mediator 的双节点群集可以配置为 MetroCluster SDS。
+
+.ONTAP MetroCluster SDS 有哪些要求？
+要求如下：
+
+* 三个数据中心（一个用于 ONTAP Select Deploy Mediator，一个用于每个节点）
+* 5ms RTT 和 5ms 抖动，最大总计 10ms
+* ONTAP Select Deploy Mediator 和每个 ONTAP Select 节点之间的 125ms RTT 和最小带宽 5Mbps
+* Premium 或 Premium XL 许可证
+
+
+.ONTAP Select 支持 vMotion 或 VMware HA 吗？
+在 vSAN 数据存储或外部阵列数据存储（换句话说，vNAS 部署）上运行的 ONTAP Select VM 支持 vMotion、DRS 和 VMware HA 功能。
+
+.ONTAP Select 支持存储 vMotion 吗？
+所有配置都支持存储 vMotion，包括单节点和多节点 ONTAP Select 集群和 ONTAP Select Deploy VM。存储 vMotion 可用于在不同的 VMFS 版本（例如 VMFS 5 到 VMFS 6）之间迁移 ONTAP Select 或 ONTAP Select Deploy VM，但不限于此用例。最佳做法是在启动存储 vMotion 操作之前关闭 VM。ONTAP Select Deploy 必须在存储 vMotion 操作完成后发出以下操作：
+
+[listing]
+----
+cluster refresh
+----
+
+NOTE: 不支持不同类型的数据存储之间的存储 vMotion 操作。换句话说，不支持 NFS 类型数据存储区和 VMFS 数据存储区之间的存储 vMotion 操作。一般来说，不支持外部数据存储区和 DAS 数据存储区之间的存储 vMotion 操作。
+
+.ONTAP Select 节点之间的 HA 流量是否可以在不同 vSwitch 和/或隔离的物理端口上运行和/或在 ESXi 主机之间使用点对点 IP 电缆？
+不支持这些配置。ONTAP Select 无法查看承载客户端流量的物理网络上行链路的状态。因此，ONTAP Select 依靠 HA 心跳来确保客户端和其对等体可以同时访问虚拟机。当发生物理连接丢失时，HA 心跳丢失会导致自动故障转移到另一个节点，这是所需的行为。
+
+在单独的物理基础架构上隔离 HA 流量可能会导致 Select VM 能够与其对等体进行通信，但不能与其客户端进行通信。这会阻止自动 HA 过程，并导致数据不可用，直到调用手动故障转移。
+
+
+
+== Mediator 服务
+
+关于调解员服务有几个问题和答案。
+
+.什么是 Mediator 服务？
+双节点集群持续依赖 ONTAP Select Deploy VM 进行 HA 仲裁。参与双节点 HA 仲裁协商的 ONTAP Select Deploy VM 被标记为 Mediator VM。
+
+.Mediator 服务是否可以远程？
+是的。ONTAP Select Deploy 充当双节点 HA 对的 Mediator，支持高达 500ms RTT 的 WAN 延迟，最低带宽为 5Mbps。
+
+.Mediator 服务使用什么协议？
+Mediator 流量为 iSCSI，源自 ONTAP Select 节点管理 IP 地址，终止于 ONTAP Select Deploy IP 地址。请注意，使用双节点集群时，不能将 IPv6 用于 ONTAP Select 节点管理 IP 地址。
+
+.我可以将一个 Mediator 服务用于多个双节点 HA 集群吗？
+可以。每个 ONTAP Select Deploy VM 可以作为最多 100 个双节点 ONTAP Select 集群的通用 Mediator 服务。
+
+.可以在部署后更改 Mediator 服务位置吗？
+可以。可以使用另一个 ONTAP Select Deploy VM 来托管 Mediator 服务。
+
+.ONTAP Select 支持带（或不带）Mediator 的拉伸集群吗？
+在延伸的 HA 部署模型中，仅支持具有 Mediator 的双节点集群。

@@ -1,0 +1,76 @@
+---
+sidebar: sidebar 
+permalink: concept_api_understanding_scripts.html 
+keywords: rest api, deploy rest api, rest, python, python scripts, understanding 
+summary: 示例 Python 脚本允许您执行几种不同的任务。在实时 Deploy 实例中使用脚本之前，应先了解这些脚本。 
+---
+= 了解 ONTAP Select Deploy 的 Python 脚本
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+示例 Python 脚本允许您执行几种不同的任务。在实时 Deploy 实例中使用脚本之前，应先了解这些脚本。
+
+
+
+== 通用设计特点
+
+脚本的设计具有以下共同特征：
+
+* 从客户端计算机的命令行界面执行 您可以从任何正确配置的客户端计算机运行 Python 脚本。有关详细信息，请参见_在开始之前_。
+* 接受 CLI 输入参数 每个脚本通过输入参数在 CLI 上进行控制。
+* 读取输入文件 每个脚本根据其目的读取输入文件。创建或删除集群时，必须提供 JSON 配置文件。添加节点许可证时，必须提供有效的许可证文件。
+* 使用通用支持模块 通用支持模块 _deploy_requests.py_ 包含一个类。它被导入并由每个脚本使用。
+
+
+
+
+== 创建集群
+
+您可以使用脚本 cluster.py 创建 ONTAP Select 集群。根据 CLI 参数和 JSON 输入文件的内容，您可以将脚本修改为适合您的部署环境，如下所示：
+
+* 虚拟机监控程序 您可以部署到 ESXI 或 KVM（取决于 Deploy 版本）。部署到 ESXi 时，虚拟机监控程序可以由 vCenter 管理，也可以是独立主机。
+* 集群大小 您可以部署单节点或多节点集群。
+* 评估或生产许可证 您可以部署具有评估或购买的生产许可证的集群。
+
+
+脚本的 CLI 输入参数包括：
+
+* Deploy 服务器的主机名或 IP 地址
+* 管理员用户帐户的密码
+* JSON 配置文件的名称
+* 消息输出的详细标志
+
+
+
+
+== 添加节点许可证
+
+如果选择部署生产集群，则必须使用脚本 _add_license.py_ 为每个节点添加许可证。您可以在部署集群之前或之后添加许可证。
+
+脚本的 CLI 输入参数包括：
+
+* Deploy 服务器的主机名或 IP 地址
+* 管理员用户帐户的密码
+* 许可证文件的名称
+* 具有添加许可证权限的 ONTAP 用户名
+* ONTAP 用户的密码
+
+
+
+
+== 删除集群
+
+您可以使用脚本 _delete_cluster.py_ 删除现有的 ONTAP Select 集群。
+
+脚本的 CLI 输入参数包括：
+
+* Deploy 服务器的主机名或 IP 地址
+* 管理员用户帐户的密码
+* JSON 配置文件的名称
+

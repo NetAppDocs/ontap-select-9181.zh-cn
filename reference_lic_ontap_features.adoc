@@ -1,0 +1,81 @@
+---
+sidebar: sidebar 
+permalink: reference_lic_ontap_features.html 
+keywords: license, licensing, ontap features, default ontap features 
+summary: ONTAP Select 为大多数 ONTAP 功能提供全面支持。部署集群时，每个节点都会自动获得许多 ONTAP 功能的许可。但是，某些功能需要单独的许可证。 
+---
+= ONTAP Select 支持 ONTAP 功能
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 支持大多数 ONTAP 功能。部署集群时，每个节点都会自动获得许多 ONTAP 功能的许可。但是，某些功能需要单独的许可证。
+
+
+NOTE: ONTAP Select 通常不支持具有硬件特定依赖项的 ONTAP 功能。
+
+
+
+== 默认情况下自动启用的 ONTAP 功能
+
+ONTAP Select 支持以下 ONTAP 功能，并且默认已获得许可：
+
+* 自主勒索软件防护 (ARP) (手动更新)
+* CIFS
+* 重复数据删除和压缩
+* FlexCache
++
+ONTAP Select 支持具有回写功能的 FlexCache 缓存卷。不支持具有回写功能的 FlexCache 原始卷。
+
++
+link:concept_ots_overview.html#flexcache-write-back-with-ontap-select["详细了解使用 ONTAP Select 的 FlexCache 回写"]
+
+* FlexClone
+* iSCSI
+* NDMP
+* NetApp 卷加密（仅限非限制性国家/地区）
+* NFS
+* 基于 TCP 的 NVMe
+* ONTAP 多租户功能
+* ONTAP S3
+* S3 SnapMirror
+* SnapLock Select
++
+SnapLock Select 是专为 ONTAP Select 设计的 ONTAP SnapLock 实施，包括 SnapLock Enterprise。它不包括 SnapLock Compliance。
+
++
+link:https://docs.netapp.com/us-en/ontap/snaplock/index.html["了解 ONTAP SnapLock"^]
+
+* SnapMirror
+* SnapMirror 云
+* SnapRestore
+* SnapVault
+* Storage VM 灾难恢复 (SVM DR)
++
+ONTAP Select 支持 SVM DR 作为源和目标，最多可有 16 个关系。SVM DR 支持仅限于使用源 ONTAP 版本到版本 +2。例如，ONTAP Select 9.12.1 源可以连接到目标 ONTAP 版本 9.12.1、9.13.1 或 9.14.1。
+
+
+
+
+
+== 单独许可的 ONTAP 功能
+
+您需要为任何默认情况下未启用的 ONTAP 功能获取单独的许可证，包括：
+
+* FabricPool
++
+
+NOTE: 使用 StorageGRID 时，您不需要 FabricPool 许可证。
+
+* MetroCluster SDS（ONTAP Select 高级许可证产品）
+
+
+.相关信息
+* link:concept_ots_overview.html#compare-ontap-select-and-ontap-9["比较 ONTAP Select 和 ONTAP 9"]
+* link:https://mysupport.netapp.com/site/systems/master-license-keys["了解 NetApp ONTAP 主许可证密钥"^]
+

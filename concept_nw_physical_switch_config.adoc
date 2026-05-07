@@ -1,0 +1,49 @@
+---
+sidebar: sidebar 
+permalink: concept_nw_physical_switch_config.html 
+keywords: ontap select, upstream physical switch configuration 
+summary: 基于单交换机和多交换机环境的上游物理交换机配置详细信息。 
+---
+= ONTAP Select 物理交换机配置
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+基于单交换机和多交换机环境的上游物理交换机配置详细信息。
+
+在做出从虚拟交换机层到物理交换机的连接决策时，应谨慎考虑。内部集群流量与外部数据服务的分离应通过第二层 VLAN 提供的隔离延伸到上游物理组网层。
+
+物理交换机端口应配置为中继端口。ONTAP Select 外部流量可以通过两种方式之一跨越多个二层网络进行分离。一种方法是将 ONTAP VLAN 标记的虚拟端口与单个端口组一起使用。另一种方法是在 VST 模式下将单独的端口组分配给管理端口 e0a。您还必须根据 ONTAP Select 版本和单节点或多节点配置将数据端口分配给 e0b 和 e0c/e0g。如果外部流量跨越多个二层网络分离，则上行物理交换机端口应在其允许的 VLAN 列表中具有这些 VLAN。
+
+ONTAP Select 内部网络流量使用链路本地 IP 地址定义的虚拟接口进行。由于这些 IP 地址不可路由，因此集群节点之间的内部流量必须流经单个二层网络。不支持 ONTAP Select 集群节点之间的路由跃点。
+
+
+
+== 共享物理交换机
+
+下图显示了多节点 ONTAP Select 群集中一个节点可能使用的交换机配置。在此示例中，vSwitches 托管内部和外部网络端口组使用的物理 NIC 连接到同一个上游交换机。使用包含在单独 VLAN 中的广播域将交换机流量保持隔离。
+
+
+NOTE: 对于 ONTAP Select 内部网络，标记在端口组级别完成。虽然以下示例将 VGT 用于外部网络，但该端口组同时支持 VGT 和 VST。
+
+*使用共享物理交换机的网络配置*
+
+image:DDN_06.jpg["使用共享物理交换机的网络配置"]
+
+
+NOTE: 在此配置中，共享交换机将成为单点故障。如果可能，应使用多个交换机来防止物理硬件故障导致集群网络中断。
+
+
+
+== 多个物理交换机
+
+当需要冗余时，应使用多个物理网络交换机。下图显示了多节点 ONTAP Select 群集中一个节点使用的建议配置。来自内部和外部端口组的 NIC 都连接到不同的物理交换机，从而保护用户免受单个硬件交换机故障的影响。交换机之间配置了虚拟端口通道，以防止生成树问题。
+
+*使用多个物理交换机的网络配置*
+
+image:DDN_07.jpg["使用多个物理交换机的网络配置"]

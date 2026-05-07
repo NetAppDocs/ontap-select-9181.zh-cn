@@ -1,0 +1,152 @@
+---
+sidebar: sidebar 
+permalink: task_cluster_expansion_contraction.html 
+keywords: cluster, expand, expansion, contract, contraction, six, eight, node deployment workflow, workflow, deployment steps 
+summary: 从 ONTAP Select 9.15.1 开始，您可以增加或减少现有集群的大小。 
+---
+= 在 ESXi 或 KVM 主机上扩展或收缩 ONTAP Select 集群
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+增加或减少 ESXi 和 KVM 虚拟机监控程序主机现有 ONTAP Select 群集的群集大小。对于两种主机类型，都可以在四个和十二个节点之间以增量增加和减小群集大小。
+
+ESXi 和 KVM 主机不支持以下群集扩展和收缩：
+
+* 从一个或两个节点集群扩展到六个、八个、十个或十二个节点集群。
+* 从六个、八个、十个或十二个节点集群到一个或两个节点集群的收缩。
+
+
+[NOTE]
+====
+要将集群中的节点数更改为集群扩展或收缩不支持的大小，需要执行以下任务：
+
+. 使用 ONTAP Select Deploy 管理实用程序提供的 link:task_cli_deploy_cluster.html["命令行界面"] 或 link:task_deploy_cluster.html["Web UI"] 部署新的多节点集群。
+. 如果适用，请使用 link:https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-disaster-recovery-concept.html["SnapMirror 复制"^] 将数据迁移到新群集。
+
+
+====
+您可以使用 CLI、API 或 Web 界面从 ONTAP Select Deploy 启动集群扩展和收缩过程。
+
+
+
+== 硬件和存储注意事项
+
+以下 KVM 和 ESXi 虚拟机监控程序主机支持群集扩展和收缩功能。
+
+[role="tabbed-block"]
+====
+.ESXi
+--
+从 ONTAP Select 9.15.1 开始，ESXi 虚拟机监控程序主机支持群集扩展和收缩。
+
+以下 ESXi 虚拟机管理程序版本支持集群扩展和收缩：
+
+* ESXi 9.0
+* ESXi 8.0 U3
+* ESXi 8.0 U2
+* ESXi 8.0 U1
+* ESXi 8.0 GA
+
+
+--
+.KVM
+--
+从 ONTAP Select 9.17.1 开始，KVM 虚拟机管理程序主机支持群集扩展和收缩。
+
+以下 KVM 虚拟机管理程序版本支持群集扩展和收缩：
+
+* Red Hat Enterprise Linux (RHEL) 64 位 10.1、10.0、9.7、9.6、9.5、9.4、9.3、9.2、9.1、9.0、8.8、8.7 和 8.6
+* Rocky Linux 10.1、10.0、9.7、9.6、9.5、9.4、9.3、9.2、9.1、9.0、8.9、8.8、8.7 和 8.6
+
+
+--
+====
+
+
+== 扩展集群
+
+使用集群扩展功能可增加现有 ONTAP Select 集群的大小。
+
+您可以按以下增量增加 ESXi 或 KVM 主机上现有群集的大小：
+
+* 从四个节点到六个、八个、十个或十二个节点
+* 从六个节点到八个、十个或十二个节点
+* 从八个节点到十个或十二个节点
+* 从 10 个节点到 12 个节点
+
+
+.关于此任务
+为准备群集扩展，将向库存中添加新的 ESXi 和 KVM 主机，并分配新节点的详细信息。在开始群集扩展过程之前，网络预检查将验证选定的内部网络。
+
+.开始之前
+* 部署多节点集群时，您应该熟悉网络连接检查器。您可以使用 link:task_adm_connectivity.html["Web UI"] 或 link:task_cli_connectivity.html["命令行界面"] 运行网络连接检查器。
+* 确认您拥有新节点的许可证详细信息。
+
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 选择页面顶部的 *Cluster* 选项卡，然后从列表中选择所需的集群。
+. 在集群详细信息页面上，选择页面右侧的齿轮图标，然后选择 *Expand Cluster*。
+. 导航到 *HA Pair 4* 部分。
+. 为第四个 HA 对选择以下高可用性 (HA) 对配置详细信息：
++
+** 实例类型
+** 节点名称
+** 关联的虚拟机监控程序主机
+** 节点 IP 地址
+** 许可证
+** 网络配置
+** 存储配置（RAID 类型和存储池）
+
+
+. 选择 *Save HA Pair* 保存配置详细信息。
+. 提供 ONTAP 凭据，然后选择 *扩展集群*。
+. 选择 *Next* ，然后通过选择 *Run* 来运行网络预检查。
++
+网络预检查验证为 ONTAP 集群流量选择的内部网络是否正常工作。
+
+. 选择 *Expand Cluster* 开始集群扩展过程，然后在对话框中选择 *OK*。
++
+扩展集群可能需要长达 45 分钟。
+
+. 监控多步骤集群扩展过程，以确认集群扩展成功。
+. 有关操作进度的定期更新，请参见 *Events* 选项卡。页面会定期自动刷新。
+
+
+.完成后
+在扩展集群后，您应该 link:task_cli_clusters.html["备份 ONTAP Select Deploy 配置数据"]。
+
+
+
+== 收缩集群
+
+使用集群收缩功能减小现有 ONTAP Select 集群的大小。
+
+您可以按以下增量减小 ESXi 或 KVM 主机上现有群集的大小：
+
+* 从 12 个节点到 10 个、8 个、6 个或 4 个节点
+* 从十个节点到八个、六个或四个节点
+* 从 8 个到 6 个或 4 个节点
+* 从六个到四个节点
+
+
+.关于此任务
+选择集群中所需的 HA 节点对，为过程期间的集群收缩做准备。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 选择页面顶部的 *Cluster* 选项卡，然后从列表中选择所需的集群。
+. 在集群详细信息页面上，选择页面右侧的齿轮图标，然后选择 *Contract Cluster*。
+. 选择要删除的任何 HA 对的 HA 对配置详细信息，并提供 ONTAP 凭据，然后选择 *Contract Cluster*。
++
+集群可能需要长达 30 分钟才能收缩。
+
+. 监控多步骤集群收缩过程，以确认集群收缩成功。
+. 有关操作进度的定期更新，请参见 *Events* 选项卡。页面会定期自动刷新。
+

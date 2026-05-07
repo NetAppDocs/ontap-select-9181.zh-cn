@@ -1,0 +1,168 @@
+---
+sidebar: sidebar 
+permalink: concept_nw_single_multi_node.html 
+keywords: ontap select, single node network configuration, multi-node network configuration 
+summary: ONTAP Select 支持单节点和多节点网络配置。 
+---
+= ONTAP Select 单节点和多节点网络配置
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP Select 支持单节点和多节点网络配置。
+
+
+
+== 单节点网络配置
+
+单节点 ONTAP Select 配置不需要 ONTAP 内部网络，因为没有集群、HA 或镜像流量。
+
+与 ONTAP Select 产品的多节点版本不同，每个 ONTAP Select VM 都包含三个虚拟网络适配器，分别提供给 ONTAP 网络端口 e0a、e0b 和 e0c。
+
+这些端口用于提供以下服务：管理、数据和集群间 LIF。
+
+.KVM
+您可以将 ONTAP Select 部署为单节点集群。虚拟机监控程序主机包括一个提供对外部网络访问的虚拟交换机。
+
+.ESXi
+下图显示了这些端口与底层物理适配器之间的关系。图中显示了 ESXi 虚拟机监控程序上的一个 ONTAP Select 群集节点。
+
+*单节点 ONTAP Select 集群的网络配置*
+
+image:DDN_03.jpg["单节点 ONTAP Select 集群的网络配置"]
+
+
+NOTE: 即使两个适配器足以用于单节点集群，NIC 分组仍然是必需的。
+
+
+
+=== LIF 分配
+
+如本文档的多节点 LIF 分配部分所述，ONTAP 使用 IPspaces 将集群网络流量与数据和管理流量分开。此平台的单节点变体不包含集群网络。因此，集群 IPspace 中不存在任何端口。
+
+
+NOTE: 集群和节点管理 LIF 在 ONTAP Select 集群设置期间自动创建。您可以在部署后创建剩余的 LIF。
+
+
+
+=== 管理和数据 LIF（e0a、e0b 和 e0c）
+
+ONTAP 端口 e0a、e0b 和 e0c 被委派为传输以下类型流量的 LIF 的候选端口：
+
+* SAN/NAS 协议流量（CIFS、NFS 和 iSCSI）
+* 集群、节点和 SVM 管理流量
+* 集群间流量（SnapMirror 和 SnapVault）
+
+
+
+
+== 多节点网络配置
+
+多节点 ONTAP Select 网络配置由两个网络组成。
+
+它们是内部网络，负责提供集群和内部复制服务，以及外部网络，负责提供数据访问和管理服务。在这两个网络中流动的流量的端到端隔离对于构建适合集群弹性的环境极其重要。
+
+下图显示了这些网络，其中显示了在 VMware vSphere 平台上运行的四节点 ONTAP Select 集群。六个、八个、十个和十二个节点集群具有相似的网络布局。
+
+
+NOTE: 每个 ONTAP Select 实例驻留在单独的物理服务器上。内部和外部流量使用单独的网络端口组进行隔离，这些网络端口组分配给每个虚拟网络接口，并允许群集节点共享相同的物理交换机基础设施。
+
+*ONTAP Select 多节点集群网络配置概述*
+
+image:DDN_01.jpg["ONTAP Select 多节点集群网络配置概述"]
+
+每个 ONTAP Select VM 包含七个虚拟网络适配器，作为一组七个网络端口（e0a 到 e0g）呈现给 ONTAP。虽然 ONTAP 将这些适配器视为物理 NIC，但它们实际上是虚拟的，并通过虚拟化网络层映射到一组物理接口。因此，每个托管服务器不需要六个物理网络端口。
+
+
+NOTE: 不支持向 ONTAP Select VM 中添加虚拟网络适配器。
+
+这些端口已预配置为提供以下服务：
+
+* e0a、e0b 和 e0g。管理和数据 LIF
+* e0c，e0d。集群网络 LIF
+* e0e。RSM
+* e0f。HA 互连
+
+
+端口 e0a、e0b 和 e0g 位于外部网络上。虽然端口 e0c 到 e0f 执行几种不同的功能，但它们共同构成了内部 Select 网络。在做出网络设计决策时，应将这些端口放置在单个二层网络上。无需将这些虚拟适配器分离到不同的网络中。
+
+下图显示了这些端口与底层物理适配器之间的关系，其中描绘了 ESXi 虚拟机监控程序上的一个 ONTAP Select 群集节点。
+
+*作为多节点 ONTAP Select 集群一部分的单个节点的网络配置* image:DDN_02.jpg["属于多节点 ONTAP Select 集群的单个节点的网络配置"]
+
+隔离不同物理网卡的内部和外部流量可防止对网络资源的访问不足，从而将延迟引入系统。此外，通过 NIC 组进行聚合允许 ONTAP Select 集群节点在单个网络适配器发生故障时继续访问网络。
+
+
+NOTE: 外部网络和内部网络端口组均以对称方式包含所有四个 NIC 适配器。外部网络端口组中的活动端口是内部网络中的备用端口。相反，内部网络端口组中的活动端口是外部网络端口组中的备用端口。
+
+
+
+=== LIF 分配
+
+随着 IPspaces 的引入，ONTAP 端口角色已被弃用。与 FAS 阵列一样，ONTAP Select 集群同时包含默认 IPspace 和集群 IPspace。通过将网络端口 e0a、e0b 和 e0g 放入默认 IPspace，并将端口 e0c 和 e0d 放入集群 IPspace，这些端口基本上被隔离，无法托管不属于的 LIF。ONTAP Select 集群中的其余端口通过提供内部服务的接口的自动分配来消耗。它们不会通过 ONTAP shell 暴露，就像 RSM 和 HA 互连接口一样。
+
+
+NOTE: 并非所有 LIF 都通过 ONTAP 命令外壳可见。HA 互连和 RSM 接口对 ONTAP 隐藏，在内部用来提供各自的服务。
+
+以下各节将详细解释网络端口和 LIF。
+
+
+
+=== 管理和数据 LIF（e0a、e0b 和 e0g）
+
+ONTAP 端口 e0a、e0b 和 e0g 被委派为承载以下类型流量的 LIF 的候选端口：
+
+* SAN/NAS 协议流量（CIFS、NFS 和 iSCSI）
+* 集群、节点和 SVM 管理流量
+* 集群间流量（SnapMirror 和 SnapVault）
+
+
+
+NOTE: 集群和节点管理 LIF 在 ONTAP Select 集群设置期间自动创建。您可以在部署后创建剩余的 LIF。
+
+
+
+=== 集群网络 LIF（e0c、e0d）
+
+ONTAP 端口 e0c 和 e0d 被委派为集群接口的主端口。在每个 ONTAP Select 集群节点内，在 ONTAP 设置期间使用链接本地 IP 地址（169.254.x.x）自动生成两个集群接口。
+
+
+NOTE: 您不能为这些接口分配静态 IP 地址，也不应创建其他集群接口。
+
+集群网络流量必须通过低延迟、非路由的第 2 层网络。由于集群吞吐量和延迟要求，您应该将 ONTAP Select 集群物理定位在附近（例如，多包、单个数据中心）。不支持通过跨 WAN 或相当大的地理距离分离 HA 节点来构建四个、六个、八个、十个或十二个节点的扩展集群配置。支持带有中介器的拉伸双节点配置。
+
+有关详细信息，请参阅部分 link:reference_plan_best_practices.html#two-node-stretched-ha-metrocluster-sds-best-practices["双节点拉伸 HA（MetroCluster SDS）最佳实践"]。
+
+
+NOTE: 为确保群集网络流量的最大吞吐量，已将此网络端口配置为使用巨型帧（7500 到 9000 MTU）。要进行正确的群集操作，请验证是否在所有为 ONTAP Select 群集节点提供内部网络服务的上游虚拟和物理交换机上启用了巨型帧。
+
+
+
+=== RAID SyncMirror 流量 (e0e)
+
+跨 HA 伙伴节点的块同步复制使用驻留在网络端口 e0e 上的内部网络接口进行。此功能在集群设置期间使用 ONTAP 配置的网络接口自动进行，无需管理员进行配置。
+
+
+NOTE: 端口 e0e 由 ONTAP 保留用于内部复制流量。因此，端口和托管 LIF 在 ONTAP CLI 或 System Manager 中都不可见。此接口配置为使用自动生成的链路本地 IP 地址，您无法分配备用 IP 地址。此网络端口需要使用巨型帧（7500 至 9000 MTU）。
+
+
+
+=== HA 互连 (e0f)
+
+NetApp FAS 阵列使用专用硬件在 ONTAP 集群中的 HA 对之间传递信息。然而，软件定义的环境往往没有这种类型的设备（例如 InfiniBand 或 iWARP 设备），因此需要替代解决方案。虽然考虑了几种可能性，但对互连传输的 ONTAP 要求要求在软件中模拟此功能。因此，在 ONTAP Select 集群中，HA 互连的功能（传统上由硬件提供）已被设计到操作系统中，使用以太网作为传输机制。
+
+每个 ONTAP Select 节点配置有 HA 互连端口 e0f。此端口托管 HA 互连网络接口，该接口负责两个主要功能：
+
+* 在 HA 对之间镜像 NVRAM 的内容
+* 在 HA 对之间发送/接收 HA 状态信息和网络心跳消息
+
+
+HA 互连流量通过在以太网数据包中分层远程直接内存访问（RDMA）帧，使用单个网络接口流经此网络端口。
+
+
+NOTE: 与 RSM 端口（e0e）一样，无论是从 ONTAP CLI 还是从 System Manager，用户都不会看到物理端口或托管网络接口。因此，您无法修改此接口的 IP 地址，也无法更改端口的状态。此网络端口需要使用巨型帧（7500 至 9000 MTU）。

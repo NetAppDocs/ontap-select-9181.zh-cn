@@ -1,0 +1,227 @@
+---
+sidebar: sidebar 
+permalink: task_install_deploy.html 
+keywords: install, installing, ontap select deploy, deploy administration utility, deploy utility 
+summary: 您需要安装 ONTAP Select Deploy 管理实用程序，并使用该实用程序创建 ONTAP Select 群集。 
+---
+= 安装 ONTAP Select Deploy
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您需要安装 ONTAP Select Deploy 管理实用程序，并使用该实用程序创建 ONTAP Select 群集。
+
+
+
+== 步骤 1：下载虚拟机映像
+
+从 NetApp 支持站点下载 ONTAP Select 包。
+
+.开始之前
+https://mysupport.netapp.com/site/user/registration["您已注册 NetApp 支持站点帐户"^]。
+
+.关于此任务
+ONTAP Select Deploy 管理实用程序打包为基于开放虚拟化格式 (OVF) 标准的虚拟机 (VM)。单个压缩文件具有后缀 `OVA`（用于 ESXi 主机）和 `TGZ`（用于 KVM 主机）。VM 为 ONTAP Select 节点提供 Deploy 服务器和安装映像。
+
+.步骤
+. 访问 link:https://mysupport.netapp.com/site/downloads/["NetApp 支持站点下载"^] 页面。
+. 向下滚动并选择 *ONTAP Select Deploy*。
+. 选择所需的 ONTAP Select 版本。
+. 查看最终用户许可协议 (EULA) 并选择 *Accept & Continue*。
+. 选择并下载相应的 *ONTAP Select Deploy Install* 软件包。根据需要回复所有提示。
+
+
+
+
+== 步骤 2：验证 ONTAP Select Deploy OVA 签名
+
+在安装安装包之前，请验证 ONTAP Select Open Virtualization Appliance (OVA) 签名。
+
+.开始之前
+验证您的系统是否满足以下要求：
+
+* 用于基本验证的 OpenSSL 版本 1.0.2 至 3.0
+* 用于在线证书状态协议 (OCSP) 验证的公共 Internet 访问
+
+
+.步骤
+. 从 NetApp 支持站点的产品下载页面获取以下文件：
++
+[cols="2*"]
+|===
+| 文件 | 问题描述 
+
+
+| `ONTAP-Select-Deploy-Production.pub` | 用于验证签名的公钥。 
+
+
+| `csc-prod-chain-ONTAP-Select-Deploy.pem` | 公共证书颁发机构 (CA) 信任链。 
+
+
+| `csc-prod-ONTAP-Select-Deploy.pem` | 用于生成密钥的证书。 
+
+
+| `ONTAPdeploy.ova` | ONTAP Select 的产品安装可执行文件。 
+
+
+| `ONTAPdeploy.ova.sig` | SHA-256 算法经过哈希处理，然后由 Remote Support Agent (RSA) 使用安装程序的 `csc-prod`密钥和签名进行签名。 
+|===
+. 验证  `ONTAPdeploy.ova.sig` 文件是否正在使用关联的证书和验证命令。
+. 验证签名：
++
+[source, cli]
+----
+openssl dgst  -sha256 -verify ONTAP-Select-Deploy-Production.pub -signature ONTAPdeploy.ova.sig  ONTAPdeploy.ova
+----
+
+
+
+
+== 步骤 3：部署虚拟机
+
+使用 OVF VM 映像安装并启动 ONTAP Select Deploy VM。作为安装过程的一部分，您可以将网络接口配置为使用 DHCP 或静态 IP 配置。
+
+.开始之前
+对于 ESXi 虚拟机监控程序，您必须准备部署 ONTAP Select Deploy VM：
+
+* 通过安装 VMware Client Integration Plugin 或根据需要执行类似的配置，在浏览器中启用 OVF 功能
+* 如果要为 Deploy VM 动态分配 IP 地址，请在 VMware 环境中启用 DHCP
+
+
+对于 ESXi 和 KVM 虚拟机管理程序，必须具有在创建 VM 时要使用的配置信息，包括 VM 的名称、外部网络和主机名。定义静态网络配置时，需要以下附加信息：
+
+* Deploy VM 的 IP 地址
+* 网络掩码
+* 网关（路由器）的 IP 地址
+* 主 DNS 服务器的 IP 地址
+* 第二个 DNS 服务器的 IP 地址
+* DNS 搜索域
+
+
+.关于此任务
+如果使用 vSphere，则 Deploy OVF 模板向导包含一个表单，用于提供所有 Deploy 配置信息，包括网络配置。但是，如果选择不使用此表单，则可以使用 Deploy VM 的控制台来配置网络。
+
+.步骤
+您遵循的步骤取决于您是使用 ESXi 还是 KVM 虚拟机管理程序。
+
+[role="tabbed-block"]
+====
+.ESXi
+--
+. 访问 vSphere 客户端并登录。
+. 导航到层次结构中的适当位置，然后选择 *Deploy OVF Template*。
+. 选择 OVA 文件并完成 Deploy OVF Template 向导。选择适合您环境的选项。
++
+必须定义管理员帐户的密码。登录到 Deploy 实用程序时需要提供此密码。
+
+. 部署 VM 后，选择新 VM。如果尚未根据您对部署向导的输入将其打开，请手动将其打开。
+. 如果需要，您可以使用 VM 控制台配置 Deploy 网络：
++
+.. 选择 *Console* 选项卡以访问 ESXi 主机设置 shell 并监控开机过程。
+.. 等待以下提示：
++
+主机名：
+
+.. 键入主机名，然后按 *Enter*。
+.. 等待以下提示：
++
+为管理员用户提供密码：
+
+.. 输入密码并按 *Enter* 键。
+.. 等待以下提示：
++
+使用 DHCP 设置网络信息？[n]：
+
+.. 键入 *n* 定义静态 IP 配置或 *y* 使用 DHCP，然后选择 *Enter*。
+.. 如果选择静态配置，请提供所有必需的网络配置信息。
+
+
+
+
+--
+.KVM
+--
+. 在 Linux 服务器上 Sign in 到 CLI：
++
+[listing]
+----
+ssh root@<ip_address>
+----
+. 创建新目录并提取原始 VM 映像：
++
+[listing]
+----
+mkdir /home/select_deploy25
+cd /home/select_deploy25
+mv /root/<file_name> .
+tar -xzvf <file_name>
+----
+. 创建并启动运行 Deploy 管理实用程序的 KVM VM：
++
+[listing]
+----
+virt-install --name=select-deploy --vcpus=2 --ram=4096 --os-variant=debian10 --controller=scsi,model=virtio-scsi --disk path=/home/deploy/ONTAPdeploy.raw,device=disk,bus=scsi,format=raw --network "type=bridge,source=ontap-br,model=virtio,virtualport_type=openvswitch" --console=pty --import --noautoconsole
+----
+. 如果需要，您可以使用 VM 控制台配置 Deploy 网络：
++
+.. 连接到 VM 控制台：
++
+[listing]
+----
+virsh console <vm_name>
+----
+.. 等待以下提示：
++
+[listing]
+----
+Host name :
+----
+.. 键入主机名并选择 *Enter*。
+.. 等待以下提示：
++
+[listing]
+----
+Use DHCP to set networking information? [n]:
+----
+.. 键入 *n* 定义静态 IP 配置或 *y* 使用 DHCP，然后选择 *Enter*。
+.. 如果选择静态配置，请根据需要提供所有网络配置信息。
+
+
+
+
+--
+====
+
+
+== 步骤 4：Sign in 到 Deploy Web 界面
+
+Sign in 到 Web 用户界面，以确认部署实用程序可用并执行初始配置。
+
+.步骤
+. 使用 IP 地址或域名将浏览器指向 Deploy 实用程序：
++
+`\https://<ip_address>/`
+
+. 提供管理员 (admin) 帐户名和密码并 sign in。
+. 如果显示 *Welcome to ONTAP Select* 弹出窗口，请查看先决条件并选择 *OK* 以继续。
+. 如果这是首次 Sign in，并且您没有使用 vCenter 提供的向导安装 Deploy，请在出现提示时提供以下配置信息：
++
+** 管理员帐户的新密码（必填）
+** AutoSupport (可选)
+** 具有帐户凭据的 vCenter 服务器（可选）
+
+
+
+
+.下一步：
+link:task_deploy_cluster.html["部署 ONTAP Select 集群"]
+
+.相关信息
+* link:task_cli_signing_in.html["了解如何使用 SSH Sign in 到 Deploy"]
+* link:deploy-evaluation-ontap-select-ovf-template.html["了解如何部署 ONTAP Select 集群的 90 天评估实例"]
+

@@ -1,0 +1,72 @@
+---
+sidebar: sidebar 
+permalink: concept_api_operation.html 
+keywords: rest api, deploy rest api, rest, operation, basic operation 
+summary: 虽然 REST 建立了一套通用的技术和最佳实践，但每个 API 的详细信息可能因设计选择而异。在使用 API 之前，您应该了解 ONTAP Select Deploy API 的详细信息和操作特性。 
+---
+= ONTAP Select Deploy API 基本操作特性
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+虽然 REST 建立了一套通用的技术和最佳实践，但每个 API 的详细信息可能因设计选择而异。在使用 API 之前，您应该了解 ONTAP Select Deploy API 的详细信息和操作特性。
+
+
+
+== Hypervisor 主机与 ONTAP Select 节点
+
+_hypervisor host_ 是托管 ONTAP Select 虚拟机的核心硬件平台。当 ONTAP Select 虚拟机部署并在 hypervisor host 上处于活动状态时，该虚拟机被视为 _ONTAP Select 节点_。使用 Deploy REST API 版本 3，主机和节点对象是分开且不同的。这允许一对多关系，其中一个或多个 ONTAP Select 节点可以在同一 hypervisor host 上运行。
+
+
+
+== 对象标识符
+
+每个资源实例或对象在创建时都分配有唯一的标识符。这些标识符在 ONTAP Select Deploy 的特定实例中是全局唯一的。在发出创建新对象实例的 API 调用后，关联的 id 值将在 HTTP 响应的  `location` 标头中返回给调用方。您可以提取标识符，并在引用资源实例时将其用于后续调用。
+
+
+NOTE: 对象标识符的内容和内部结构可以随时更改。在引用关联对象时，仅应根据需要在适用的 API 调用中使用标识符。
+
+
+
+== 请求标识符
+
+每个成功的 API 请求都会分配一个唯一标识符。标识符在关联 HTTP 响应的 `request-id`标头中返回。您可以使用请求标识符来共同引用单个特定 API 请求-响应事务的活动。例如，您可以根据请求 ID 检索事务的所有事件消息。
+
+
+
+== 同步和异步调用
+
+服务器执行从客户端接收的 HTTP 请求有两种主要方式：
+
+* 同步 服务器立即执行请求，并以状态代码 200、201 或 204 响应。
+* 异步 服务器接受请求并以状态代码 202 响应。这表示服务器已接受客户端请求并启动后台任务以完成请求。最终的成功或失败无法立即获得，必须通过其他 API 调用来确定。
+
+
+
+
+== 确认长时间运行作业的完成
+
+一般来说，任何可能需要很长时间才能完成的操作都会在服务器上使用后台任务进行异步处理。使用 Deploy REST API，每个后台任务都由 Job 对象锚定，该对象跟踪任务并提供信息，例如当前状态。在创建后台任务后，在 HTTP 响应中返回 Job 对象，包括其唯一标识符。
+
+您可以直接查询 Job 对象，以确定关联 API 调用的成功或失败。有关其他信息，请参阅_使用 Job 对象的异步处理_。
+
+除了使用 Job 对象之外，还有其他方法可以确定请求的成功或失败，包括：
+
+* 事件消息 您可以使用与原始响应一起返回的请求 ID 检索与特定 API 调用关联的所有事件消息。事件消息通常包含成功或失败的指示，并且在调试错误条件时也很有用。
+* 资源状态或状态 一些资源维护一个状态或状态值，您可以查询该值以间接确定请求的成功或失败。
+
+
+
+
+== 安全性
+
+Deploy API 使用以下安全技术：
+
+* 传输层安全性 Deploy 服务器和客户端之间通过网络发送的所有流量都通过 TLS 加密。不支持在未加密的通道上使用 HTTP 协议。支持 TLS 1.2 版本。
+* HTTP 身份验证 基本身份验证用于每个 API 事务。每个请求都会添加一个 HTTP 标头，其中包括 base64 字符串中的用户名和密码。
+

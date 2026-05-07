@@ -1,0 +1,19 @@
+---
+sidebar: sidebar 
+permalink: concept_workflow_deploy.html 
+keywords: plan, planning, cluster deployment workflow, deployment workflow, workflow, deployment steps 
+summary: 有一个工作流程可用于部署 ONTAP Select 集群。 
+---
+= ONTAP Select 安装和部署工作流程
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以使用以下工作流程部署和管理 ONTAP Select 群集。
+
+image:deploy_workflow2.png["描述部署 ONTAP Select 集群所需的完整工作流程。"]

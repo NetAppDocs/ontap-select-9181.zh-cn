@@ -1,0 +1,79 @@
+---
+sidebar: sidebar 
+permalink: reference_host_modify_command.html 
+keywords: host modify, command, syntax, host management server 
+summary: 您可以使用 host modify 命令通过此 ONTAP Select Deploy 实例修改主机管理服务器。 
+---
+= 修改 ONTAP Select Deploy 的主机管理服务器
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以使用  `host modify` 命令通过此 ONTAP Select Deploy 实例修改主机管理服务器。
+
+
+
+== 语法
+
+`host modify [-help] [-foreground] -name _name_ -mgmt-server _management_server_ [-username _username_]`
+
+
+
+== 必需参数
+
+[cols="35,65"]
+|===
+
+
+| 参数 | 问题描述 
+
+
+ a| 
+`-name _name_`
+ a| 
+要修改的主机的 IP 地址或 FQDN。
+
+
+
+ a| 
+`-mgmt-server _management_server_`
+ a| 
+要设置为主机的主机管理服务器的 IP 地址或 FQDN。指定"-"（连字符）以从主机取消设置管理服务器。必须在使用  `credential add` 命令注册此主机之前添加此管理服务器的凭据。
+
+|===
+
+
+== 可选参数
+
+[cols="35,65"]
+|===
+
+
+| 参数 | 问题描述 
+
+
+ a| 
+`-help`
+ a| 
+显示帮助消息。
+
+
+
+ a| 
+`-foreground`
+ a| 
+此参数控制长时间运行的命令的行为。如果设置，命令将在前台运行，与操作相关的事件消息将在发生时显示。
+
+
+
+ a| 
+`-username _username_`
+ a| 
+有权访问此主机的用户名。这仅在主机不由管理服务器（即由 vCenter 管理的 ESXi 主机）管理时才需要。
+
+|===

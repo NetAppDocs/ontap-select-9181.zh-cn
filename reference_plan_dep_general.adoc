@@ -1,0 +1,133 @@
+---
+sidebar: sidebar 
+permalink: reference_plan_dep_general.html 
+keywords: plan, planning, ontap select deploy, general requirements 
+summary: 在计划安装 ONTAP Select Deploy 管理实用程序时，您应该考虑几个一般要求。 
+---
+= ONTAP Select Deploy 一般要求和规划
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+在计划安装 ONTAP Select Deploy 管理实用程序时，您应该考虑几个一般要求。
+
+
+
+== 将 Deploy 实用程序与 ONTAP Select 集群配对
+
+将 Deploy 实用程序的实例与 ONTAP Select 集群配对时，有几个选项。
+
+
+NOTE: 在所有部署方案中，单个 ONTAP Select 集群和集群中的节点只能由 Deploy 管理实用程序的一个实例管理。一个集群不能由 Deploy 实用程序的两个或多个不同实例管理。
+
+.每个 ONTAP Select 集群的实用程序的一个实例
+您可以使用 Deploy 实用程序的专用实例部署和管理每个 ONTAP Select 集群。通过这种一对一配置，每个实用程序到集群配对之间都有明确的分离。此配置使用较小的故障域提供高级别的隔离。
+
+.用于多个 ONTAP Select 集群的实用程序的一个实例
+您可以使用 Deploy 实用程序的单个实例来部署和管理组织中的多个 ONTAP Select 集群。使用此一对多配置，所有处理和配置数据都由 Deploy 实用程序的同一实例管理。
+
+
+NOTE: Deploy 实用程序的一个实例最多可以管理 400 个 ONTAP Select 节点或 100 个集群。
+
+
+
+== 与 KVM 环境相关的要求
+
+在 KVM 虚拟机监控程序环境中安装 Deploy 管理实用程序之前，应查看基本要求并准备部署。
+
+.部署的要求和限制
+在 KVM 环境中安装 ONTAP Select Deploy 实用程序时，您应该考虑以下几个要求和限制。
+
+.Linux KVM 主机服务器硬件要求
+Linux KVM 虚拟机监控程序主机必须满足几个最低资源要求。验证部署 ONTAP Select 的主机是否满足以下基本要求：
+
+* Linux 服务器：
++
+** 硬件和软件必须为 64 位
+** 服务器必须遵循为 ONTAP Select 节点定义的相同支持版本
+
+
+* 虚拟 CPU (2)
+* 虚拟内存 (4GB)
+* 存储 (40GB)
+* "已启用动态主机配置协议 (DHCP) (您也可以分配静态 IP 地址)"
+
+
+.网络连接
+验证 Deploy 虚拟机网络接口已配置并且可以连接到其管理的 ONTAP Select 主机。
+
+.支持 IP 版本 4
+ONTAP Select Deploy 仅支持 IP 版本 4 (IPv4)。不支持 IP 版本 6 (IPv6)。此限制通过以下方式影响 ONTAP Select：
+
+* 必须为 Deploy VM 的管理 LIF 分配 IPv4 地址。
+* Deploy 无法创建配置为在 ONTAP LIF 上使用 IPv6 的 ONTAP Select 节点。
+
+
+
+
+== 必需的配置信息
+
+作为部署计划的一部分，您应该在安装 ONTAP Select Deploy 管理实用程序之前确定所需的配置信息。
+
+.Deploy VM 的名称
+用于 VM 的名称。
+
+.Linux KVM 主机的名称
+安装了 Deploy 实用程序的 Linux KVM 主机。
+
+.存储池的名称
+保存 VM 文件的存储池（大约需要 40GB）。
+
+.VM 的网络
+Deploy VM 连接的网络。
+
+
+
+== 可选网络配置信息
+
+Deploy VM 默认使用 DHCP 进行配置。但是，如果需要，您可以手动配置 VM 的网络接口。
+
+.主机名
+主机的名称。
+
+.主机 IP 地址
+静态 IPv4 地址。
+
+.子网掩码
+子网掩码，基于 VM 所属的网络。
+
+.网关
+默认网关或路由器。
+
+.主 DNS 服务器
+主域名服务器。
+
+.辅助 DNS 服务器
+辅助域名服务器。
+
+.搜索域
+要使用的搜索域。
+
+
+
+== 使用凭据存储进行身份验证
+
+ONTAP Select Deploy 凭据存储是保存帐户信息的数据库。Deploy 使用帐户凭据来执行主机身份验证，这是群集创建和管理的一部分。您应该了解在规划 ONTAP Select 部署时如何使用凭据存储。
+
+
+NOTE: 帐户信息使用 AES 加密算法和 SHA-256 哈希算法安全地存储在数据库中。
+
+.凭据类型
+支持以下类型的凭据：
+
+* 主机 用于在将 ONTAP Select 节点直接部署到 VMware ESXi 的过程中对虚拟机监控程序主机进行身份验证
+* vCenter 用于在将 ONTAP Select 节点部署到 ESXi 的过程中对 vCenter 服务器进行身份验证，当主机由 VMware vCenter 管理时
+
+
+.访问
+凭据存储在内部访问，作为使用 Deploy 执行正常管理任务（例如添加虚拟机监控程序主机）的一部分。您还可以直接通过 Deploy Web 用户界面和 CLI 管理凭据存储。

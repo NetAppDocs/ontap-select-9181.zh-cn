@@ -1,0 +1,37 @@
+---
+sidebar: sidebar 
+permalink: concept_lic_cp_benefits.html 
+keywords: license, licensing, Capacity Pools, benefits 
+summary: 使用容量池许可模型而不是容量层许可模型有几个好处。 
+---
+= ONTAP Select Capacity Pools 许可的优势摘要
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+使用容量池许可模型而不是容量层许可模型有几个好处。
+
+
+
+== 更有效地利用存储容量
+
+使用 Capacity Tiers 许可时，您需要为每个节点分配固定的存储容量。任何未使用的空间都不能与其他节点共享，实际上是浪费了。使用 Capacity Pools 许可，每个节点仅根据数据聚合的大小消耗所需的容量。
+
+容量锚定在一个中央池中，可以在组织中的许多节点之间共享。
+
+
+
+== 显著减少管理开销，从而降低成本
+
+如果使用 Capacity Tier 许可证，则必须为每个节点获取并安装许可证。使用 Capacity Pools 时，每个共享池都有一个许可证。这可以大大降低管理开销并降低成本。
+
+
+
+== 改进了使用量指标
+
+Deploy Web 用户界面为容量池提供增强的使用信息。您可以快速确定容量池中使用和可用的存储量，哪些节点正在使用池中的存储，以及集群从哪些池分配容量。

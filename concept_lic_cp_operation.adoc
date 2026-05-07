@@ -1,0 +1,95 @@
+---
+sidebar: sidebar 
+permalink: concept_lic_cp_operation.html 
+keywords: license, licensing, Capacity Pools, operation details 
+summary: Capacity Pools 许可模式与 Capacity Tiers 模式不同。不是将存储容量专用于每个单独的节点，而是将存储容量分配给一个池，并在多个节点之间共享。已创建其他组件和流程以支持 Capacity Pools 模型。 
+---
+= ONTAP Select Capacity Pools 许可模式的运营详细信息
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Capacity Pools 许可模式与 Capacity Tiers 模式不同。不是将存储容量专用于每个单独的节点，而是将存储容量分配给一个池，并在多个节点之间共享。已创建其他组件和流程以支持 Capacity Pools 模型。
+
+
+
+== 许可证管理器
+
+License Manager 在 Deploy 管理实用程序的每个实例中作为单独的进程运行。LM 提供的一些功能包括：
+
+* 根据容量池许可证序列号为每个节点生成唯一的二十位序列号
+* 基于来自 ONTAP Select 节点的请求，从共享容量池创建容量租约
+* 通过 Deploy 用户界面报告池使用情况信息
+
+
+
+
+== 租赁特征
+
+在使用 Capacity Pool 许可证的节点上为每个数据聚合分配的存储必须具有相关的租约。节点请求存储租约，如果容量可用，License Manager 将以租约响应。每个租约都具有以下显式或隐式属性：
+
+* 许可证管理器
++
+每个 ONTAP Select 节点都与一个 License Manager 实例关联
+
+* 容量池
++
+每个 ONTAP Select 节点都与一个容量池关联
+
+* 存储分配
++
+在租赁中分配特定的容量值
+
+* 到期日期和时间
++
+租约的持续时间为 1 小时至 7 天，具体取决于用户配置。
+
+
+
+
+
+== 许可证锁定 ID
+
+许可证管理器的每个实例以及相应的每个 Deploy 实用程序实例都使用唯一的 128 位数字进行标识。此数字与九位数容量池许可证序列号相结合，以将池锁定到特定许可证管理器实例（实际上是 Deploy 实例）。作为生成 NetApp 许可证文件 (NLF) 的一部分，您必须在 NetApp 支持站点提供这两个值。
+
+您可以通过以下方式使用 Web 用户界面确定 Deploy 实例的许可证锁定 ID：
+
+* Getting Started 页面
++
+首次登录时，Deploy 会显示此页面。您也可以打开页面右上角的下拉框，然后选择*入门*以显示此页面。LLID 显示在添加许可证部分。
+
+* 选择页面顶部的 *Administration* 选项卡，然后选择 *Systems & AutoSupport*。
+
+
+
+
+== 基本租赁操作
+
+每次创建、扩展或更改数据聚合时，ONTAP Select 节点都必须定位或请求有效的容量租赁。您可以使用从之前的请求中获得的仍有效的租赁，也可以根据需要请求新的租赁。ONTAP Select 节点采取以下步骤来查找 Capacity Pool 租赁：
+
+. 如果现有租约位于节点上，则只要满足以下所有条件，就会使用该租约：
++
+** 租约尚未到期
+** 聚合的存储请求不超过租赁容量
+
+
+. 如果无法找到现有租约，节点将从 License Manager 请求新租约。
+
+
+
+
+== 将存储容量返回到容量池
+
+根据需要从容量池中分配存储容量，每个新请求都可以减少池中的可用存储。在几种情况下，将存储容量返回到池中，包括：
+
+* 数据聚合的租约过期且未由节点续订
+* 数据聚合已删除
+
+
+
+NOTE: 如果删除了 ONTAP Select 虚拟机，则任何活动租约都将一直有效，直到到期。发生这种情况时，容量将返回到池中。

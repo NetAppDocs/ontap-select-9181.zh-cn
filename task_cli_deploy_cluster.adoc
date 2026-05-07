@@ -1,0 +1,484 @@
+---
+sidebar: sidebar 
+permalink: task_cli_deploy_cluster.html 
+keywords: administer, administering, cli, create cluster, deploy cluster 
+summary: 您可以使用 ONTAP Select Deploy 管理实用程序提供的命令行界面创建单节点或多节点 ONTAP Select 集群。 
+---
+= 使用 CLI 部署 ONTAP Select 集群
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以使用 ONTAP Select Deploy 管理实用程序提供的命令行界面创建单节点或多节点 ONTAP Select 集群。
+
+
+
+== 步骤 1：准备部署
+
+在虚拟机监控程序上创建 ONTAP Select 集群之前，您应了解所需的准备工作。
+
+.步骤
+. 准备将存储连接到 ONTAP Select 节点
++
+[role="tabbed-block"]
+====
+.硬件 RAID
+--
+如果使用本地硬件 RAID 控制器，则必须在每个节点上为系统数据以及根和数据聚合至少创建一个数据存储区 (ESXi) 或一个link:kvm-host-configuration-and-preparation-checklist.html#step-2-create-a-storage-pool["存储池 (KVM)"]。作为配置 ONTAP Select 节点的一部分，必须附加存储池。
+
+--
+.软件 RAID
+--
+如果使用软件 RAID，则必须至少创建一个数据存储区 (ESXi) 或一个link:kvm-host-configuration-and-preparation-checklist.html#step-2-create-a-storage-pool["存储池 (KVM)"]为系统数据，并确保 SSD 驱动器可用于根和数据聚合。作为配置 ONTAP Select 节点的一部分，必须附加存储池和磁盘。
+
+--
+====
+. 可用的 ONTAP Select 版本
++
+Deploy 管理实用程序包含单个版本的 ONTAP Select。如果要使用早期版本的 ONTAP Select 部署集群，则必须首先link:task_cli_deploy_image_add.html["添加 ONTAP Select 图片"]到您的 Deploy 实例。
+
+. 为生产部署许可 ONTAP Select
++
+在生产环境中部署 ONTAP Select 群集之前，必须购买存储容量许可证并下载关联的许可证文件。您可以link:concept_lic_production.html["许可每个节点上的存储"]使用 _Capacity Tiers_ 模型或使用 _Capacity Pools_ 模型许可共享池。
+
+
+
+
+
+== 步骤 2：上传并注册许可证文件
+
+获取具有存储容量的许可证文件后，必须将包含该许可证的文件上传到 Deploy 虚拟机并进行注册。
+
+
+NOTE: 如果部署集群仅用于评估，则可以跳过此步骤。
+
+.开始之前
+您必须具有 admin 用户帐户的密码。
+
+.步骤
+. 在本地工作站上的命令外壳中，使用 sftp 实用程序将许可证文件上传到 Deploy 虚拟机。
++
+输出示例
+
++
+....
+sftp admin@10.234.81.101 (provide password when prompted)
+put NLF-320000nnn.txt
+exit
+....
+. 使用 SSH 通过管理员帐户 Sign in 到 Deploy 实用程序 CLI。
+. 注册许可证：
++
+[source, cli]
+----
+license add -file-name <file_name>
+----
++
+出现提示时，请提供管理员帐户密码。
+
+. 在系统中显示许可证，以确认许可证已正确添加：
++
+[source, cli]
+----
+license show
+----
+
+
+
+
+== 步骤 3：添加虚拟机监控程序主机
+
+必须注册将运行 ONTAP Select 节点的每个虚拟机监控程序主机。
+
+[role="tabbed-block"]
+====
+.KVM
+--
+您必须注册 ONTAP Select 节点将运行的虚拟机监控程序主机。作为其中的一部分，Deploy 管理实用程序将对 KVM 主机进行身份验证。
+
+.关于此任务
+如果需要多个虚拟机监控程序主机，请使用此过程添加每个主机。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 注册主机：
++
+[source, cli]
+----
+host register -name <FQDN|IP> -hypervisor-type KVM -username <KVM_username>
+----
++
+输出示例
+
++
+[listing]
+----
+host register -name 10.234.81.14 -hypervisor-type KVM -username root
+----
++
+出现提示时，请提供主机帐户的密码。
+
+. 显示主机的状态并确认其已通过身份验证：
++
+[source, cli]
+----
+host show -name <FQDN|IP> -detailed
+----
++
+输出示例
+
++
+[listing]
+----
+host show -name 10.234.81.14 -detailed
+----
+
+
+--
+.ESXi
+--
+作为其中的一部分，Deploy 管理实用程序向管理主机的 vCenter 服务器或直接向 ESXi 独立主机进行身份验证。
+
+.关于此任务
+在注册由 vCenter 管理的主机之前，必须为该 vCenter 服务器添加管理服务器帐户。如果主机不是由 vCenter 管理，您可以在注册主机时提供主机凭据。您应该按照此步骤添加每个主机。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 如果主机由 vCenter 服务器管理，请添加 vCenter 账号凭据：
++
+[source, cli]
+----
+credential add -hostname <FQDN|IP> -type vcenter -username <vcenter_username>
+----
++
+输出示例
+
++
+....
+credential add -hostname vc.select.company-demo.com -type vcenter -username administrator@vsphere.local
+....
+. 注册主机：
++
+** 注册不由 vCenter 管理的独立主机：
++
+[source, cli]
+----
+host register -name <FQDN|IP> -hypervisor-type ESX -username <esx_username>
+----
+** 注册由 vCenter 管理的主机：
++
+[source, cli]
+----
+host register -name <FQDN|IP> -hypervisor-type ESX -mgmt-server <FQDN|IP>
+----
++
+输出示例
+
++
+....
+host register -name 10.234.81.14 -hypervisor-type ESX -mgmt-server vc.select.company-demo.com
+....
+
+
+. 显示主机的状态，并确认已通过身份验证。
++
+[source, cli]
+----
+host show -name <FQDN|IP> -detailed
+----
++
+输出示例
+
++
+....
+host show -name 10.234.81.14 -detailed
+....
+
+
+--
+====
+
+
+== 步骤 4：创建并配置 ONTAP Select 集群
+
+您必须创建并配置 ONTAP Select 集群。配置集群后，您可以配置单个节点。
+
+.开始之前
+确定集群包含多少个节点，并具有关联的配置信息。
+
+.关于此任务
+在您创建 ONTAP Select 群集时，Deploy 实用程序会根据您提供的群集名称和节点计数自动生成节点名称。Deploy 还会生成唯一的节点标识符。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 创建集群：
++
+[source, cli]
+----
+cluster create -name <cluster_name> -node-count <count>
+----
++
+输出示例
+
++
+....
+cluster create -name test-cluster -node-count 1
+....
+. 配置集群：
++
+[source, cli]
+----
+cluster modify -name <cluster_name> -mgmt-ip <IP_address> -netmask <netmask> -gateway <IP_address> -dns-servers <FQDN|IP>_LIST -dns-domains <domain_list>
+----
++
+输出示例
+
++
+....
+cluster modify -name test-cluster -mgmt-ip 10.234.81.20 -netmask 255.255.255.192
+-gateway 10.234.81.1 -dns-servers 10.221.220.10 -dnsdomains select.company-demo.com
+....
+. 显示集群的配置和状态：
++
+[source, cli]
+----
+cluster show -name <cluster_name> -detailed
+----
+
+
+
+
+== 第 5 步：配置 ONTAP Select 节点
+
+您必须配置 ONTAP Select 集群中的每个节点。
+
+.开始之前
+* 验证是否具有此节点的配置信息。
+* 验证是否已在 Deploy 实用程序中上传和安装 Capacity Tier 或 Capacity Pool 许可证文件。
+
+
+.关于此任务
+您应该使用此过程来配置每个节点。在此示例中，将对节点应用 Capacity Tier 许可证。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 确定分配给集群节点的名称：
++
+[source, cli]
+----
+node show -cluster-name <cluster_name>
+----
+. 选择节点并执行基本配置：
++
+[source, cli]
+----
+node modify -name <node_name> -cluster-name <cluster_name> -host-name <FQDN|IP> -license-serial-number <number> -instance-type TYPE -passthrough-disks false
+----
++
+输出示例
+
++
+....
+node modify -name test-cluster-01 -cluster-name test-cluster -host-name 10.234.81.14
+-license-serial-number 320000nnnn -instance-type small -passthrough-disks false
+....
++
+节点的 RAID 配置使用 _passthrough-disks_ 参数指示。如果使用本地硬件 RAID 控制器，则此值必须为 "false"。如果使用软件 RAID，则此值必须为 "true"。
+
++
+容量层许可证用于 ONTAP Select 节点。
+
+. 显示主机上可用的网络配置：
++
+[source, cli]
+----
+host network show -host-name <FQDN|IP> -detailed
+----
++
+输出示例
+
++
+....
+host network show -host-name 10.234.81.14 -detailed
+....
+. 执行节点的网络配置：
++
+[role="tabbed-block"]
+====
+.ESXi 主机
+--
+[source, cli]
+----
+node modify -name <node_name> -cluster-name <cluster_name> -mgmt-ip IP -management-networks <network_name> -data-networks <network_name> -internal-network <network_name>
+----
+--
+.KVM 主机
+--
+[source, cli]
+----
+node modify -name <node_name> -cluster-name <cluster_name> -mgmt-ip IP -management-vlans <vlan_id> -data-vlans <vlan_id> -internal-vlans <vlad_id>
+----
+--
+====
++
+部署单节点集群时，不需要内部网络，应删除"-internal-network"。
+
++
+输出示例
+
++
+....
+node modify -name test-cluster-01 -cluster-name test-cluster -mgmt-ip 10.234.81.21
+-management-networks sDOT_Network -data-networks sDOT_Network
+....
+. 显示节点的配置：
++
+[source, cli]
+----
+node show -name <node_name> -cluster-name <cluster_name> -detailed
+----
++
+输出示例
+
++
+....
+node show -name test-cluster-01 -cluster-name test-cluster -detailed
+....
+
+
+
+
+== 第 6 步：将存储附加到 ONTAP Select 节点
+
+配置 ONTAP Select 集群中每个节点使用的存储。必须始终为每个节点分配至少一个存储池。使用软件 RAID 时，每个节点还必须分配至少一个磁盘驱动器。
+
+.开始之前
+使用 VMware vSphere 创建存储池。如果使用软件 RAID，还需要至少一个可用的磁盘驱动器。
+
+.关于此任务
+使用本地硬件 RAID 控制器时，需要执行步骤 1 至 4。使用软件 RAID 时，需要执行步骤 1 至 6。
+
+.步骤
+. 使用具有管理员帐户凭据的 SSH Sign in 到 Deploy 实用程序 CLI。
+. 显示主机上可用的存储池：
++
+[source, cli]
+----
+host storage pool show -host-name <FQDN|IP>
+----
++
+输出示例
+
++
+[listing]
+----
+host storage pool show -host-name 10.234.81.14
+----
++
+您还可以通过 VMware vSphere 获取可用的存储池。
+
+. 将可用存储池附加到 ONTAP Select 节点：
++
+[source, cli]
+----
+node storage pool attach -name <pool_name> -cluster-name <cluster_name> -node-name <node_name> -capacity-limit <limit>
+----
++
+如果包含 "-capacity-limit" 参数，请将值指定为 GB 或 TB。
+
++
+输出示例
+
++
+[listing]
+----
+node storage pool attach -name sDOT-02 -cluster-name test-cluster -
+node-name test-cluster-01 -capacity-limit 500GB
+----
+. 显示附加到节点的存储池：
++
+[source, cli]
+----
+node storage pool show -cluster-name <cluster_name> -node-name <node_name>
+----
++
+输出示例
+
++
+[listing]
+----
+node storage pool show -cluster-name test-cluster -node-name testcluster-01
+----
+. 如果使用软件 RAID，请连接可用的驱动器：
++
+[source, cli]
+----
+node storage disk attach -node-name <node_name> -cluster-name <cluster_name> -disks <list_of_drives>
+----
++
+输出示例
+
++
+[listing]
+----
+node storage disk attach -node-name NVME_SN-01 -cluster-name NVME_SN -disks 0000:66:00.0 0000:67:00.0 0000:68:00.0
+----
+. 如果使用软件 RAID，则显示连接到节点的磁盘：
++
+[source, cli]
+----
+node storage disk show -node-name <node_name> -cluster-name <cluster_name>`
+----
++
+输出示例
+
++
+[listing]
+----
+node storage disk show -node-name sdot-smicro-009a -cluster-name NVME
+----
+
+
+
+
+== 第七步：部署 ONTAP Select 集群
+
+配置集群和节点后，即可部署集群。
+
+.开始之前
+使用 link:task_adm_connectivity.html["Web UI"] 或 link:task_cli_connectivity.html["命令行界面"] 运行网络连接检查器，以确认内部网络上的集群节点之间的连接。
+
+.步骤
+. 使用管理员帐户通过 SSH Sign in 到 Deploy 实用程序 CLI。
+. 部署 ONTAP Select 集群：
++
+[source, cli]
+----
+cluster deploy -name <cluster_name>
+----
++
+输出示例
+
++
+[listing]
+----
+cluster deploy -name test-cluster
+----
++
+在提示时提供要用于 ONTAP 管理员帐户的密码。
+
+. 显示集群的状态，以确定集群何时已成功部署：
++
+[source, cli]
+----
+cluster show -name <cluster_name>
+----
+
+
+.下一步是什么？
+link:task_cli_clusters.html["备份 ONTAP Select Deploy 配置数据"]。

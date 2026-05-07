@@ -1,0 +1,251 @@
+---
+sidebar: sidebar 
+permalink: concept_stor_swraid_local.html 
+keywords: ontap select, software raid, local attached storage, protection 
+summary: 软件 RAID 是在 ONTAP 软件堆栈中实现的 RAID 抽象层。它提供与传统 ONTAP 平台（如 FAS）中 RAID 层相同的功能。RAID 层执行驱动器奇偶校验计算，并提供针对 ONTAP Select 节点内单个驱动器故障的保护。 
+---
+= ONTAP Select 软件 RAID 配置服务，适用于本地连接存储
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+软件 RAID 是在 ONTAP 软件堆栈中实现的 RAID 抽象层。它提供与传统 ONTAP 平台（如 FAS）中 RAID 层相同的功能。RAID 层执行驱动器奇偶校验计算，并提供针对 ONTAP Select 节点内单个驱动器故障的保护。
+
+与硬件 RAID 配置无关，ONTAP Select 还提供软件 RAID 选项。在某些环境中，硬件 RAID 控制器可能不可用或不受欢迎，例如当 ONTAP Select 部署在小型商品硬件上时。软件 RAID 扩展了可用的部署选项，以包括此类环境。要在您的环境中启用软件 RAID，请记住以下几点：
+
+* 它可与 Premium 或 Premium XL 许可证一起使用。
+* 它仅支持用于 ONTAP 根磁盘和数据磁盘的 SSD 或 NVMe（需要 Premium XL 许可证）驱动器。
+* ONTAP Select VM 启动分区需要一个单独的系统磁盘。
++
+** 选择单独的磁盘（SSD 或 NVMe 驱动器），为系统磁盘（NVRAM、Boot/CF 卡、Coredump 和多节点设置中的 Mediator）创建数据存储区。
+
+
+
+
+[NOTE]
+====
+* 术语服务磁盘和系统磁盘可互换使用。
++
+** 服务磁盘是 ONTAP Select VM 中使用的虚拟磁盘 (VMDK)，用于为集群、引导等各种项目提供服务。
+** 服务磁盘物理上位于单个物理磁盘上（从主机视角来看，统称为服务/系统物理磁盘）。该物理磁盘必须包含一个 DAS 数据存储。ONTAP Deploy 在集群部署期间为 ONTAP Select 虚拟机创建这些服务磁盘。
+
+
+* 无法跨多个数据存储区或多个物理驱动器进一步分离 ONTAP Select 系统磁盘。
+* 硬件 RAID 未被弃用。
+
+
+====
+
+
+== 适用于本地连接存储的软件 RAID 配置
+
+当使用软件 RAID 时，没有硬件 RAID 控制器是理想的，但是，如果系统确实具有现有的 RAID 控制器，则必须遵守以下要求：
+
+* 您必须禁用硬件 RAID 控制器，以便磁盘可以直接呈现给系统（JBOD）。您通常可以在 RAID 控制器 BIOS 中进行此更改。
+* 或者硬件 RAID 控制器应处于 SAS HBA 模式。例如，某些 BIOS 配置除了 RAID 之外还允许 "AHCI" 模式，您可以选择启用 JBOD 模式。这启用了直通，以便可以在主机上按原样看到物理驱动器。
+
+
+根据控制器支持的最大驱动器数量，可能需要额外的控制器。使用 SAS HBA 模式时，请确保以最低 6Gbps 的速度支持 I/O 控制器（SAS HBA）。但是，NetApp 建议使用 12Gbps 的速度。
+
+不支持其他硬件 RAID 控制器模式或配置。例如，一些控制器允许 RAID 0 支持，这可以人为地使磁盘通过，但其影响可能是不可取的。支持的物理磁盘大小（仅限 SSD）介于 200GB 和 16TB 之间。
+
+
+NOTE: 管理员需要跟踪 ONTAP Select VM 正在使用哪些驱动器，并防止在主机上无意中使用这些驱动器。
+
+
+
+== ONTAP Select 虚拟磁盘和物理磁盘
+
+对于带有硬件 RAID 控制器的配置，物理磁盘冗余由 RAID 控制器提供。ONTAP Select 显示了一个或多个 VMDK，ONTAP 管理员可以从中配置数据聚合。这些 VMDK 以 RAID 0 格式进行条带化，因为使用 ONTAP 软件 RAID 是冗余的、低效的，并且由于在硬件级别提供的弹性而无效。此外，用于系统磁盘的 VMDK 与用于存储用户数据的 VMDK 位于同一个数据存储区中。
+
+使用软件 RAID 时， ONTAP Deploy 将为 ONTAP Select 提供一组 VMDK 和物理磁盘原始设备映射 [RDM] （用于 SSD ）以及直通或 DirectPath IO 设备（用于 NVMe ）。
+
+下图更详细地显示了这种关系，突出了用于 ONTAP Select VM 内部的虚拟化磁盘与用于存储用户数据的物理磁盘之间的差异。
+
+*ONTAP Select 软件 RAID：使用虚拟化磁盘和 RDM*
+
+image:ST_18.PNG["ONTAP Select 软件 RAID：使用虚拟化磁盘和 RDM"]
+
+系统磁盘 (VMDK) 驻留在同一个数据存储区和同一个物理磁盘上。虚拟 NVRAM 磁盘需要快速耐用的介质。因此，仅支持 NVMe 和 SSD 类型的数据存储。
+
+image:ST_19.PNG["ONTAP Select 软件 RAID 与 NVMe 驱动器：使用虚拟化磁盘和直通设备"]
+
+系统磁盘（VMDK）位于同一数据存储区和同一物理磁盘上。虚拟 NVRAM 磁盘需要快速耐用的介质。因此，仅支持 NVMe 和 SSD 类型的数据存储。将 NVMe 驱动器用于数据时，出于性能原因，系统磁盘也应为 NVMe 设备。对于全 NVMe 配置的系统磁盘，INTEL Optane 卡是一个很好的选择。
+
+
+NOTE: 在当前版本中，无法跨多个数据存储或多个物理驱动器进一步分离 ONTAP Select 系统磁盘。
+
+每个数据磁盘分为三个部分：一个小根分区（条带）和两个大小相等的分区，以创建在 ONTAP Select VM 中看到的两个数据磁盘。分区使用 Root Data Data (RD2) 架构，如下图所示，适用于单个节点群集和高可用性 (HA) 对中的节点。
+
+`P` 表示奇偶校验驱动器， `DP` 表示双奇偶校验驱动器， `S` 表示备用驱动器。
+
+*单节点集群的 RDD 磁盘分区*
+
+image:ST_19.jpg["单节点集群的 RDD 磁盘分区"]
+
+*多节点集群（HA 对）的 RDD 磁盘分区*
+
+image:ST_20.jpg["多节点集群 (HA 对) 的 RDD 磁盘分区"]
+
+ONTAP 软件 RAID 支持以下 RAID 类型：RAID 4、RAID-DP 和 RAID-TEC。这些是 FAS 和 AFF 平台使用的相同 RAID 结构。对于根配置，ONTAP Select 仅支持 RAID 4 和 RAID-DP。当对数据聚合使用 RAID-TEC 时，整体保护为 RAID-DP。ONTAP Select HA 使用无共享架构，将每个节点的配置复制到其他节点。这意味着每个节点必须存储其根分区和对等节点根分区的副本。数据磁盘具有单个根分区。这意味着数据磁盘的最小数量取决于 ONTAP Select 节点是否是 HA 对的一部分。
+
+对于单节点集群，所有数据分区都用于存储本地（活动）数据。对于属于 HA 对的节点，一个数据分区用于存储该节点的本地（活动）数据，第二个数据分区用于镜像来自 HA 对等的活动数据。
+
+
+
+== 直通（DirectPath IO）设备与原始设备映射（RDM）
+
+ESXi 和 KVM 虚拟机管理程序不支持 NVMe 磁盘作为原始设备映射 (RDM)。要允许 ONTAP Select 直接控制 NVMe 磁盘，必须将这些驱动器配置为 ESXi 或 KVM 内的直通设备。将 NVMe 设备配置为直通设备时，需要服务器 BIOS 的支持，并且可能需要重新启动主机。此外，每个主机可以分配的直通设备数量也有限制，这可能因平台而异。但是，ONTAP Deploy 将此限制为每个 ONTAP Select 节点 14 个 NVMe 设备。这意味着 NVMe 配置以牺牲总容量为代价，提供非常高的 IOPS 密度 (IOPS/TB)。或者，如果您需要具有更大存储容量的高性能配置，建议配置为大型 ONTAP Select VM 大小、用于系统磁盘的 INTEL Optane 卡以及用于数据存储的标称数量的 SSD 驱动器。
+
+
+NOTE: 要充分利用 NVMe 性能，请考虑较大的 ONTAP Select VM 大小。
+
+直通设备和 RDM 之间还有一个额外的区别。RDM 可以映射到正在运行的 VM。直通设备需要重新启动 VM。这意味着任何 NVMe 驱动器更换或容量扩展（驱动器添加）过程都需要重新启动 ONTAP Select VM。驱动器更换和容量扩展（驱动器添加）操作由 ONTAP Deploy 中的工作流驱动。ONTAP Deploy 管理单节点集群的 ONTAP Select 重新启动和 HA 对的故障转移/故障回复。但是，请注意使用 SSD 数据驱动器（不需要 ONTAP Select 重新启动/故障转移）和使用 NVMe 数据驱动器（需要 ONTAP Select 重新启动/故障转移）之间的区别。
+
+
+
+== 物理和虚拟磁盘配置
+
+为了提供更流畅的用户体验，ONTAP Deploy 会自动从指定的数据存储区（物理系统磁盘）配置系统（虚拟）磁盘，并将它们连接到 ONTAP Select VM。此操作在初始设置期间会自动执行，以便 ONTAP Select VM 可以启动。对 RDM 进行分区，并自动生成根聚合。如果 ONTAP Select 节点是 HA 对的一部分，则会自动将数据分区分配给本地存储池和镜像存储池。此分配在群集创建操作和存储添加操作期间会自动执行。
+
+由于 ONTAP Select 虚拟机上的数据磁盘与底层物理磁盘相关联，因此创建具有更多物理磁盘的配置会影响性能。
+
+
+NOTE: 根聚合的 RAID 组类型取决于可用磁盘的数量。ONTAP Deploy 选择适当的 RAID 组类型。如果有足够的磁盘分配给节点，则使用 RAID-DP，否则创建 RAID-4 根聚合。
+
+使用软件 RAID 向 ONTAP Select VM 添加容量时，管理员必须考虑物理驱动器大小和所需驱动器的数量。有关详细信息，请参见 link:concept_stor_capacity_inc.html["增加存储容量"]。
+
+与 FAS 和 AFF 系统类似，您只能将容量相同或更大的驱动器添加到现有的 RAID 组。容量更大的驱动器会调整为合适的大小。如果您要创建新的 RAID 组，则新的 RAID 组大小应与现有的 RAID 组大小相匹配，以确保整体聚合性能不会恶化。
+
+
+
+== 将 ONTAP Select 磁盘与相应的 ESXi 或 KVM 磁盘匹配
+
+ONTAP Select 磁盘通常标记为 NET x.y。您可以使用以下 ONTAP 命令获取磁盘 UUID：
+
+[source, cli]
+----
+<system name>::> disk show NET-1.1
+Disk: NET-1.1
+Model: Micron_5100_MTFD
+Serial Number: 1723175C0B5E
+UID: *500A0751:175C0B5E*:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000
+BPS: 512
+Physical Size: 894.3GB
+Position: shared
+Checksum Compatibility: advanced_zoned
+Aggregate: -
+Plex: -This UID can be matched with the device UID displayed in the ‘storage devices’ tab for the ESX host
+----
+image:ST_21.jpg["将 ONTAP Select 磁盘与相应的 ESXi 磁盘匹配"]
+
+在 ESXi 或 KVM shell 中，您可以输入以下命令来闪烁给定物理磁盘（由其 naa.unique-id 标识）的 LED。
+
+[role="tabbed-block"]
+====
+.ESXi
+--
+[source, cli]
+----
+esxcli storage core device set -d <naa_id> -l=locator -L=<seconds>
+----
+--
+.KVM
+--
+[source, cli]
+----
+cat /sys/block/<block_device_id>/device/wwid
+----
+--
+====
+
+
+== 使用软件 RAID 时出现多个驱动器故障
+
+系统可能会遇到多个驱动器同时处于故障状态的情况。系统的行为取决于聚合 RAID 保护和故障驱动器的数量。
+
+RAID4 聚合可以在一个磁盘故障中存活，RAID-DP 聚合可以在两个磁盘故障中存活，RAID-TEC 聚合可以在三个磁盘故障中存活。
+
+如果故障磁盘数小于 RAID 类型支持的最大故障数，且备用磁盘可用，则自动启动重建过程。如果备用磁盘不可用，则聚合以降级状态提供数据，直至添加备用磁盘。
+
+如果故障磁盘数大于 RAID 类型支持的最大故障数，则本地丛标记为故障，聚合状态降级。从驻留在 HA 合作伙伴上的第二个丛提供数据。这意味着节点 1 的任何 I/O 请求都通过集群互连端口 e0e（iSCSI）发送到物理上位于节点 2 上的磁盘。如果第二个丛也失败，则聚合将被标记为失败，并且数据不可用。
+
+必须删除并重新创建失败的丛，才能恢复正确的数据镜像。请注意，导致数据聚合降级的多磁盘故障也会导致根聚合降级。ONTAP Select 使用根数据数据 (RDD) 分区架构将每个物理驱动器拆分为一个根分区和两个数据分区。因此，丢失一个或多个磁盘可能会影响多个聚合，包括本地根或远程根聚合的副本，以及本地数据聚合和远程数据聚合的副本。
+
+以下输出示例中删除并重新创建了失败的 plex：
+
+[listing]
+----
+C3111E67::> storage aggregate plex delete -aggregate aggr1 -plex plex1
+Warning: Deleting plex "plex1" of mirrored aggregate "aggr1" in a non-shared HA configuration will disable its synchronous mirror protection and disable
+         negotiated takeover of node "sti-rx2540-335a" when aggregate "aggr1" is online.
+Do you want to continue? {y|n}: y
+[Job 78] Job succeeded: DONE
+
+C3111E67::> storage aggregate mirror -aggregate aggr1
+Info: Disks would be added to aggregate "aggr1" on node "sti-rx2540-335a" in the following manner:
+      Second Plex
+        RAID Group rg0, 5 disks (advanced_zoned checksum, raid_dp)
+                                                            Usable Physical
+          Position   Disk                      Type           Size     Size
+          ---------- ------------------------- ---------- -------- --------
+          shared     NET-3.2                   SSD               -        -
+          shared     NET-3.3                   SSD               -        -
+          shared     NET-3.4                   SSD         208.4GB  208.4GB
+          shared     NET-3.5                   SSD         208.4GB  208.4GB
+          shared     NET-3.12                  SSD         208.4GB  208.4GB
+
+      Aggregate capacity available for volume use would be 526.1GB.
+      625.2GB would be used from capacity license.
+Do you want to continue? {y|n}: y
+
+C3111E67::> storage aggregate show-status -aggregate aggr1
+Owner Node: sti-rx2540-335a
+ Aggregate: aggr1 (online, raid_dp, mirrored) (advanced_zoned checksums)
+  Plex: /aggr1/plex0 (online, normal, active, pool0)
+   RAID Group /aggr1/plex0/rg0 (normal, advanced_zoned checksums)
+                                                              Usable Physical
+     Position Disk                        Pool Type     RPM     Size     Size Status
+     -------- --------------------------- ---- ----- ------ -------- -------- ----------
+     shared   NET-1.1                      0   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-1.2                      0   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-1.3                      0   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-1.10                     0   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-1.11                     0   SSD        -  205.1GB  447.1GB (normal)
+  Plex: /aggr1/plex3 (online, normal, active, pool1)
+   RAID Group /aggr1/plex3/rg0 (normal, advanced_zoned checksums)
+                                                              Usable Physical
+     Position Disk                        Pool Type     RPM     Size     Size Status
+     -------- --------------------------- ---- ----- ------ -------- -------- ----------
+     shared   NET-3.2                      1   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-3.3                      1   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-3.4                      1   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-3.5                      1   SSD        -  205.1GB  447.1GB (normal)
+     shared   NET-3.12                     1   SSD        -  205.1GB  447.1GB (normal)
+10 entries were displayed..
+----
+[NOTE]
+====
+要测试或模拟一个或多个驱动器故障，请使用  `storage disk fail -disk NET-x.y -immediate` 命令。如果系统中有备件，聚合体将开始重建。您可以使用命令  `storage aggregate show` 检查重建的状态。您可以使用 ONTAP Deploy 删除模拟故障驱动器。请注意，ONTAP 已将驱动器标记为  `Broken`。驱动器实际上并未损坏，可以使用 ONTAP Deploy 重新添加。要擦除"损坏"标签，请在 ONTAP Select CLI 中输入以下命令：
+
+[listing]
+----
+set advanced
+disk unfail -disk NET-x.y -spare true
+disk show -broken
+----
+最后一个命令的输出应为空。
+
+====
+
+
+== 虚拟化 NVRAM
+
+NetApp FAS 系统传统上配备物理 NVRAM PCI 卡。此卡是包含非易失性闪存的高性能卡，可显著提高写入性能。它通过授予 ONTAP 立即确认传入写入回客户端的能力来实现这一点。它还可以在称为 destaging 的过程中安排将修改的数据块移动回较慢的存储介质。
+
+商品系统通常不配备此类设备。因此，NVRAM 卡的功能已被虚拟化并放置在 ONTAP Select 系统引导磁盘上的分区中。正是出于这个原因，实例的系统虚拟磁盘的放置非常重要。

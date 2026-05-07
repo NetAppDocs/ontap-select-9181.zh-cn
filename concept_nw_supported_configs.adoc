@@ -1,0 +1,45 @@
+---
+sidebar: sidebar 
+permalink: concept_nw_supported_configs.html 
+keywords: ontap select, supported network configurations 
+summary: 选择最佳硬件并配置网络，以优化性能和故障恢复能力。 
+---
+= 支持的 ONTAP Select 网络配置
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+选择最佳硬件并配置网络，以优化性能和故障恢复能力。
+
+服务器供应商了解客户有不同的需求，选择至关重要。因此，在购买物理服务器时，在做出网络连接决策时有许多选项可供选择。大多数商品系统附带各种 NIC 选项，提供单端口和多端口选项，具有不同的速度和吞吐量排列。这包括支持 VMware ESX 的 25Gb/s 和 40Gb/s NIC 适配器。
+
+由于 ONTAP Select VM 的性能与底层硬件的特性直接相关，通过选择更高速的 NIC 来提高 VM 的吞吐量可以实现更高性能的集群和更好的整体用户体验。可以使用四个 10Gb NIC 或两个更高速的 NIC（25/40 Gb/s）来实现高性能网络布局。还支持许多其他配置。对于双节点集群，支持 4 x 1Gb 端口或 1 x 10Gb 端口。对于单节点集群，支持 2 x 1Gb 端口。
+
+.网络最低配置和建议配置
+根据集群大小，支持多种以太网配置。
+
+[cols="30,35,35"]
+|===
+| 集群大小 | 最低要求 | 建议 
+
+
+| 单节点集群 | 2 x 1GbE | 2 x 10GbE 
+
+
+| 双节点集群或 MetroCluster SDS | 4 x 1GbE 或 1 x 10GbE | 2 x 10GbE 
+
+
+| 四个、六个、八个、十个或十二个节点集群 | 2 x 10GbE | 4 x 10GbE 或 2 x 25/40GbE 
+|===
+
+NOTE: 不支持在运行的群集上单链路拓扑和多链路拓扑之间进行转换，因为可能需要在每个拓扑所需的不同 NIC 组配置之间进行转换。
+
+.使用多个物理交换机的网络配置
+当有足够的硬件可用时，由于增加了对物理交换机故障的保护，NetApp 建议使用下图所示的多交换机配置。
+
+image:BP_02.jpg["使用多个物理交换机的网络配置"]

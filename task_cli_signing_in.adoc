@@ -1,0 +1,35 @@
+---
+sidebar: sidebar 
+permalink: task_cli_signing_in.html 
+keywords: administer, administering, cli, deploy, sign in, signing in 
+summary: 您需要使用 SSH Sign in 到 Deploy 管理 shell。Sign in 后，您可以发出 CLI 命令以创建 ONTAP Select 集群并执行相关管理过程。 
+---
+= 使用 SSH Sign in 到 ONTAP Select Deploy
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您需要使用 SSH Sign in 到 Deploy 管理 shell。Sign in 后，您可以发出 CLI 命令以创建 ONTAP Select 集群并执行相关管理过程。
+
+.开始之前
+您必须具有 Deploy 管理员（admin）帐户的当前密码。如果您是首次登录并使用 vCenter 安装 Deploy 虚拟机，则应使用在安装过程中设置的密码。
+
+.步骤
+. 使用 Deploy 虚拟机的管理员帐户和管理 IP 地址 Sign in；例如：
++
+`ssh admin@<10.235.82.22>`
+
+. 如果这是首次 Sign in，并且您没有使用 vCenter 提供的向导安装 Deploy，请在出现提示时提供以下配置信息：
++
+** 管理员帐户的新密码（必填）
+** 公司名称（必填）
+** 代理 URL（可选）
+
+
+. 键入 *?* 并按 *Enter* 可显示可用的管理 shell 命令列表。
+

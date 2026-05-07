@@ -1,0 +1,40 @@
+---
+sidebar: sidebar 
+permalink: task_lic_acquire_cp.html 
+keywords: license, licensing, acquire, Capacity Pools 
+summary: 您必须为 ONTAP Select 节点使用的每个容量池获取许可证文件。许可证文件定义了池的存储容量和过期时间。它通过 NetApp 分配的唯一许可证序列号和与 Deploy 实例关联的许可证锁定 ID 的组合锁定到许可证管理器。 
+---
+= 获取 ONTAP Select Capacity Pool 许可证
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您必须为 ONTAP Select 节点使用的每个容量池获取许可证文件。许可证文件定义了池的存储容量和过期时间。它通过 NetApp 分配的唯一许可证序列号和与 Deploy 实例关联的许可证锁定 ID 的组合锁定到许可证管理器。
+
+.开始之前
+* 您必须拥有由 NetApp 分配给容量池的九位许可证序列号。
+* 在获取许可证文件之前，您应至少在采购订单的发货日期后等待 24 小时。
+* 您已审阅 link:sizing-capacity-pool-license.html["调整 Capacity Pools 许可证大小的注意事项"]。
+
+
+.关于此任务
+必须为 ONTAP Select 节点使用的每个容量池执行此任务。
+
+.步骤
+. 登录到 link:https://mysupport.netapp.com/site/["NetApp 支持站点"^]。
+. 选择 *Systems* > *Software Licenses*。
+. 为容量池键入许可证序列号，然后选择 *Go!*。
+. 在许可证详细信息页面上，导航到 *Product Details* 列。
+. 在相应的行中选择 *获取 NetApp 许可证文件*。
+. 键入 ONTAP Select Deploy 实例的许可证锁定 ID，然后选择 *Submit*。
+. 选择适当的交付方式，然后选择 *Submit*。
+. 在派送确认窗口中选择 *确定*。
+
+
+.完成后
+您必须先将许可证文件上传到 Deploy 管理实用程序，然后 ONTAP Select 节点才能使用 Capacity Pool。

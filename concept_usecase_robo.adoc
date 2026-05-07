@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: concept_usecase_robo.html 
+keywords: ontap select, ROBO, remote office/branch office 
+summary: '在远程办公室/分支机构 (ROBO) 情况下部署 ONTAP Select，以支持较小的办公室，同时保持集中管理和控制。' 
+---
+= 在远程和分支机构使用 ONTAP Select
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+在远程办公室/分支机构 (ROBO) 情况下部署 ONTAP Select，以支持较小的办公室，同时保持集中管理和控制。
+
+支持以下 ROBO 配置：
+
+* 具有 HA 功能的双节点集群
+* 单节点集群
+
+
+ONTAP Select VM 可以与应用程序 VM 并置，使其成为 ROBO 的最佳解决方案。
+
+使用 ONTAP Select 提供企业级文件服务，同时允许双向复制到其他 ONTAP Select 或 FAS 集群，使弹性解决方案能够在低接触或低成本环境中构建。ONTAP Select 预装了 CIFS、NFS 和 iSCSI 协议服务以及 SnapMirror 和 SnapVault 复制技术的功能许可证。因此，所有这些功能在部署后立即可用。
+
+[NOTE]
+====
+由于支持所有 VMware vSphere 许可证，因此可以选择 vSphere Remote Office Branch Office Standard 或 Advanced 许可证，而不是 Enterprise 或 Enterprise Plus 许可证。
+
+支持所有 vSphere 和 VSAN 许可证。
+
+====
+具有远程调解器的 ONTAP Select 双节点群集是小型数据中心的一个有吸引力的解决方案。在此配置中，HA 功能由 ONTAP Select 提供。双节点 ONTAP Select ROBO 解决方案的最低网络要求是四个 1Gb 链路。还支持单个 10Gb 网络连接。在 VSAN 上运行的 vNAS ONTAP Select 解决方案（包括双节点 VSAN ROBO 配置）是另一种选择。在此配置中，HA 功能由 VSAN 提供。最后，将数据复制到核心位置的单节点 ONTAP Select 群集可以在商品服务器上提供一组强大的企业数据管理工具。
+
+下图显示了在 VM ESXi 上使用 ONTAP Select 的常见远程办公室配置。计划驱动的 SnapMirror 关系定期将数据从远程办公室复制到位于主数据中心的单个整合工程存储阵列。
+
+*远程办公室到企业数据中心的计划备份*
+
+image:ROBO_01.jpg["远程办公室到企业数据中心的计划备份"]

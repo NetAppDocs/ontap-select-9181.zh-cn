@@ -1,0 +1,41 @@
+---
+sidebar: sidebar 
+permalink: reference_plan_ots_two_node.html 
+keywords: plan, planning, two nodes, two node clusters 
+summary: 使用 HA 部署双节点群集涉及与其他群集节点配置一起使用的相同的规划和配置。但是，在创建双节点群集时，您应该注意几个不同之处。 
+---
+= ONTAP Select 双节点集群与 HA
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+使用 HA 部署双节点群集涉及与其他群集节点配置一起使用的相同的规划和配置。但是，在创建双节点群集时，您应该注意几个不同之处。
+
+.目标环境
+双节点集群由一个 HA 对组成，专为远程办公室和分支机构部署而设计。
+
+
+NOTE: 虽然主要针对远程和分支机构环境设计，但如果需要，您还可以在数据中心中部署双节点集群。
+
+.许可
+您可以使用任何 VMware vSphere 许可证部署双节点群集。但是，VMware ROBO Standard 和 Advanced 许可证非常适合远程和分支机构部署。
+
+.Mediator 服务
+当集群由两个节点组成时，当节点失败或失去通信时，无法实现所需的法定人数。为了解决这些类型的脑裂情况，ONTAP Select Deploy 实用程序的每个实例都包含一个中介服务。该服务连接到活动双节点集群中的每个节点，以监控 HA 对并协助管理故障。中介服务将 HA 状态信息维护在与每个双节点集群相关联的专用 iSCSI 目标上。
+
+
+CAUTION: 如果您有一个或多个活动的双节点集群，则必须始终运行管理集群的 ONTAP Select Deploy 虚拟机。如果 ONTAP Select Deploy 虚拟机暂停或失败，则中介服务不可用，并且双节点集群的 HA 功能将丢失。
+
+.集群和调解人服务的位置
+由于双节点群集通常部署在远程或分支机构中，因此它们可以远离公司数据中心和提供管理支持的 ONTAP Select Deploy 实用程序。通过此配置，ONTAP Select Deploy 实用程序和群集之间的管理流量通过 WAN 流动。有关限制和约束的更多信息，请参见 link:reference_release_notes.html["发行说明"]。
+
+.备份 Deploy 配置数据
+最佳做法是定期 link:task_cli_clusters.html["备份 ONTAP Select Deploy 配置数据"]，包括在创建集群后进行。这对于双节点集群尤其重要，因为备份中包含中介配置数据。
+
+.分配给 Deploy 的静态 IP 地址
+您必须为 ONTAP Select Deploy 管理实用程序分配一个静态 IP 地址。此要求适用于管理一个或多个 ONTAP Select 双节点集群的所有 ONTAP Select Deploy 实例。

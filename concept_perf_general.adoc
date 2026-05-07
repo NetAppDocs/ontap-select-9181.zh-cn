@@ -1,0 +1,24 @@
+---
+sidebar: sidebar 
+permalink: concept_perf_general.html 
+keywords: ontap select, performance 
+summary: ONTAP Select 集群的性能可能会因硬件配置而异。 
+---
+= ONTAP Select 性能概述
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+由于底层硬件和配置的特性，ONTAP Select 集群的性能可能会有很大差异。特定硬件配置是影响特定 ONTAP Select 实例性能的最大因素。以下是影响特定 ONTAP Select 实例性能的一些因素：
+
+* *核心频率*。一般来说，更高的频率是更好的。
+* *单插槽与多插槽*。ONTAP Select 不使用多插槽功能，但支持多插槽配置的虚拟机管理程序开销会导致总性能出现一定程度的偏差。
+* *RAID 卡配置和相关的虚拟机管理程序驱动程序*。虚拟机管理程序提供的默认驱动程序可能需要由硬件供应商驱动程序替换。
+* *RAID 组中的驱动器类型和驱动器数量*。
+* *虚拟机监控程序版本和补丁级别*。
+

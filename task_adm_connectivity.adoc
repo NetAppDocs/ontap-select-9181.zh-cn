@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: task_adm_connectivity.html 
+keywords: administer, administering, web, connectivity, network connectivity, network checker 
+summary: 您可以测试内部集群网络上两个或多个 ONTAP Select 节点之间的网络连接。通常在部署多节点集群之前运行此测试，以检测可能导致操作失败的问题。 
+---
+= 确认 ONTAP Select 节点之间的连通性
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+您可以测试内部集群网络上两个或多个 ONTAP Select 节点之间的网络连接。通常在部署多节点集群之前运行此测试，以检测可能导致操作失败的问题。
+
+.开始之前
+必须对测试中包含的所有 ONTAP Select 节点进行配置并打开电源。
+
+.关于此任务
+每次启动测试时，都会在后台创建一个新的进程运行，并分配一个唯一的运行标识符。一次只能激活一个运行。
+
+该测试有两种控制其操作的模式：
+
+* 快速 此模式执行基本无中断测试。执行 PING 测试，同时测试网络 MTU 大小和 vSwitch。
+* 扩展 此模式对所有冗余网络路径执行更全面的测试。如果在活动的 ONTAP Select 群集上运行此操作，则可能会影响群集的性能。
+
+
+
+NOTE: 建议在创建多节点群集之前始终执行快速测试。快速测试成功完成后，您可以根据生产要求选择执行扩展测试。
+
+.步骤
+. 使用管理员帐户 Sign in 到 Deploy 实用程序 Web 用户界面。
+. 单击页面顶部的 *Administration* 选项卡，然后单击 *Network Checker*。
+. 单击 *Start New Run* ，然后为 HA 对选择主机和网络
++
+您可以根据需要添加和配置其他 HA 对。
+
+. 单击 *Start* 开始网络连接测试。
+

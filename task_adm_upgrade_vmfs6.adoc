@@ -1,0 +1,50 @@
+---
+sidebar: sidebar 
+permalink: task_adm_upgrade_vmfs6.html 
+keywords: administer, administering, web, storage vmotion, upgrade vmfs6 
+summary: VMware 不支持从 VMFS 5 到 VMFS 6 的现场升级。您可以使用存储 vMotion 从现有 ONTAP Select 节点的 VMFS 5 数据存储区过渡到 VMFS 6 数据存储区。 
+---
+= 使用存储 vMotion 将 ONTAP Select 节点升级到 VMFS6
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+VMware 不支持从 VMFS 5 到 VMFS 6 的现场升级。您可以使用存储 vMotion 从现有 ONTAP Select 节点的 VMFS 5 数据存储区过渡到 VMFS 6 数据存储区。
+
+对于 ONTAP Select 虚拟机，存储 vMotion 可用于单节点和多节点群集。它可以用于仅存储以及计算和存储迁移。
+
+image:ST_10.jpg["迁移"]
+
+.开始之前
+确保新主机可以支持 ONTAP Select 节点。例如，如果在原始主机上使用 RAID 控制器和 DAS 存储，则新主机上应存在类似的配置。
+
+
+CAUTION: 如果 ONTAP Select 虚拟机在不合适的环境中重新托管，可能会导致严重的性能问题。
+
+.步骤
+. 关闭 ONTAP Select 虚拟机。
++
+如果节点是 HA 对的一部分，请先执行存储故障转移。
+
+. 清除 *CD/DVD 驱动器* 选项。
++
+如果您在未使用 ONTAP Deploy 的情况下安装了 ONTAP Select，则此步骤不适用。
+
++
+image:ST_11.jpg["编辑设置"]
+
+. 存储 vMotion 操作完成后，启动 ONTAP Select 虚拟机。
++
+如果此节点是 HA 对的一部分，则可以执行手动交还。
+
+. 使用 Deploy 实用程序执行 `cluster refresh`操作，并确认操作成功。
+. 备份 Deploy 实用程序数据库。
+
+
+.完成后
+存储 vMotion 操作完成后，应使用 Deploy 实用程序执行 `cluster refresh`操作。 `cluster refresh`使用 ONTAP Select 节点的新位置更新 ONTAP Deploy 数据库。

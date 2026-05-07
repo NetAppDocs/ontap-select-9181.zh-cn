@@ -1,0 +1,71 @@
+---
+sidebar: sidebar 
+permalink: concept_lic_production.html 
+keywords: license, licensing, production, purchased, standard, premium, premium xl 
+summary: 在确定 ONTAP Select 适合您的组织之后，您可以购买支持生产部署所需的许可证。您必须选择容量层或容量池许可模式以及每个部署的存储容量。 
+---
+= 了解用于生产部署的 ONTAP Select 购买许可证
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+在确定 ONTAP Select 适合您的组织之后，您可以购买支持生产部署所需的许可证。您必须选择容量池或容量层许可模式以及每个部署的存储容量。
+
+
+
+== 常见许可特征
+
+_Capacity Pools_ 和 _Capacity Tiers_ 许可模式在几个方面有很大不同。但是，这两种许可模式有几个共同特点，包括：
+
+* 在生产环境中部署 ONTAP Select 时，您必须根据需要购买一个或多个许可证。
+* 许可证的存储容量以 1 TB 为增量进行分配。
+* 支持所有平台许可产品（标准、高级和高级 XL）。
+* 在获取必要的许可证时，应根据需要联系 NetApp 客户团队或合作伙伴寻求帮助。
+* 您必须将许可证文件上传到 Deploy 管理实用程序，然后该实用程序将根据许可模式应用许可证。
+* 安装并应用许可证后，您可以通过联系您的 NetApp 客户团队或合作伙伴来获取更新的许可证以添加额外的容量。
+* 最初使用购买的许可证部署的 ONTAP Select 节点无法转换为评估许可证。
+
+
+
+
+== 容量层许可模式
+
+容量层许可模式有几个独特的特征，包括：
+
+* 您必须为每个 ONTAP Select 节点购买许可证。
+* 您可以购买的最小容量为 1 TB。
+* 每个容量层许可证都有一个存储容量，并锁定到特定节点。
+* 存储容量标识原始容量，并与 ONTAP Select 虚拟机可用的数据磁盘的总允许大小相对应。
+* NetApp 为每个 ONTAP Select 节点生成一个九位数的许可证序列号。
+* 分配给节点的存储是永久性的（无需续订），但您必须续订与许可证关联的支持合同。
+* 高可用性 (HA) 对中的每个 ONTAP Select 节点都需要至少与连接到该节点的原始存储一样大的许可证。
+* 节点序列号为九位数，与许可证序列号相等。
+* 您可以在集群部署期间或创建集群后 30 天内应用许可证文件。
+
+
+
+
+== 容量池许可模式
+
+容量池许可模式有几个独特的特征，包括：
+
+* 您必须为每个共享 Capacity Pool 购买许可证。
+* 您可以购买的最小容量为 2 TB。
+* 每个 Capacity Pool 许可证都有一个存储容量，并锁定到 Deploy 管理实用程序中的特定 License Manager 实例。
+* 存储容量标识原始容量，并与可以在 ONTAP Select 虚拟机中创建的数据聚合的总允许大小相对应。
+* 每个容量池都会由 NetApp 生成一个九位数的许可证序列号。
+* 分配给 Capacity Pool 的存储仅在基于购买的特定时间内有效（需要续订）。
+* License Manager 根据 Capacity Pool 许可证序列号生成一个二十位数的节点序列号。
+* 集群中的所有 ONTAP Select 节点共享相同的许可证容量。这意味着许可证必须足够大，才能提供分配给集群中所有节点的存储。
+* 每个节点自动从共享 Capacity Pool 租用其本地数据聚合的存储容量。
+
+
+.下一步是什么？
+* link:concept_lic_platforms.html["了解 ONTAP Select 的平台许可证产品"]
+* link:concept_lic_cp_operation.html["详细了解 ONTAP Select 容量池许可模式"]
+

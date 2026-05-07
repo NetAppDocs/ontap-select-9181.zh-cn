@@ -1,0 +1,95 @@
+---
+sidebar: sidebar 
+permalink: esxi-host-configuration-and-preparation-checklist.html 
+keywords: ontap select, pre-installation checklist, esxi, host preparation 
+summary: 准备部署 ONTAP Select 节点的每个 ESXi 虚拟机监控程序主机。在准备主机时，您需要仔细评估部署环境，以确保主机配置正确并准备好支持 ONTAP Select 集群的部署。 
+---
+= 适用于 ONTAP Select 的 ESXi 主机配置和准备检查清单
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+准备部署 ONTAP Select 节点的每个 ESXi 虚拟机监控程序主机。在准备主机时，您需要仔细评估部署环境，以确保主机已正确配置并准备好支持 ONTAP Select 集群的部署。
+
+
+NOTE: ONTAP Select Deploy 管理实用程序不执行虚拟机监控程序主机所需的网络和存储配置。在部署 ONTAP Select 群集之前，必须手动准备每个主机。
+
+
+
+== 步骤 1：准备 ESXi 虚拟机管理程序主机
+
+验证 ESXi 主机和防火墙端口的配置。
+
+.步骤
+. 验证每个 ESXi 是否配置了以下内容：
++
+** 预安装和支持的虚拟机管理程序
+** VMware vSphere 许可证
+
+
+. 验证同一台 vCenter 服务器是否可以管理集群中部署 ONTAP Select 节点的所有主机。
+. 验证防火墙端口是否配置为允许访问 vSphere。必须打开这些端口才能支持到 ONTAP Select 虚拟机的串行端口连接。
++
+[role="tabbed-block"]
+====
+.建议
+--
+NetApp 建议您打开以下防火墙端口以允许访问 vSphere：
+
+** 端口 7200 – 7400（入站和出站流量）
+
+
+--
+.默认
+--
+默认情况下，VMware 允许访问以下端口：
+
+** 端口 22 和端口 1024 – 65535（入站流量）
+** 端口 0 – 65535（出站流量）
+
+
+--
+====
++
+有关详细信息，请参见 link:https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-security-8-0/securing-esxi-hosts/customizing-hosts-with-the-security-profile/esxi-firewall-configuration.html["Broadcom VMware vSphere 文档"^]。
+
+. 熟悉所需的 vCenter 权限。有关详细信息，请参见 link:reference_plan_ots_vcenter.html["VMware vCenter 服务器"]。
+
+
+
+
+== 步骤 2：查看 ONTAP Select 集群配置
+
+您可以将 ONTAP Select 部署为多节点集群或单节点集群。在许多情况下，由于额外的存储容量和高可用性 (HA) 功能，多节点集群更可取。
+
+下图说明了与单节点集群和四节点集群一起使用的 ONTAP Select 网络。
+
+[role="tabbed-block"]
+====
+.单节点集群
+--
+下图说明了单节点集群。外部网络承载客户端、管理和跨集群复制流量 (SnapMirror/SnapVault)。
+
+image:CHK_01.jpg["显示一个网络的单节点集群"]
+
+--
+.四节点集群
+--
+下图显示了一个显示两个网络的四节点群集。内部网络支持节点之间的通信，以支持 ONTAP 群集网络服务。外部网络承载客户端、管理和跨群集复制流量（SnapMirror/SnapVault）。
+
+image:CHK_02.jpg["显示两个网络的四节点集群"]
+
+--
+.四节点集群中的单个节点
+--
+下图说明了四节点群集中单个 ONTAP Select 虚拟机的典型网络配置。有两个独立的网络：ONTAP-internal 和 ONTAP-external。
+
+image:CHK_03.jpg["四节点集群中的单个节点"]
+
+--
+====
