@@ -18,6 +18,7 @@ ONTAP Select vNAS 是一种解决方案，允许 ONTAP Select 数据存储位于
 
 
 
+[[basic-requirements-and-restrictions]]
 == 基本要求和限制
 
 ONTAP Select vNAS 解决方案可以与任何规模的 ONTAP Select 集群一起使用。
@@ -42,6 +43,7 @@ NOTE: 单节点和多节点 ONTAP Select 集群支持这些 VMware 功能。部�
 
 
 
+[[configuration-requirements]]
 == 配置要求
 
 如果您计划在外部存储阵列（iSCSI、光纤通道、以太网光纤通道）上使用 VMFS 数据存储区，则必须在配置 ONTAP Select 以使用存储之前创建 VMFS 存储池。如果您使用 NFS 数据存储区，则无需创建单独的 VMFS 数据存储区。所有 vSAN 数据存储区必须在同一 ESXi 群集中定义。
@@ -51,6 +53,7 @@ CAUTION: 在配置主机或执行存储添加操作时，必须为 VMware vSAN �
 
 
 
+[[best-practices]]
 == 最佳实践
 
 查看 VMware 文档，并遵循为 ESXi 主机确定的适用最佳实践。此外：

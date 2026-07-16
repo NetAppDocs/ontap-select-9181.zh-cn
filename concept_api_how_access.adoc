@@ -21,18 +21,21 @@ NOTE: ONTAP Select Deploy 附带的 REST API 分配了一个版本号。API 版�
 
 
 
+[[deploy-utility-native-user-interface]]
 == 部署实用程序本机用户界面
 
 访问 API 的主要方式是通过 ONTAP Select Deploy Web 用户界面。浏览器调用 API，并根据用户界面的设计重新格式化数据。您还可以通过 Deploy 实用程序命令行界面访问 API。
 
 
 
+[[ontap-select-deploy-online-documentation-page]]
 == ONTAP Select Deploy 在线文档页面
 
 使用浏览器时，ONTAP Select Deploy 在线文档页面提供了另一个接入点。除了提供直接执行单个 API 调用的方法外，该页面还包括 API 的详细说明，包括每个调用的输入参数和其他选项。API 调用分为几个不同的功能区域或类别。
 
 
 
+[[custom-program]]
 == 自定义程序
 
 您可以使用多种不同的编程语言和工具中的任何一种来访问 Deploy API。热门选择包括 Python、Java 和 cURL。使用 API 的程序、脚本或工具充当 REST Web 服务客户端。使用编程语言可以让您更好地了解 API，并提供自动化 ONTAP Select 部署的机会。

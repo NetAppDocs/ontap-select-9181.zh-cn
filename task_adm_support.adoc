@@ -18,6 +18,7 @@ summary: 在管理 ONTAP Select 过程中，您可以执行几个相关的诊断
 
 
 
+[[configure-the-deploy-system]]
 == 配置 Deploy 系统
 
 您应该设置影响 Deploy 实用程序运行方式的基本系统配置参数。
@@ -42,6 +43,7 @@ summary: 在管理 ONTAP Select 过程中，您可以执行几个相关的诊断
 
 
 
+[[display-the-ontap-select-deploy-event-messages]]
 == 显示 ONTAP Select Deploy 事件消息
 
 ONTAP Select Deploy 实用程序包括一个事件日志记录工具，该工具提供有关系统活动的信息。您应该查看事件日志的内容，以调试任何问题或在支持人员指示时进行调试。
@@ -66,6 +68,7 @@ ONTAP Select Deploy 实用程序包括一个事件日志记录工具，该工具
 
 
 
+[[enable-autosupport]]
 == 启用 AutoSupport
 
 您可以根据需要启用和禁用 AutoSupport 功能。
@@ -82,6 +85,7 @@ AutoSupport 是 NetApp 在支持 ONTAP Select 时使用的主要故障排除工�
 
 
 
+[[generate-and-download-an-autosupport-package]]
 == 生成并下载 AutoSupport 包
 
 ONTAP Select 包括生成 AutoSupport 包的功能。您应该生成一个包来调试任何问题，或者在支持人员指示时进行调试。

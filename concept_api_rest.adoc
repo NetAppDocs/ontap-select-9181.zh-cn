@@ -18,12 +18,14 @@ summary: '表示状态传输 (REST) 是一种用于创建分布式 Web 应用程
 
 
 
+[[architecture-and-classic-constraints]]
 == 架构和经典约束
 
 REST 由 Roy Fielding 于 2000 年在 UC Irvine 的博士 https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm["论文"]中正式阐述。它通过一系列约束定义了一种架构风格，这些约束共同改进了基于 Web 的应用程序和底层协议。这些约束基于使用无状态通信协议的客户端/服务器架构建立了 RESTful Web 服务应用程序。
 
 
 
+[[resources-and-state-representation]]
 == 资源和状态表示
 
 资源是基于 Web 的系统的基本组成部分。创建 REST Web 服务应用程序时，早期设计任务包括：
@@ -36,12 +38,14 @@ REST 由 Roy Fielding 于 2000 年在 UC Irvine 的博士 https://www.ics.uci.ed
 
 
 
+[[uri-endpoints]]
 == URI 端点
 
 必须使用明确定义的编址方案来定义和提供每个 REST 资源。资源所在和标识的端点使用统一资源标识符 (URI)。URI 提供了一个通用框架，用于为网络中的每个资源创建唯一的名称。统一资源定位器 (URL) 是一种与 Web 服务一起使用的 URI 类型，用于标识和访问资源。资源通常以类似于文件目录的分层结构公开。
 
 
 
+[[http-messages]]
 == HTTP 消息
 
 超文本传输协议 (HTTP) 是 Web 服务客户端和服务器用于交换有关资源的请求和响应消息的协议。作为设计 Web 服务应用程序的一部分，HTTP 谓词（如 GET 和 POST）映射到资源和相应的状态管理操作。
@@ -50,6 +54,7 @@ HTTP 是无状态的。因此，要在一个事务下关联一组相关的请求
 
 
 
+[[json-formatting]]
 == JSON 格式
 
 虽然信息可以通过多种方式在客户端和服务器之间进行结构化和传输，但最受欢迎的选项（以及与 Deploy REST API 一起使用的选项）是 JavaScript 对象表示法 (JSON)。JSON 是以纯文本表示简单数据结构的行业标准，用于传输描述资源的状态信息。

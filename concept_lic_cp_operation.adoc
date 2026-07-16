@@ -18,6 +18,7 @@ Capacity Pools 许可模式与 Capacity Tiers 模式不同。不是将存储容�
 
 
 
+[[license-manager]]
 == 许可证管理器
 
 License Manager 在 Deploy 管理实用程序的每个实例中作为单独的进程运行。LM 提供的一些功能包括：
@@ -29,6 +30,7 @@ License Manager 在 Deploy 管理实用程序的每个实例中作为单独的�
 
 
 
+[[lease-characteristics]]
 == 租赁特征
 
 在使用 Capacity Pool 许可证的节点上为每个数据聚合分配的存储必须具有相关的租约。节点请求存储租约，如果容量可用，License Manager 将以租约响应。每个租约都具有以下显式或隐式属性：
@@ -53,6 +55,7 @@ License Manager 在 Deploy 管理实用程序的每个实例中作为单独的�
 
 
 
+[[license-lock-id]]
 == 许可证锁定 ID
 
 许可证管理器的每个实例以及相应的每个 Deploy 实用程序实例都使用唯一的 128 位数字进行标识。此数字与九位数容量池许可证序列号相结合，以将池锁定到特定许可证管理器实例（实际上是 Deploy 实例）。作为生成 NetApp 许可证文件 (NLF) 的一部分，您必须在 NetApp 支持站点提供这两个值。
@@ -68,6 +71,7 @@ License Manager 在 Deploy 管理实用程序的每个实例中作为单独的�
 
 
 
+[[basic-lease-operations]]
 == 基本租赁操作
 
 每次创建、扩展或更改数据聚合时，ONTAP Select 节点都必须定位或请求有效的容量租赁。您可以使用从之前的请求中获得的仍有效的租赁，也可以根据需要请求新的租赁。ONTAP Select 节点采取以下步骤来查找 Capacity Pool 租赁：
@@ -83,6 +87,7 @@ License Manager 在 Deploy 管理实用程序的每个实例中作为单独的�
 
 
 
+[[return-storage-capacity-to-a-capacity-pool]]
 == 将存储容量返回到容量池
 
 根据需要从容量池中分配存储容量，每个新请求都可以减少池中的可用存储。在几种情况下，将存储容量返回到池中，包括：

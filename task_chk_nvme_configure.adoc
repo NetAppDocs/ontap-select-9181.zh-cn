@@ -20,6 +20,7 @@ summary: 如果您计划将 NVMe 驱动器与软件 RAID 一起使用，则需�
 
 
 
+[[step-1-configure-the-host]]
 == 步骤 1：配置主机
 
 配置 ESXi 或 KVM 主机以识别驱动器。
@@ -109,6 +110,7 @@ image:nvme_03.png["重新启动此主机"]
 
 
 
+[[step-2-install-the-ontap-select-deploy-utility]]
 == 步骤 2：安装 ONTAP Select Deploy 实用程序
 
 主机准备就绪后，您可以安装 ONTAP Select Deploy 实用程序。Deploy 将指导您在新准备的主机上创建 ONTAP Select 存储集群。在此过程中，Deploy 检测配置为直通的 NVMe 驱动器的存在，并自动选择它们用作 ONTAP 数据磁盘。如果需要，您可以调整默认选择。

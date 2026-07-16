@@ -18,6 +18,7 @@ summary: 如果您在 VMware ESXi 上运行 ONTAP Select，您可以将 ESXi 软
 
 
 
+[[prepare-to-upgrade-vmware-esxi]]
 == 准备升级 VMware ESXi
 
 在托管 ONTAP Select 集群的虚拟机管理程序上升级 ESXi 软件之前，请准备并选择适合您环境的升级过程。
@@ -65,6 +66,7 @@ TIP: 您应该选择使用 Deploy 管理实用程序的升级过程。
 
 
 
+[[upgrade-a-single-node-cluster-using-deploy]]
 == 使用 Deploy 升级单节点集群
 
 您可以使用 Deploy 管理实用程序作为过程的一部分来升级托管 ONTAP Select 单节点集群的 VMware ESXi 虚拟机监控程序。
@@ -102,6 +104,7 @@ sdot-d200-011d true    true
 
 
 
+[[upgrade-a-multi-node-cluster-using-deploy]]
 == 使用 Deploy 升级多节点集群
 
 您可以使用 Deploy 管理实用程序作为过程的一部分来升级托管 ONTAP Select 多节点集群的 VMware ESXi 虚拟机监控程序。
@@ -156,6 +159,7 @@ sdot-d200-012d true true
 
 
 
+[[upgrade-a-single-node-cluster-without-deploy]]
 == 在没有 Deploy 的情况下升级单节点集群
 
 您可以升级托管 ONTAP Select 单节点集群的 VMware ESXi 虚拟机监控程序，而无需使用 Deploy 管理实用程序。
@@ -192,6 +196,7 @@ sdot-d200-011d true    true
 
 
 
+[[upgrade-a-multi-node-cluster-without-deploy]]
 == 升级不使用 Deploy 的多节点集群
 
 您可以升级托管 ONTAP Select 多节点群集的 VMware ESXi 虚拟机管理程序，而无需使用 Deploy 管理实用程序。

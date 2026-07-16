@@ -26,6 +26,7 @@ SnapMirror 软件可让您在混合云的 ONTAP 存储之间移动数据，以�
 
 
 
+[[software-defined-storage]]
 == 软件定义存储
 
 通过软件实现和交付 IT 服务，使管理员能够以以前无法实现的速度和敏捷性快速调配资源。随着现代数据中心迁移到软件定义基础设施 (SDI) 架构，您可以将最有价值的 IT 资产与底层物理基础设施分开，从而提供灵活性、可扩展性和可编程性。
@@ -36,18 +37,21 @@ ONTAP Select 是 NetApp 针对 SDS 市场的解决方案。ONTAP Select 为软�
 
 
 
+[[two-software-components]]
 == 两个软件组件
 
 ONTAP Select 由两个主要软件组件组成：
 
 
 
+[[ontap-select-node]]
 === ONTAP Select 节点
 
 ONTAP Select 集群由一个、两个、四个、六个、八个、十个或十二个节点组成。每个集群节点都部署为单独的虚拟机，并运行专门设计的 ONTAP 9 软件版本。
 
 
 
+[[ontap-select-deploy-administration-utility]]
 === ONTAP Select Deploy 管理实用程序
 
 部署管理实用程序作为单独的 Linux 虚拟机打包和安装。您必须使用此实用程序在生产环境中部署 ONTAP Select 群集。当前版本的 ONTAP Select 节点映像与 Deploy 实用程序捆绑在一起。
@@ -57,6 +61,7 @@ NOTE: Deploy 管理实用程序未分配单独的版本号。Deploy 与关联的
 
 
 
+[[illustration-of-a-typical-deployment]]
 == 典型部署的示意图
 
 下图说明了用于部署和支持四节点 ONTAP Select 集群的 NetApp ONTAP Select Deploy 管理实用程序。Deploy 实用程序和 ONTAP Select 节点在专用虚拟机监控程序主机上作为单独的虚拟机运行。
@@ -65,6 +70,7 @@ image:ots_architecture.png["演示使用 Deploy 管理实用程序创建的 ONTA
 
 
 
+[[flexcache-write-back-with-ontap-select]]
 == 使用 ONTAP Select 的 FlexCache 回写
 
 ONTAP Select 支持具有回写功能的 FlexCache 缓存卷。ONTAP Select 实例的整体性能与入门级 ONTAP 系统相当。
@@ -82,30 +88,35 @@ link:https://docs.netapp.com/us-en/ontap/flexcache-writeback/flexcache-write-bac
 
 
 
+[[compare-ontap-select-and-ontap-9]]
 == 比较 ONTAP Select 和 ONTAP 9
 
 基于硬件的 ONTAP 和 ONTAP Select 提供企业级存储解决方案。但是，由于它们的设计和实现方式不同，因此每个都可以满足不同的业务需求和使用场景。在规划 ONTAP Select 部署之前，您应该熟悉平台之间的主要差异。
 
 
 
+[[different-ha-architecture]]
 === 不同的 HA 架构
 
 根据您在群集中定义的节点数量，ONTAP Select 提供 HA 功能。例如，一个四节点群集由两个 HA 对组成。与 ONTAP Select 一起使用的 HA 架构基于非共享存储模型。也就是说，HA 对中的一个节点不能直接访问另一个节点拥有的存储。此设计可能会影响某些 ONTAP Select 操作特性。
 
 
 
+[[capacity-licensing]]
 === 容量许可
 
 ONTAP Select 引入了基于消费的许可模式。在生产环境中部署 ONTAP Select 集群时，必须为每个节点或共享容量池购买具有存储容量的许可证。使用 Deploy 实用程序，必须应用建立集群节点存储容量的许可证文件。
 
 
 
+[[ontap-feature-licensing]]
 === ONTAP 功能许可
 
 ONTAP Select 集群中的每个节点都会自动获得使用多个 ONTAP 功能的许可。无需手动安装或应用这些功能许可证。
 
 
 
+[[ontap-features-not-supported-in-ontap-select]]
 === ONTAP Select 中不支持的 ONTAP 功能
 
 ONTAP Select 不支持几个 ONTAP 功能。在大多数情况下，这些功能需要在虚拟化 ONTAP Select 环境中不可用的特殊硬件。

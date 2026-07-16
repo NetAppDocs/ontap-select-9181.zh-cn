@@ -42,6 +42,7 @@ summary: 软件 RAID 是在 ONTAP 软件堆栈中实现的 RAID 抽象层。它�
 ====
 
 
+[[software-raid-configuration-for-local-attached-storage]]
 == 适用于本地连接存储的软件 RAID 配置
 
 当使用软件 RAID 时，没有硬件 RAID 控制器是理想的，但是，如果系统确实具有现有的 RAID 控制器，则必须遵守以下要求：
@@ -59,6 +60,7 @@ NOTE: 管理员需要跟踪 ONTAP Select VM 正在使用哪些驱动器，并防
 
 
 
+[[ontap-select-virtual-and-physical-disks]]
 == ONTAP Select 虚拟磁盘和物理磁盘
 
 对于带有硬件 RAID 控制器的配置，物理磁盘冗余由 RAID 控制器提供。ONTAP Select 显示了一个或多个 VMDK，ONTAP 管理员可以从中配置数据聚合。这些 VMDK 以 RAID 0 格式进行条带化，因为使用 ONTAP 软件 RAID 是冗余的、低效的，并且由于在硬件级别提供的弹性而无效。此外，用于系统磁盘的 VMDK 与用于存储用户数据的 VMDK 位于同一个数据存储区中。
@@ -98,6 +100,7 @@ ONTAP 软件 RAID 支持以下 RAID 类型：RAID 4、RAID-DP 和 RAID-TEC。这
 
 
 
+[[passthrough-directpath-io-devices-vs-raw-device-maps-rdms]]
 == 直通（DirectPath IO）设备与原始设备映射（RDM）
 
 ESXi 和 KVM 虚拟机管理程序不支持 NVMe 磁盘作为原始设备映射 (RDM)。要允许 ONTAP Select 直接控制 NVMe 磁盘，必须将这些驱动器配置为 ESXi 或 KVM 内的直通设备。将 NVMe 设备配置为直通设备时，需要服务器 BIOS 的支持，并且可能需要重新启动主机。此外，每个主机可以分配的直通设备数量也有限制，这可能因平台而异。但是，ONTAP Deploy 将此限制为每个 ONTAP Select 节点 14 个 NVMe 设备。这意味着 NVMe 配置以牺牲总容量为代价，提供非常高的 IOPS 密度 (IOPS/TB)。或者，如果您需要具有更大存储容量的高性能配置，建议配置为大型 ONTAP Select VM 大小、用于系统磁盘的 INTEL Optane 卡以及用于数据存储的标称数量的 SSD 驱动器。
@@ -109,6 +112,7 @@ NOTE: 要充分利用 NVMe 性能，请考虑较大的 ONTAP Select VM 大小。
 
 
 
+[[physical-and-virtual-disk-provisioning]]
 == 物理和虚拟磁盘配置
 
 为了提供更流畅的用户体验，ONTAP Deploy 会自动从指定的数据存储区（物理系统磁盘）配置系统（虚拟）磁盘，并将它们连接到 ONTAP Select VM。此操作在初始设置期间会自动执行，以便 ONTAP Select VM 可以启动。对 RDM 进行分区，并自动生成根聚合。如果 ONTAP Select 节点是 HA 对的一部分，则会自动将数据分区分配给本地存储池和镜像存储池。此分配在群集创建操作和存储添加操作期间会自动执行。
@@ -124,6 +128,7 @@ NOTE: 根聚合的 RAID 组类型取决于可用磁盘的数量。ONTAP Deploy �
 
 
 
+[[match-an-ontap-select-disk-to-the-corresponding-esxi-or-kvm-disk]]
 == 将 ONTAP Select 磁盘与相应的 ESXi 或 KVM 磁盘匹配
 
 ONTAP Select 磁盘通常标记为 NET x.y。您可以使用以下 ONTAP 命令获取磁盘 UUID：
@@ -165,6 +170,7 @@ cat /sys/block/<block_device_id>/device/wwid
 ====
 
 
+[[multiple-drive-failures-when-using-software-raid]]
 == 使用软件 RAID 时出现多个驱动器故障
 
 系统可能会遇到多个驱动器同时处于故障状态的情况。系统的行为取决于聚合 RAID 保护和故障驱动器的数量。
@@ -244,6 +250,7 @@ disk show -broken
 ====
 
 
+[[virtualized-nvram]]
 == 虚拟化 NVRAM
 
 NetApp FAS 系统传统上配备物理 NVRAM PCI 卡。此卡是包含非易失性闪存的高性能卡，可显著提高写入性能。它通过授予 ONTAP 立即确认传入写入回客户端的能力来实现这一点。它还可以在称为 destaging 的过程中安排将修改的数据块移动回较慢的存储介质。

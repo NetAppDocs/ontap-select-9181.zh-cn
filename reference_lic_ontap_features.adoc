@@ -21,6 +21,8 @@ NOTE: ONTAP Select 通常不支持具有硬件特定依赖项的 ONTAP 功能。
 
 
 
+[[ontap-features-automatically-enabled-by-default]]
+[[enabled-ontap-features]]
 == 默认情况下自动启用的 ONTAP 功能
 
 ONTAP Select 支持以下 ONTAP 功能，并且默认已获得许可：
@@ -62,6 +64,7 @@ ONTAP Select 支持 SVM DR 作为源和目标，最多可有 16 个关系。SVM 
 
 
 
+[[ontap-features-that-are-separately-licensed]]
 == 单独许可的 ONTAP 功能
 
 您需要为任何默认情况下未启用的 ONTAP 功能获取单独的许可证，包括：

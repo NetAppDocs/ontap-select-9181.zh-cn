@@ -38,6 +38,7 @@ summary: 如果您想在做出购买决定之前评估 ONTAP Select，可以使�
 
 
 
+[[licensing-characteristics]]
 == 许可特征
 
 ONTAP Select 评估许可证具有以下特点：
@@ -53,6 +54,7 @@ ONTAP Select 评估许可证具有以下特点：
 
 
 
+[[upgrade-to-a-production-license]]
 == 升级到生产许可证
 
 您可以升级 ONTAP Select 评估集群以使用生产许可证。您应注意以下限制：

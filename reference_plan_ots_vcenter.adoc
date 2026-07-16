@@ -21,12 +21,14 @@ NOTE: 您还需要管理部署 ONTAP Select 的 ESXi 虚拟机监控程序主机
 
 
 
+[[administrative-privileges]]
 == 管理权限
 
 创建和管理 ONTAP Select 集群所需的最低管理权限如下所示。
 
 
 
+[[datastore]]
 === 数据存储库
 
 * 分配空间
@@ -38,6 +40,7 @@ NOTE: 您还需要管理部署 ONTAP Select 的 ESXi 虚拟机监控程序主机
 
 
 
+[[host]]
 === 主机
 
 配置::
@@ -61,6 +64,7 @@ NOTE: 您还需要管理部署 ONTAP Select 的 ESXi 虚拟机监控程序主机
 
 
 
+[[network]]
 === 网络
 
 * 分配网络
@@ -68,6 +72,7 @@ NOTE: 您还需要管理部署 ONTAP Select 的 ESXi 虚拟机监控程序主机
 
 
 
+[[virtual-machine]]
 === 虚拟机
 
 配置:: 类别中的所有权限。
@@ -78,9 +83,10 @@ NOTE: 您还需要管理部署 ONTAP Select 的 ESXi 虚拟机监控程序主机
 
 
 
+[[vapp]]
 === vApp
 
 类别中的所有权限。
 
 .相关信息
-link:https://docs.netapp.com/us-en/ontap-select/reference_plan_dep_vmware.html#ontap-select-deploy-vmware-vcenter-server-considerations["了解在 vCenter 中用于 vSAN ESA 的 VMware vSphere 权限"]
+link:reference_plan_dep_vmware.html#vmware-vcenter-server-considerations["了解在 vCenter 中用于 vSAN ESA 的 VMware vSphere 权限"]

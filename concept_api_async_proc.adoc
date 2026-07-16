@@ -18,6 +18,7 @@ summary: 某些 Deploy API 调用（尤其是创建或修改资源的调用）�
 
 
 
+[[asynchronous-requests-described-using-job-object]]
 == 使用 Job 对象描述的异步请求
 
 在进行异步运行的 API 调用后，HTTP 响应代码 202 表示请求已成功验证和接受，但尚未完成。此请求作为后台任务处理，此后台任务在对客户端的初始 HTTP 响应后继续运行。响应包括锚定请求的 Job 对象，包括其唯一标识符。
@@ -27,6 +28,7 @@ NOTE: 您应参阅 ONTAP Select Deploy 在线文档页面，以确定哪些 API 
 
 
 
+[[query-the-job-object-associated-with-an-api-request]]
 == 查询与 API 请求关联的作业对象
 
 HTTP 响应中返回的 Job 对象包含多个属性。您可以查询 state 属性以确定请求是否成功完成。Job 对象可以处于以下状态之一：
@@ -55,6 +57,7 @@ TIP: 应始终使用长轮询来减少 Deploy 虚拟机上的工作负载。
 
 
 
+[[general-procedure-for-issuing-an-asynchronous-request]]
 == 发出异步请求的一般过程
 
 您可以使用以下高级过程完成异步 API 调用：

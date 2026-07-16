@@ -19,6 +19,7 @@ summary: 当前版本包括特定于 ONTAP Select 的多项新功能或改进。
 
 
 
+[[ontap-select-9-18-1]]
 == ONTAP Select 9.18.1
 
 ONTAP Select 产品下载选项的更新:: NetApp 支持站点上的 ONTAP Select 产品下载选项将随着 ONTAP Select 9.18.1 版本更改为 *ONTAP Select Deploy* 和 *ONTAP Select Image*。这两个新产品下载选项取代了前四个选项，如下表所示：
@@ -70,6 +71,7 @@ link:task_cluster_expansion_contraction.html["了解集群扩展和收缩以及�
 
 
 
+[[ontap-select-9-17-1]]
 == ONTAP Select 9.17.1
 
 KVM 主机上本地连接的 NVMe 磁盘的软件 RAID 支持:: ONTAP Select 9.17.1 为基于内核的虚拟机 (KVM) 虚拟机管理程序主机上的 ONTAP Select 本地连接 NVMe 磁盘引入了软件 RAID 支持。
@@ -125,9 +127,9 @@ ONTAP Select Deploy 和 ONTAP Select for ESXi 支持配置 ONTAP Select 单节�
 
 [NOTE]
 ====
-要执行内容库操作，您需要访问其他权限级别。如果您使用受限角色，这对于 vSAN ESA 部署是必需的。
+要执行内容库操作，您需要访问其他权限级别。如果您使用受限角色，则 vSAN ESA 部署需要此访问权限。
 
-link:https://docs.netapp.com/us-en/ontap-select/reference_plan_dep_vmware.html["了解内容库操作的访问权限级别"^]。
+link:reference_plan_dep_vmware.html#vmware-vcenter-server-considerations["了解有关访问内容库操作的权限级别的信息"]。
 
 ====
 --
@@ -155,6 +157,7 @@ RHEL 10.1 和 10.0 以及 Rocky Linux 10.0 主机上的 KVM 虚拟机管理程�
 
 
 
+[[ontap-select-9-16-1]]
 == ONTAP Select 9.16.1
 
 更新 NetApp 许可证文件支持:: 从 ONTAP Select 9.16.1 开始，NetApp 许可证文件 (NLF) 支持已更新。新的 NLF 格式包括 ARP、ONTAP S3 和 S3 SnapMirror 功能的许可证。link:reference_lic_ontap_features.html#enabled-ontap-features["了解更多"]。
@@ -170,6 +173,7 @@ RHEL 10.1 和 10.0 以及 Rocky Linux 10.0 主机上的 KVM 虚拟机管理程�
 
 
 
+[[ontap-select-9-15-1]]
 == ONTAP Select 9.15.1
 
 更新的 KVM 虚拟机管理程序支持:: 从 ONTAP Select 9.15.1 开始，RHEL 9.4 和 Rocky Linux 9.4 支持基于内核的虚拟机 (KVM) 管理程序。
@@ -194,6 +198,7 @@ NOTE: 对集群扩展和收缩的支持仅限于 ESXi 集群。
 
 
 
+[[ontap-select-9-14-1]]
 == ONTAP Select 9.14.1
 
 支持 KVM 虚拟机管理程序:: 从 ONTAP Select 9.14.1 开始，已恢复对 KVM 虚拟机管理程序的支持。以前，在 ONTAP Select 9.10.1 中删除了对在 KVM 虚拟机管理程序上部署新集群的支持，并且在 ONTAP Select 9.11.1 中删除了对管理现有 KVM 集群和主机的支持，但脱机或删除除外。
@@ -204,6 +209,7 @@ NOTE: 对集群扩展和收缩的支持仅限于 ESXi 集群。
 
 
 
+[[ontap-select-9-13-1]]
 == ONTAP Select 9.13.1
 
 支持 NVMe over TCP:: 升级到 ONTAP Select 9.13.1 时，必须具有支持 TCP 上的 NVMe 的新许可证。从版本 9.13.1 首次部署 ONTAP Select 时，将自动包含此许可证。
@@ -213,6 +219,7 @@ NOTE: 对集群扩展和收缩的支持仅限于 ESXi 集群。
 
 
 
+[[ontap-select-9-12-1]]
 == ONTAP Select 9.12.1
 
 ONTAP Select 9.12.1 受益于核心 ONTAP 产品当前版本的大部分新开发。它不包括任何特定于 ONTAP Select 的新功能或改进。
@@ -221,6 +228,7 @@ ONTAP Select 9.12.1 受益于核心 ONTAP 产品当前版本的大部分新开�
 
 
 
+[[ontap-select-9-11-1]]
 == ONTAP Select 9.11.1
 
 增强的 VMware ESXi 支持:: ONTAP Select 9.11.1 包括对 VMware ESXi 7.0 U3C 的支持。
@@ -249,6 +257,7 @@ NetApp 强烈建议客户计划并执行从 ONTAP Select for KVM 到任何其他
 
 
 
+[[ontap-select-9-10-1]]
 == ONTAP Select 9.10.1
 
 支持 VMware NSX-T:: ONTAP Select 9.10.1 已通过 VMware NSX-T 3.1.2 版认证。将 NSX-T 与使用 OVA 文件和 ONTAP Select Deploy 管理实用程序部署的 ONTAP Select 单节点群集一起使用时，不存在功能问题或缺陷。但是，将 NSX-T 与 ONTAP Select 多节点群集一起使用时，应注意以下要求和限制：
@@ -274,6 +283,7 @@ NetApp 强烈建议客户计划并执行从 ONTAP Select for KVM 到任何其他
 
 
 
+[[ontap-select-9-9-1]]
 == ONTAP Select 9.9.1
 
 处理器系列支持:: 从 ONTAP Select 9.9.1 开始，ONTAP Select 仅支持 Intel Xeon Sandy Bridge 或更高版本的 CPU 型号。
@@ -289,6 +299,7 @@ NetApp 强烈建议客户计划并执行从 ONTAP Select for KVM 到任何其他
 
 
 
+[[ontap-select-9-8]]
 == ONTAP Select 9.8
 
 高速接口:: 高速接口功能通过为 25G (25GbE) 和 40G (40GbE) 提供选项来增强网络连接。为了在使用这些更高速度时获得最佳性能，您应遵循 ONTAP Select 文档中所述的有关端口映射配置的最佳实践。

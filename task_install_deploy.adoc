@@ -18,6 +18,7 @@ summary: 您需要安装 ONTAP Select Deploy 管理实用程序，并使用该�
 
 
 
+[[step-1-download-the-virtual-machine-image]]
 == 步骤 1：下载虚拟机映像
 
 从 NetApp 支持站点下载 ONTAP Select 包。
@@ -38,6 +39,7 @@ ONTAP Select Deploy 管理实用程序打包为基于开放虚拟化格式 (OVF)
 
 
 
+[[step-2-verify-the-ontap-select-deploy-ova-signature]]
 == 步骤 2：验证 ONTAP Select Deploy OVA 签名
 
 在安装安装包之前，请验证 ONTAP Select Open Virtualization Appliance (OVA) 签名。
@@ -82,6 +84,7 @@ openssl dgst  -sha256 -verify ONTAP-Select-Deploy-Production.pub -signature ONTA
 
 
 
+[[step-3-deploy-the-virtual-machine]]
 == 步骤 3：部署虚拟机
 
 使用 OVF VM 映像安装并启动 ONTAP Select Deploy VM。作为安装过程的一部分，您可以将网络接口配置为使用 DHCP 或静态 IP 配置。
@@ -198,6 +201,7 @@ Use DHCP to set networking information? [n]:
 ====
 
 
+[[step-4-sign-in-to-the-deploy-web-interface]]
 == 步骤 4：Sign in 到 Deploy Web 界面
 
 Sign in 到 Web 用户界面，以确认部署实用程序可用并执行初始配置。

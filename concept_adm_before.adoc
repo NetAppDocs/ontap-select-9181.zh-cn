@@ -29,6 +29,7 @@ summary: 创建 ONTAP Select 集群后，可以通过执行各种管理任务来
 
 
 
+[[administer-ontap-select]]
 == 管理 ONTAP Select
 
 作为支持 ONTAP Select 的一部分，有许多不同的管理程序可用。此外，还有特定于 Deploy 管理实用程序的程序。以下是其中最重要的程序。一般来说，都使用 Deploy Web 用户界面。
@@ -38,6 +39,7 @@ NOTE: 您也可以link:https://docs.netapp.com/us-en/ontap-select/task_cli_signi
 
 
 
+[[perform-additional-ontap-configuration]]
 == 执行其他 ONTAP 配置
 
 部署 ONTAP Select 集群后，您可以像配置和管理基于硬件的 ONTAP 系统一样配置和管理集群。例如，您可以使用 ONTAP System Manager 或 ONTAP CLI 配置 ONTAP Select 集群。

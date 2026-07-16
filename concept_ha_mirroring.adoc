@@ -18,6 +18,7 @@ summary: '使用 RAID SyncMirror (RSM)、镜像聚合和写入路径防止数据
 
 
 
+[[synchronous-replication]]
 == 同步复制
 
 ONTAP HA 模型建立在 HA 合作伙伴的概念之上。ONTAP Select 通过使用 ONTAP 中存在的 RAID SyncMirror (RSM) 功能在集群节点之间复制数据块，将此架构扩展到非共享商品服务器领域，提供分布在 HA 对中的用户数据的两个副本。
@@ -26,6 +27,7 @@ ONTAP HA 模型建立在 HA 合作伙伴的概念之上。ONTAP Select 通过使
 
 
 
+[[mirrored-aggregates]]
 == 镜像聚合
 
 ONTAP Select 集群由 2 到 12 个节点组成。每个 HA 对包含两个用户数据副本，通过 IP 网络跨节点同步镜像。此镜像对用户是透明的，并且是数据聚合的属性，该属性在数据聚合创建过程中自动配置。
@@ -54,6 +56,7 @@ NOTE: 部署 ONTAP Select 群集时，系统上存在的所有虚拟磁盘将自
 
 
 
+[[write-path]]
 == 写入路径
 
 集群节点之间数据块的同步镜像以及系统故障时无数据丢失的要求对传入写入在 ONTAP Select 集群中传播时所采取的路径具有重大影响。这个过程包括两个阶段：

@@ -18,6 +18,7 @@ summary: 可以执行多个相关任务来管理 ONTAP Select 集群。
 
 
 
+[[back-up-the-ontap-select-deploy-configuration-data]]
 == 备份 ONTAP Select Deploy 配置数据
 
 备份 ONTAP Select Deploy 配置数据，例如，在部署集群后。数据将保存到单个加密文件中，您可以将其下载到本地工作站。
@@ -54,6 +55,7 @@ deploy backup show -detailed
 
 
 
+[[delete-an-ontap-select-cluster]]
 == 删除 ONTAP Select 集群
 
 您可以在不再需要 ONTAP Select 集群时将其删除。

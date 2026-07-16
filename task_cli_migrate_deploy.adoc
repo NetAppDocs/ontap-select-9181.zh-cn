@@ -20,6 +20,7 @@ summary: 您可以使用命令行界面将 Deploy 管理实用程序的现有实
 
 
 
+[[step-1back-up-the-deploy-configuration-data]]
 == 步骤 1：备份 Deploy 配置数据
 
 作为迁移虚拟机的一部分，您必须创建 Deploy 配置数据的备份。您还应该在部署 ONTAP Select 集群后创建备份。数据将保存到单个加密文件中，您可以将该文件下载到本地工作站。
@@ -63,6 +64,7 @@ deploy backup show -detailed
 
 
 
+[[step-2-install-a-new-instance-of-the-deploy-virtual-machine]]
 == 步骤 2：安装 Deploy 虚拟机的新实例
 
 您必须创建 Deploy 虚拟机的新实例，您可以使用原始虚拟机的配置数据对其进行更新。
@@ -88,6 +90,7 @@ link:task_install_deploy.html["安装 ONTAP Select Deploy"]
 
 
 
+[[step-3-restore-the-deploy-configuration-data-to-the-new-virtual-machine]]
 == 步骤 3：将 Deploy 配置数据还原到新虚拟机
 
 必须将配置数据从原始 Deploy 实用程序虚拟机还原到新虚拟机。数据位于您必须从本地工作站上传的单个文件中。
