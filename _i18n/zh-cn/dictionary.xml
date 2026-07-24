@@ -94,7 +94,6 @@
   <block id="c94bc3200f704807c4c41ce4c2e2b2d8" category="paragraph">您必须对 ONTAP Select 集群中使用的每台主机执行升级过程。</block>
   <block id="ffc775822cbd19e463401855c97e8181" category="summary">ONTAP Select MetroCluster SDS 提供增强的保护和具有成本效益的实施。</block>
   <block id="24d0d0c7fc9a3866a568dea751e3cd63" category="doc">了解 ONTAP Select 数据保护和效率</block>
-  <block id="fd1f31b53e7242c3be0dbe67d6dbb5fb" category="paragraph">ONTAP Select 基于 ONTAP 存储软件构建，通过高可用、无共享的横向扩展架构高效地提供企业存储服务。您可以部署具有一个、两个、四个、六个、八个、十个或十二个节点的解决方案，每个节点的 NFS、SMB/CIFS 和 iSCSI 连接存储的原始容量高达 400TB。您可以利用本机重复数据删除和压缩，通过增加有效容量来降低存储成本。横向扩展架构可实现高可用性和无中断数据移动，用于负载平衡或服务硬件。</block>
   <block id="b489b293d6cbe8b86835d3cac8c315fb" category="section-title">Snapshot 数据保护</block>
   <block id="467385c0c4913cc96395e5493d47b3bc" category="paragraph">ONTAP Select 包括数据保护功能，包括快照和 SnapMirror 软件。您可以快速将数据复制到其他 ONTAP 存储，无论是在内部、远程站点还是在云中。如果您必须快速恢复数据，SnapRestore 软件可以使用本地快照在几秒钟内恢复整个文件系统或数据卷，而不管文件的容量或数量如何。</block>
   <block id="787fb8fbafed37b77c3881f9e0c851a0" category="section-title">MetroCluster 软件定义存储</block>
@@ -1101,14 +1100,12 @@
   <block id="0e68718563c850d8c86e630de430e588" category="paragraph">您可以使用 Deploy 虚拟机的 IP 或域名访问在线文档页面。要显示页面，请在浏览器中输入具有以下格式的 URL（替换 Deploy VM 实例的相应 IP 地址或域名）：<block ref="65b6906201e24740d3ed28588ffd2826" prefix=" " category="inline-code"></block></block>
   <block id="d5955f327d5d79aa3434b5772a31b4d8" category="summary">ONTAP Select 是 ONTAP 的纯软件版本，可作为虚拟机在虚拟机监控程序主机上进行部署。它补充了主流的 FAS 和 AFF ONTAP 产品套件以及其他纯软件选项，如 Cloud Volumes ONTAP。</block>
   <block id="ecfebb50ecfee3163729b1b24cfa5d09" category="doc">了解 ONTAP Select</block>
-  <block id="69bbee1943d709d1872e201eef4b29a8" category="paragraph">ONTAP Select 是 ONTAP 的纯软件版本，可以将其部署为虚拟机监控程序主机上的虚拟机。它补充了主流的 FAS、AFF 和 ASA ONTAP 产品套件以及其他纯软件选项，如 Cloud Volumes ONTAP。</block>
   <block id="00a3caa2896a927e39b353d23b56eb2d" category="paragraph">ONTAP Select 将内部磁盘驱动器、NVMe、SSD 或 HDD 以及外部阵列存储转换为灵活的存储系统，具有专用 ONTAP 存储系统提供的许多相同优势。您还可以在新服务器或现有服务器基础设施上部署 ONTAP Select。ONTAP Select 易于管理，并利用与基于 ONTAP 的解决方案相同的管理软件，这意味着减少了运营开销和培训要求。</block>
   <block id="8307546cfa4f0ccad4627a2dcd4f46fa" category="paragraph">ONTAP Select 通过两种互补的许可模式适应您的容量消耗需求——容量层级和完全灵活的容量池。两种许可模式都允许您以低至 1TB 的增量增加容量。例如，您可以从几个 TB 开始，并随着项目的增长动态添加容量。如果使用容量池，则可以在项目完成时根据需要重新分配容量。</block>
   <block id="5b6d4054ef7052cdbac6938952fde107" category="paragraph">ONTAP Select 已集成到 VMware vSphere 和基于内核的虚拟机 (KVM) 等云管理框架中。这有助于加快新项目的部署，例如文件服务、主目录、软件开发环境和应用程序测试。</block>
   <block id="39de1f5e6bbe7e17017c377d3305e9fd" category="paragraph">SnapMirror 软件可让您在混合云的 ONTAP 存储之间移动数据，以便您可以轻松访问所需的数据。例如，您可以快速创建一个环境来证明一个想法。稍后，您可以将项目移动到专用存储平台以进行生产部署，或者将其作为开发工作流的一部分在云中更易于访问。</block>
   <block id="9ed6c695ae7ec8113471a76ddcea07cf" category="section-title">软件定义存储</block>
   <block id="9c191e042a5bb50dde6bcacd73b9fc18" category="paragraph">通过软件实现和交付 IT 服务，使管理员能够以以前无法实现的速度和敏捷性快速调配资源。随着现代数据中心迁移到软件定义基础设施 (SDI) 架构，您可以将最有价值的 IT 资产与底层物理基础设施分开，从而提供灵活性、可扩展性和可编程性。</block>
-  <block id="718d7c969f416878691ffcaa2bdf3ca1" category="paragraph">在数据分散于直接连接存储（DAS）孤岛的商品世界中，数据移动和管理已成为更复杂的问题。软件定义存储（SDS）已成为 SDI 领域解决这些和其他问题的重要组成部分。</block>
   <block id="b2c8689de5a7643d75bcb087da31d4a0" category="paragraph">ONTAP Select 是 NetApp 针对 SDS 市场的解决方案。ONTAP Select 为软件定义的数据中心带来了企业级存储管理功能，并将 NetApp Data Fabric 架构扩展到极端边缘用例，包括物联网 (IoT) 和战术服务器。</block>
   <block id="5e75bdbfd3f02cf9f655d512b767dc1f" category="section-title">两个软件组件</block>
   <block id="1524f7469af0e3274a12cb0f88c7e172" category="paragraph">ONTAP Select 由两个主要软件组件组成：</block>
@@ -1157,7 +1154,6 @@
   <block id="6c9348bc5d04685460e6acda750ab989" category="list-text">ONTAP 端口属性</block>
   <block id="b360fb78c737d920cd251b2f7358f606" category="paragraph">不支持修改 ONTAP 端口的属性，包括速度、双工和流量控制。</block>
   <block id="b77e0c9663536ba98dbe087f083ddb67" category="list-text">服务处理器</block>
-  <block id="363ac709cba54fea743eb36bb06d23c7" category="list-text">SVM 迁移</block>
   <block id="c38c45e0a73411d375d048ee41944853" category="list-text">SnapLock Compliance</block>
   <block id="c0b79db5f258f0c991a383cbdbf001dd" category="list-text">SnapMirror 活动同步</block>
   <block id="b7e93a737ead6d7716c8af57ebde241a" category="list-text">VMware HCX</block>
@@ -1684,7 +1680,6 @@
   <block id="f6dbfcdd0f076283f4df3208ab633467" category="paragraph">您可以使用 VMware ESXi 上的 OVF 模板部署 ONTAP Select 集群的 90 天评估实例，范围从单节点到 99 个节点。如果您是现有或新客户，则可以下载评估许可证。例如，您是现有客户，并且希望在购买许可证之前尝试新配置。</block>
   <block id="f9f5faecdbf3b023cf5652fa18b8c4ee" category="list-text">您无需从 NetApp 获取序列号或存储容量许可证。</block>
   <block id="591ba54105fed20bc4bc8e31cee68eb3" category="list-text">您可以为用户数据分配与购买的许可证相同的存储量。</block>
-  <block id="10db4e06bde0886ecc0f97ce3a350d45" category="list-text">您无法将该节点从评估许可证升级为已购买的许可证。</block>
   <block id="de68e769353f85803d50af3ad5192201" category="list-text">您只能使用 vCenter 帐户来部署 OVF 模板。当前不支持直接安装到 ESXi 主机。</block>
   <block id="5ec5e552cbceca200e1e7e00c7ece71f" category="list-text">您必须使用 vSphere 独立客户端或 vSphere Web 客户端（ESXi 8.0 及更高版本的唯一选项）安装 OVF 模板（包含在 ova 文件中）。您不使用 ONTAP Select Deploy 管理实用程序。</block>
   <block id="ced8179cabed6ee9f3127b0c5fafd2db" category="section-title">步骤 1：准备 ONTAP Select 集群主机</block>
@@ -4059,4 +4054,10 @@
   <block id="3c877a9561264bd22f7ed715473c9258" category="paragraph">要在 vCenter 中创建和管理 vSAN Express Storage Architecture (ESA)，需要以下 vSphere 内容库权限：</block>
   <block id="913b24f487842d48914e3794480e83cc" category="admonition">要访问内容库权限，管理员需要授予您对 vCenter Server 中全局权限的访问权限。</block>
   <block id="c0d2cde9a14e7d58e2ab5a38de5b380d" category="paragraph"><block ref="c0d2cde9a14e7d58e2ab5a38de5b380d" category="inline-link-macro-rx"></block></block>
+  <block id="35c865322fb18e49c0e0d5db1a728645" category="paragraph">ONTAP Select 基于 ONTAP 存储软件构建，通过高可用、无共享的横向扩展架构高效地提供企业存储服务。您可以部署具有一个、两个、四个、六个、八个、十个或十二个节点的解决方案，每个节点的 NFS、SMB/CIFS 和 iSCSI 连接存储的原始容量高达 400TB。您可以利用原生重复数据删除和压缩功能，通过提高有效容量来降低存储成本。横向扩展架构可实现高可用性和无中断的数据访问，以实现负载平衡或对硬件进行维护。</block>
+  <block id="8caf5b702720dd48353d13906ca133b0" category="paragraph">ONTAP Select 是 ONTAP 的纯软件版本，可以将其部署为虚拟机监控程序主机上的虚拟机。它补充了主流的 AFF 和 FAS ONTAP 产品套件以及其他纯软件选项，如 Cloud Volumes ONTAP。</block>
+  <block id="8132fb388d9980a45bf3e73000044650" category="paragraph">在数据分散于直接连接存储（DAS）孤岛的商品世界中，数据访问和管理已成为更复杂的问题。软件定义存储（SDS）已成为 SDI 领域解决这些及其他问题的重要组成部分。</block>
+  <block id="972cc139ce081218935961184ceb872f" category="list-text">异步 SnapMirror 中的一致性组</block>
+  <block id="2dd64bd29dd925332151bac56daee54d" category="list-text">SVM-Migrate</block>
+  <block id="191cca9b69f6675fd704265efaee5cd4" category="paragraph">ONTAP Select 不支持异步 SnapMirror 中的一致性组。</block>
 </blocks>
